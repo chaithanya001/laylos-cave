@@ -1,0 +1,2 @@
+include ':lib'
+include 'desktop', 'android', 'html', 'core', 'ios-moe'
