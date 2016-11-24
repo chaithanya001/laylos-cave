@@ -23,7 +23,6 @@ public class PathMap {
     private static final int[] VERTICAL_SEGMENT_SIZES = {8, 9, 10, 11, 12, 13};
     private static final int[] HORIZONTAL_SEGMENT_SIZES = {20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35};
     private static final ArrayList<Segment> pathSegments = new ArrayList<com.heynaveed.layloscave.utils.maps.tools.Segment>();
-    private static final ArrayList<TileVector> globalPathPositions = new ArrayList<com.heynaveed.layloscave.utils.maps.tools.TileVector>();
     private static final ArrayList<TileVector[]> individualSegmentPositions = new ArrayList<com.heynaveed.layloscave.utils.maps.tools.TileVector[]>();
     private static final PathDirectionState[] directionStates = truncateDirectionArray(PathDirectionState.values());
     private static final boolean[] directionPotential = new boolean[directionStates.length];
@@ -32,20 +31,13 @@ public class PathMap {
 
     public PathMap build(){
         initialise();
-        createPath(false);
+        createPath();
 //        System.out.println("Segments: " + pathSegments.size());
-        return this;
-    }
-
-    public PathMap test(){
-        initialise();
-        createPath(true);
         return this;
     }
 
     private void initialise() {
         pathSegments.clear();
-        globalPathPositions.clear();
         individualSegmentPositions.clear();
         finalDirectionStates.clear();
 
@@ -58,7 +50,7 @@ public class PathMap {
         appendSegment();
     }
 
-    private void createPath(boolean isTest) {
+    private void createPath() {
         for (int i = 1; i < MAX_SEGMENTS; i++) {
             finalDirectionStates.clear();
 
@@ -118,7 +110,6 @@ public class PathMap {
     private void appendSegment() {
         Segment newestSegment = new Segment();
         pathSegments.add(newestSegment);
-        globalPathPositions.addAll(newestSegment.getTileVectorsAsList());
         individualSegmentPositions.add(newestSegment.getTileVectorsAsArray());
     }
 
@@ -371,10 +362,6 @@ public class PathMap {
 
     public ArrayList<Segment> getPathSegments() {
         return pathSegments;
-    }
-
-    public TileVector[] getGlobalPathPositions() {
-        return globalPathPositions.toArray(new TileVector[globalPathPositions.size()]);
     }
 
     public ArrayList<TileVector[]> getIndividualSegmentPositions() {

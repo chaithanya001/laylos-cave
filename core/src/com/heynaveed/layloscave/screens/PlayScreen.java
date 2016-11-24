@@ -34,10 +34,7 @@ public class PlayScreen implements Screen {
 
     private static final int MAP_UNIT_SCALE = 1;
     private static final int SPRITE_SIZE = 2;
-    private static final float MAX_WALK_JUMP_TIMER = 0.3f;
     private static final float DEFAULT_WORLD_GRAVITY = -40.0f;
-    private static final float KIRK_STRAIGHT_JUMP_ROTATION_SPEED = 25.0f;
-    private static final float KIRK_BOUNCE_JUMP_ROTATION_SPEED = 50.0f;
     private static final Array<Level> levels = new Array<Level>();
     private static final Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
     private static OrthogonalTiledMapRenderer mapRenderer;
@@ -51,20 +48,16 @@ public class PlayScreen implements Screen {
     private final Jini jini;
     private final InputController inputController;
 
-    private final int[][] workingTileIDSet;
-
     private TiledMap currentMap;
     private MapGenerator mapGenerator;
     private int currentLevel;
     private float kirkRotationAngle;
-    private float dt;
 
     public PlayScreen(GameApp gameApp) throws IOException {
         this.gameApp = gameApp;
         gameCam = new OrthographicCamera();
 //        mapGenerator = new MapGenerator().buildTreeMap();
         mapGenerator = new MapGenerator().buildPathMap();
-        workingTileIDSet = mapGenerator.getWorkingTileIDSet();
         viewport = new FitViewport(GameApp.toPPM(GameApp.VIEWPORT_WIDTH), GameApp.toPPM(GameApp.VIEWPORT_HEIGHT), gameCam);
         gameCam.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight() / 2, 0);
         currentLevel = 1;
@@ -84,7 +77,6 @@ public class PlayScreen implements Screen {
     }
 
     public void update(float dt) {
-        this.dt = dt;
         world.step(1 / GameApp.FPS, 6, 2);
         gameCam.update();
         mapRenderer.setView(gameCam);
@@ -106,23 +98,9 @@ public class PlayScreen implements Screen {
         gameApp.batch.begin();
         kirk.draw(gameApp.batch);
         jini.draw(gameApp.batch);
-        kirk.rotate(calculateJiniImpulseRotation());
         renderPlatforms();
         gameApp.batch.end();
 //        debugRenderer.render(world, gameCam.combined);
-    }
-
-    private float calculateJiniImpulseRotation(){
-        if(kirk.getCurrentCharacterState() == CharacterState.Kirk.JINI_IMPULSE) {
-            float rotationSpeed = inputController.getBounceJumpImpulse() ? KIRK_BOUNCE_JUMP_ROTATION_SPEED : KIRK_STRAIGHT_JUMP_ROTATION_SPEED;
-            kirkRotationAngle += kirk.horizontalDirectionMultiplyer(-rotationSpeed);
-            return kirk.horizontalDirectionMultiplyer(-rotationSpeed);
-        }
-        else {
-            float tempRotation = kirkRotationAngle;
-            kirkRotationAngle = 0;
-            return -tempRotation;
-        }
     }
 
     private void loadLevels() {
@@ -233,18 +211,6 @@ public class PlayScreen implements Screen {
 
     public Kirk getKirk(){
         return kirk;
-    }
-
-    public GameApp getGameApp(){
-        return gameApp;
-    }
-
-    public int[][] getWorkingTileIDSet(){
-        return workingTileIDSet;
-    }
-
-    public float dt(){
-        return this.dt;
     }
 
     public Vector2 getRandomStartingPosition(){

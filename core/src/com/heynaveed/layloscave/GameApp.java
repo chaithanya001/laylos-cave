@@ -47,8 +47,6 @@ public class GameApp extends Game {
         return value / PPM;
     }
 
-	public static float toRGB(int value){ return value/255; }
-
 	@Override
 	public void render () {
 		super.render();

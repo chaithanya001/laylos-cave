@@ -53,14 +53,13 @@ public final class MapGenerator {
     private static final int MAX_X_CLEAN_PADDING = 160;
     private static final int MIN_Y_CLEAN_PADDING = 20;
     private static final int MAX_Y_CLEAN_PADDING = 270;
-    public static final int HEIGHT = 200;
-    public static final int WIDTH = 300;
+    private static final int HEIGHT = 200;
+    private static final int WIDTH = 300;
     private static int levelNumber = 1;
     private static int[][] workingTileIDSet = new int[HEIGHT][WIDTH];
     private static int[] finalTileIDSet = new int[WIDTH * HEIGHT];
     private static String encodedString;
     private static Element mapFileRoot;
-    private static ArrayList<Integer> objectIDs = new ArrayList<Integer>();
     private static ArrayList<TileVector[]> platformPositions;
     private static TreeMap treeMap;
     private static PathMap pathMap;
@@ -460,9 +459,5 @@ public final class MapGenerator {
 
     private static int randomTileID(int[] array){
         return array[random.nextInt(array.length)];
-    }
-
-    public int[][] getWorkingTileIDSet(){
-        return workingTileIDSet;
     }
 }

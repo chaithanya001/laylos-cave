@@ -14,17 +14,14 @@ import com.heynaveed.layloscave.keys.CharacterKey;
 import com.heynaveed.layloscave.keys.ControlKey;
 import com.heynaveed.layloscave.states.PlatformState;
 import com.heynaveed.layloscave.utils.AnimationPackager;
-import com.heynaveed.layloscave.utils.maps.tools.MapGenerator;
 import com.heynaveed.layloscave.utils.RoundTo;
 import com.heynaveed.layloscave.keys.SpriteKey;
 import com.heynaveed.layloscave.universe.Character;
 
-import java.util.Random;
-
 
 public final class Kirk extends Character {
 
-    private static final Random random = new Random();
+    private static final float KIRK_STRAIGHT_JUMP_ROTATION_SPEED = 25.0f;
     private static final float MAXIMUM_VELOCITY = 15.0f;
     private static final float CAMERA_WEST_LIMIT = 12.0f;
     private static final float CAMERA_JUMP_THRESHOLD = 6.8f;
@@ -40,12 +37,11 @@ public final class Kirk extends Character {
     private float bounceTimer;
     private float maxJumpVelocity;
     private float dt;
-    private boolean willWalkJump;
+    private float kirkRotationAngle;
     private boolean isBounceJump;
     private boolean isSliding;
     private boolean isControlDisabled;
     private boolean isStraightJumping;
-    private boolean isIceBursting;
     private CharacterState.Kirk currentCharacterState;
     private CharacterState.Kirk previousCharacterState;
     private PlatformState currentPlatformState;
@@ -69,13 +65,17 @@ public final class Kirk extends Character {
 
     @Override
     public void update(float dt) {
-//        System.out.println(body.getPosition().x + ", " + body.getPosition().y);
         this.dt = dt;
         panCamera();
         capVelocities();
         handlePlatformInteractions();
+        handleJiniImpulseRotations();
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
         setRegion(updateAnimationFrame(dt));
+    }
+
+    private void handleJiniImpulseRotations(){
+        rotate(calculateJiniImpulseRotation());
     }
 
     private void capVelocities() {
@@ -220,6 +220,7 @@ public final class Kirk extends Character {
     protected void initialiseWorldValues() {
         xVelocity = 10.0f;
         maxJumpVelocity = 7.5f;
+        kirkRotationAngle = 0;
     }
 
     @Override
@@ -298,12 +299,6 @@ public final class Kirk extends Character {
         fDef.isSensor = false;
 
         body.createFixture(fDef).setUserData("diagonal");
-
-//        CircleShape jumpSensorFixture = new CircleShape();
-//        jumpSensorFixture.setRadius(FIXTURE_WIDTH*6);
-//        fDef.isSensor = true;
-//        fDef.shape = jumpSensorFixture;
-//        body.createFixture(fDef).setUserData(this);
     }
 
     @Override
@@ -312,8 +307,6 @@ public final class Kirk extends Character {
         isSliding = false;
         isControlDisabled = false;
         isStraightJumping = false;
-        isIceBursting = false;
-        willWalkJump = false;
     }
 
     @Override
@@ -373,6 +366,19 @@ public final class Kirk extends Character {
         return region;
     }
 
+    private float calculateJiniImpulseRotation(){
+        if(currentCharacterState == CharacterState.Kirk.JINI_IMPULSE) {
+            float rotationSpeed = KIRK_STRAIGHT_JUMP_ROTATION_SPEED;
+            kirkRotationAngle += horizontalDirectionMultiplyer(-rotationSpeed);
+            return horizontalDirectionMultiplyer(-rotationSpeed);
+        }
+        else {
+            float tempRotation = kirkRotationAngle;
+            kirkRotationAngle = 0;
+            return -tempRotation;
+        }
+    }
+
     @Override
     protected void updateCharacterState() {
 
@@ -418,14 +424,6 @@ public final class Kirk extends Character {
         return isSliding;
     }
 
-    public boolean isIceBursting() {
-        return isIceBursting;
-    }
-
-    public boolean isStraightJumping() {
-        return isStraightJumping;
-    }
-
     public CharacterState.Kirk getCurrentCharacterState() {
         return currentCharacterState;
     }
@@ -442,10 +440,6 @@ public final class Kirk extends Character {
         this.isStraightJumping = isStraightJumping;
     }
 
-    public void setIceBursting(boolean isIceBursting) {
-        this.isIceBursting = isIceBursting;
-    }
-
     public void setBounceJump(boolean isBounceJump) {
         this.isBounceJump = isBounceJump;
     }
@@ -460,13 +454,5 @@ public final class Kirk extends Character {
 
     public void glideDown() {
         body.setLinearVelocity(new Vector2(0, -20.0f));
-    }
-
-    public boolean getWillWalkJump() {
-        return willWalkJump;
-    }
-
-    public void setWillWalkJump(boolean willWalkJump) {
-        this.willWalkJump = willWalkJump;
     }
 }
