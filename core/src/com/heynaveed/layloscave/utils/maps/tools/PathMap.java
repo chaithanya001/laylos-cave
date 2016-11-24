@@ -19,7 +19,7 @@ public class PathMap {
     static int SEGMENT_LENGTH;
 
     private static final int PATH_SPACING = 7;
-    private static final int MAX_SEGMENTS = 150;
+    private static final int MAX_SEGMENTS = 250;
     private static final int[] VERTICAL_SEGMENT_SIZES = {8, 9, 10, 11, 12, 13};
     private static final int[] HORIZONTAL_SEGMENT_SIZES = {20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35};
     private static final ArrayList<Segment> pathSegments = new ArrayList<com.heynaveed.layloscave.utils.maps.tools.Segment>();

@@ -51,7 +51,6 @@ public class PlayScreen implements Screen {
     private TiledMap currentMap;
     private MapGenerator mapGenerator;
     private int currentLevel;
-    private float kirkRotationAngle;
 
     public PlayScreen(GameApp gameApp) throws IOException {
         this.gameApp = gameApp;
@@ -61,7 +60,6 @@ public class PlayScreen implements Screen {
         viewport = new FitViewport(GameApp.toPPM(GameApp.VIEWPORT_WIDTH), GameApp.toPPM(GameApp.VIEWPORT_HEIGHT), gameCam);
         gameCam.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight() / 2, 0);
         currentLevel = 1;
-        kirkRotationAngle = 0;
         world = new World(new Vector2(0, DEFAULT_WORLD_GRAVITY), true);
         loadLevels();
         kirk = new Kirk(this);

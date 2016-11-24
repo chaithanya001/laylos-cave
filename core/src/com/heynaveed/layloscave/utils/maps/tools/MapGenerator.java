@@ -37,6 +37,9 @@ import java.util.zip.GZIPOutputStream;
 
 public final class MapGenerator {
 
+    private static final int[] TREE_LAYER_BOUNDS_X = {16, 32, 48, 64};
+    private static final int[] TREE_LAYER_BOUNDS_Y = {8, 24, 40, 56};
+    private static final int[] GROUND_IDS = {1, 2, 3, 4, 5};
     private static final int[] CAVE_IDS = {6, 7, 8, 9, 10};
     private static final int[] BOUNCY_IDS = {21, 22, 23};
     public static final int PLATFORM_MIN_X = 20;
@@ -101,7 +104,8 @@ public final class MapGenerator {
         generateMapBase();
         cleanMapNoise();
         generatePathPlatforms();
-        determinePortalPositions();
+        squeezeTreePlatforms();
+//        determinePortalPositions();
         deleteOldObjects();
         calculateCaveObjectList();
         generateObjects();
@@ -200,7 +204,7 @@ public final class MapGenerator {
 
     private static void generateTreePlatforms(){
 
-        treeMap = new TreeMap().build();
+//        treeMap = new TreeMap().build(3);
         TileVector[] treeTileVectors = treeMap.getGlobalPlatformPositions();
 
         for(int i = 0; i < treeTileVectors.length; i++)
@@ -274,6 +278,50 @@ public final class MapGenerator {
         smoothMap(5);
     }
 
+    private static void squeezeTreePlatforms(){
+
+        ArrayList<TileVector> layerOnePotentials = new ArrayList<TileVector>();
+
+        int minXY = TREE_LAYER_BOUNDS_Y[TREE_LAYER_BOUNDS_Y.length-1];
+        int maxX = HEIGHT - minXY;
+        int maxY = WIDTH - minXY;
+        int layerNumber = 1;
+
+        for(int i = minXY; i < maxX; i++){
+            row_loop:
+            for(int j = minXY; j < maxY; j++){
+                for (int l = -TREE_LAYER_BOUNDS_X[layerNumber] / 2; l < TREE_LAYER_BOUNDS_X[layerNumber] / 2; l++) {
+                    for (int m = -TREE_LAYER_BOUNDS_Y[layerNumber] / 2; m < TREE_LAYER_BOUNDS_Y[layerNumber] / 2; m++) {
+                        if (workingTileIDSet[i + l][j + m] != 0)
+                            continue row_loop;
+                    }
+                }
+                layerOnePotentials.add(new TileVector(i, j-4));
+            }
+        }
+
+//        for(int i = 0; i < layerOnePotentials.size(); i++)
+//            workingTileIDSet[layerOnePotentials.get(i).x][layerOnePotentials.get(i).y] = randomTileID(BOUNCY_IDS);
+
+        if(!layerOnePotentials.isEmpty()) {
+            TileVector[] rootTileVector = new TileVector[8];
+            int xPos;
+            int yPos;
+            int randomPosition = random.nextInt(layerOnePotentials.size());
+            for (int i = 0; i < rootTileVector.length && !layerOnePotentials.isEmpty(); i++) {
+                xPos = layerOnePotentials.get(randomPosition).x;
+                yPos = layerOnePotentials.get(randomPosition).y + i;
+                rootTileVector[i] = new TileVector(xPos, yPos);
+            }
+
+            TreeMap tree = new TreeMap().build(layerNumber, rootTileVector);
+            TileVector[] treeTileVectors = tree.getGlobalPlatformPositions();
+
+            for (int i = 0; i < treeTileVectors.length; i++)
+                workingTileIDSet[treeTileVectors[i].x][treeTileVectors[i].y] = randomTileID(GROUND_IDS);
+        }
+    }
+
     private static void determinePortalPositions(){
         portalPositions = new ArrayList<TileVector>();
         int size = platformPositions.size();
@@ -287,13 +335,18 @@ public final class MapGenerator {
     private static void calculateCaveObjectList(){
 
         ArrayList<TileVector[]> caveObjectList = new ArrayList<TileVector[]>();
+        int[] GROUND_CAVE_IDS = new int[CAVE_IDS.length + GROUND_IDS.length];
+        for(int i = 0; i < CAVE_IDS.length; i++)
+            GROUND_CAVE_IDS[i] = CAVE_IDS[i];
+        for(int i = 0; i < GROUND_IDS.length; i++)
+            GROUND_CAVE_IDS[i+(CAVE_IDS.length)] = GROUND_IDS[i];
 
         for(int i = 0; i < workingTileIDSet.length; i++){
             TileVector[] tileVector = new TileVector[WIDTH];
             int buffer = 0;
             for(int j = 0; j < workingTileIDSet[i].length; j++, buffer++){
 
-                if ((!isNumberInArray(CAVE_IDS, workingTileIDSet[i][j]) || j == WIDTH-1)){
+                if (!isNumberInArray(GROUND_CAVE_IDS, workingTileIDSet[i][j]) || j == WIDTH-1){
                     if(buffer > 1) {
                         TileVector[] truncatedVector = new TileVector[buffer];
                         for (int l = 0; l < truncatedVector.length; l++)

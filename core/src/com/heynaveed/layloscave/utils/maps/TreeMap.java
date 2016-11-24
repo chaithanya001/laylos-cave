@@ -22,22 +22,14 @@ public final class TreeMap {
     private static final ArrayList<TileVector[]> individualPlatformPositions = new ArrayList<TileVector[]>();
     private static final ArrayList<TileVector> globalPlatformPositions = new ArrayList<TileVector>();
 
-    public static void main(){
-
-    }
-
-    public TreeMap build(){
-        initialise();
-        createTree();
+    public TreeMap build(int layerNum, TileVector[] rootTileVector){
+        initialise(rootTileVector);
+        createTree(layerNum);
         return this;
     }
 
-    public TreeMap test(){
-        return this;
-    }
-
-    private void initialise(){
-        TileVector[] rootTileVectors = calculateRootTileVector();
+    private void initialise(TileVector[] rootTileVectors){
+//        TileVector[] rootTileVectors = calculateRootTileVector();
         Node rootNode = new Node(rootTileVectors).isRootNode(true);
         nodes.add(rootNode);
         individualPlatformPositions.add(rootTileVectors);
@@ -45,7 +37,7 @@ public final class TreeMap {
     }
 
     private TileVector[] calculateRootTileVector(){
-        int rootPlatformLength = 10;
+        int rootPlatformLength = 8;
         TileVector[] rootTileVector = new TileVector[rootPlatformLength];
         int xPos;
         int yPos;
@@ -59,12 +51,14 @@ public final class TreeMap {
         return rootTileVector;
     }
 
-    private void createTree(){
-        for(int i = 1; i <= LAYER_NUM; i++){
+    private void createTree(int layerNum){
+        for(int i = 1; i <= layerNum; i++){
             for(int j = 1; j <= Math.pow(CHILDREN_PER_PARENT, i); j++) {
-                int platformLength = random.nextInt(5)+ MIN_PLATFORM_LENGTH;
+//                int platformLength = random.nextInt(5)+ MIN_PLATFORM_LENGTH;
+                int platformLength = 8;
                 int childNumber = (nodes.size() % CHILDREN_PER_PARENT);
-                int platformSpacing = random.nextInt(4) + MINIMUM_X_DIFFERENCE;
+                int platformSpacing = 8;
+//                int platformSpacing = random.nextInt(4) + MINIMUM_X_DIFFERENCE;
                 childNumber = childNumber == 0 ?4 :childNumber;
                 Node parentNode = nodes.get(
                         calculateParentIndex(nodes.size(), childNumber));
