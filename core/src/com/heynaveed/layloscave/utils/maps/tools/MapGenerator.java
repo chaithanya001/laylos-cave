@@ -37,13 +37,14 @@ import java.util.zip.GZIPOutputStream;
 
 public final class MapGenerator {
 
-    public enum MapState {}
-
     private static final int[] CAVE_IDS = {6, 7, 8, 9, 10};
+    private static final int[] BOUNCY_IDS = {21, 22, 23};
     public static final int PLATFORM_MIN_X = 20;
     public static final int PLATFORM_MAX_X = 180;
     public static final int PLATFORM_MIN_Y = 20;
     public static final int PLATFORM_MAX_Y = 280;
+    private static final int PORTAL_PADDING_X = 25;
+    private static final int PORTAL_PADDING_Y = 40;
     private static final int PATH_PADDING = 8;
     private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
     private static final String TEMPLATE_MAP_PATH = "maps/templateMap.tmx";
@@ -61,6 +62,7 @@ public final class MapGenerator {
     private static String encodedString;
     private static Element mapFileRoot;
     private static ArrayList<TileVector[]> platformPositions;
+    private static ArrayList<TileVector> portalPositions;
     private static TreeMap treeMap;
     private static PathMap pathMap;
     private static boolean isTree = false;
@@ -99,6 +101,7 @@ public final class MapGenerator {
         generateMapBase();
         cleanMapNoise();
         generatePathPlatforms();
+        determinePortalPositions();
         deleteOldObjects();
         calculateCaveObjectList();
         generateObjects();
@@ -231,7 +234,7 @@ public final class MapGenerator {
 
         for(int i = 0; i < platformPositions.size(); i++){
             for(int j = 0; j < platformPositions.get(i).length; j++)
-                workingTileIDSet[platformPositions.get(i)[j].x][platformPositions.get(i)[j].y] = randomTileID(CAVE_IDS);
+                workingTileIDSet[platformPositions.get(i)[j].x][platformPositions.get(i)[j].y] = 0;
         }
 
         for(int i = 0; i < pathSegments.size(); i++){
@@ -269,7 +272,16 @@ public final class MapGenerator {
         }
 
         smoothMap(5);
+    }
 
+    private static void determinePortalPositions(){
+        portalPositions = new ArrayList<TileVector>();
+        int size = platformPositions.size();
+
+        for(int i = 0; i < size; i++){
+            if(platformPositions.get(i).length != 0)
+                workingTileIDSet[platformPositions.get(i)[0].x][platformPositions.get(i)[0].y] = randomTileID(BOUNCY_IDS);
+        }
     }
 
     private static void calculateCaveObjectList(){
@@ -382,7 +394,7 @@ public final class MapGenerator {
                     int neighbourWallTileCount = calculateSurroundingWallCount(j, k);
 
                     if (neighbourWallTileCount > 4)
-                        workingTileIDSet[j][k] = 9;
+                        workingTileIDSet[j][k] = randomTileID(CAVE_IDS);
                     else if (neighbourWallTileCount < 4)
                         workingTileIDSet[j][k] = 0;
                 }
