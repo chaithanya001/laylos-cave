@@ -104,7 +104,7 @@ public final class MapGenerator {
         generateMapBase();
         cleanMapNoise();
         generatePathPlatforms();
-        squeezeTreePlatforms();
+//        squeezeTreePlatforms();
         determinePortalPositions();
         deleteOldObjects();
         calculateCaveObjectList();
