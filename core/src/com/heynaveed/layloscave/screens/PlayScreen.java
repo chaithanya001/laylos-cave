@@ -95,9 +95,13 @@ public class PlayScreen implements Screen {
         gameApp.batch.setProjectionMatrix(gameCam.combined);
         gameApp.batch.begin();
         kirk.draw(gameApp.batch);
+        jini.getJiniAromaEffect().draw(gameApp.batch, dt);
         jini.draw(gameApp.batch);
         renderPlatforms();
         gameApp.batch.end();
+
+        if(jini.getJiniAromaEffect().isComplete())
+            jini.getJiniAromaEffect().reset();
 //        debugRenderer.render(world, gameCam.combined);
     }
 

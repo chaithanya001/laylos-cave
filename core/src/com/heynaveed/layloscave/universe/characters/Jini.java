@@ -1,5 +1,7 @@
 package com.heynaveed.layloscave.universe.characters;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -17,6 +19,7 @@ public final class Jini extends Character {
 
     private static final float MAX_KIRK_DISPLACEMENT = 3;
     private static final float MAX_ROTATION = 15;
+    private final ParticleEffect jiniAromaEffect = new ParticleEffect();
     private final PlayScreen screen;
 
     private boolean hasSwapped;
@@ -40,6 +43,8 @@ public final class Jini extends Character {
         frameSequences = animationPackager.getFrameSequences();
         frameSpeeds = animationPackager.getFrameSpeeds();
         animations = animationPackager.getAnimations();
+        jiniAromaEffect.load(Gdx.files.internal("particle-effects/JiniAroma"), Gdx.files.internal("particle-effects"));
+        jiniAromaEffect.start();
 
         initialiseWorldValues();
         initialiseTimers();
@@ -51,10 +56,16 @@ public final class Jini extends Character {
     @Override
     public void update(float dt){
         followKirk();
+        handleAromaEffect();
         handleTeleporting();
         handleLevitating();
         setPosition(body.getPosition().x - getWidth()/2, body.getPosition().y - getHeight()/2);
         setRegion(updateAnimationFrame(dt));
+    }
+
+    private void handleAromaEffect(){
+        if(jiniAromaEffect.isComplete())
+            jiniAromaEffect.reset();
     }
 
     private void handleTeleporting(){
@@ -92,6 +103,7 @@ public final class Jini extends Character {
 
         previousFacing = isFacingRight;
         body.setTransform(screen.getKirk().getBody().getPosition().x + kirkDisplacement, screen.getKirk().getBody().getPosition().y, 0);
+        jiniAromaEffect.setPosition(body.getPosition().x, body.getPosition().y);
         setRotation(calculateRotation());
     }
 
@@ -229,5 +241,9 @@ public final class Jini extends Character {
         if(!isTeleporting)
             resetAnimationStateTimer();
         this.isLevitateImpulse = isLevitateImpulse;
+    }
+
+    public ParticleEffect getJiniAromaEffect(){
+        return jiniAromaEffect;
     }
 }

@@ -104,7 +104,7 @@ public final class MapGenerator {
         generateMapBase();
         cleanMapNoise();
         generatePathPlatforms();
-        squeezeTreePlatforms();
+//        squeezeTreePlatforms();
 //        determinePortalPositions();
         deleteOldObjects();
         calculateCaveObjectList();
@@ -346,7 +346,7 @@ public final class MapGenerator {
             int buffer = 0;
             for(int j = 0; j < workingTileIDSet[i].length; j++, buffer++){
 
-                if (!isNumberInArray(GROUND_CAVE_IDS, workingTileIDSet[i][j]) || j == WIDTH-1){
+                if (!isTileInArray(GROUND_CAVE_IDS, workingTileIDSet[i][j]) || j == WIDTH-1){
                     if(buffer > 1) {
                         TileVector[] truncatedVector = new TileVector[buffer];
                         for (int l = 0; l < truncatedVector.length; l++)
@@ -363,7 +363,7 @@ public final class MapGenerator {
         platformPositions = caveObjectList;
     }
 
-    private static boolean isNumberInArray(int[] array, int number){
+    private static boolean isTileInArray(int[] array, int number){
         for(int i = 0; i < array.length; i++){
             if(number == array[i])
                 return true;
