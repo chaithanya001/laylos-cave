@@ -78,6 +78,9 @@ public final class CollisionDetector implements ContactListener {
                 ((CrumblingPlatform) foreignObject.getUserData()).setIsTouched(true);
                 bodiesToRemove.add(foreignObject.getBody());
                 break;
+            case GameApp.KIRK_BIT | GameApp.PORTAL_BIT:
+                System.out.println("PORTAL ACTIVATED");
+                break;
         }
     }
 
@@ -130,8 +133,8 @@ public final class CollisionDetector implements ContactListener {
         switch(cDef){
             case GameApp.KIRK_BIT | GameApp.GROUND_PLATFORM_BIT:
                 kirk.setCurrentPlatformState(PlatformState.GROUND);
-                if(checkForHeadCollision)
-                    System.out.println("HEAD COLLISION");
+//                if(checkForHeadCollision)
+//                    System.out.println("HEAD COLLISION");
                 break;
             case GameApp.KIRK_BIT | GameApp.MUDDY_PLATFORM_BIT:
                 kirk.setCurrentPlatformState(PlatformState.MUDDY);

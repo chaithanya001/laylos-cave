@@ -24,6 +24,7 @@ public class GameApp extends Game {
 	public static final short MUDDY_PLATFORM_BIT = 64;
 	public static final short ICE_PLATFORM_BIT = 128;
 	public static final short JINI_BIT = 256;
+	public static final short PORTAL_BIT = 512;
 	public static final float FPS = 60;
     private static final float PPM = 100;
 

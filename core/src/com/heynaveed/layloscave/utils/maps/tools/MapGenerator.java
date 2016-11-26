@@ -57,8 +57,8 @@ public final class MapGenerator {
     private static final int MAX_X_CLEAN_PADDING = 160;
     private static final int MIN_Y_CLEAN_PADDING = 20;
     private static final int MAX_Y_CLEAN_PADDING = 270;
-    private static final int HEIGHT = 200;
-    private static final int WIDTH = 300;
+    public static final int HEIGHT = 200;
+    public static final int WIDTH = 300;
     private static int levelNumber = 1;
     private static int[][] workingTileIDSet = new int[HEIGHT][WIDTH];
     private static int[] finalTileIDSet = new int[WIDTH * HEIGHT];
@@ -104,8 +104,8 @@ public final class MapGenerator {
         generateMapBase();
         cleanMapNoise();
         generatePathPlatforms();
-//        squeezeTreePlatforms();
-//        determinePortalPositions();
+        squeezeTreePlatforms();
+        determinePortalPositions();
         deleteOldObjects();
         calculateCaveObjectList();
         generateObjects();
@@ -326,9 +326,21 @@ public final class MapGenerator {
         portalPositions = new ArrayList<TileVector>();
         int size = platformPositions.size();
 
+//        for(int i = 0; i < size; i++){
+//            if(platformPositions.get(i).length != 0)
+//                workingTileIDSet[platformPositions.get(i)[0].x][platformPositions.get(i)[0].y] = randomTileID(BOUNCY_IDS);
+//        }
+//
         for(int i = 0; i < size; i++){
-            if(platformPositions.get(i).length != 0)
-                workingTileIDSet[platformPositions.get(i)[0].x][platformPositions.get(i)[0].y] = randomTileID(BOUNCY_IDS);
+            for(int j = -1; j <= 1; j++){
+                for(int k = -1; k <= 1; k++){
+                    if(platformPositions.get(i).length != 0 &&
+                            isTileInArray(CAVE_IDS, workingTileIDSet[platformPositions.get(i)[0].x + j][platformPositions.get(i)[0].y + k])) {
+                        workingTileIDSet[platformPositions.get(i)[0].x][platformPositions.get(i)[0].y] = randomTileID(BOUNCY_IDS);
+                        portalPositions.add(new TileVector(platformPositions.get(i)[0].x, platformPositions.get(i)[0].y));
+                    }
+                }
+            }
         }
     }
 
@@ -524,5 +536,9 @@ public final class MapGenerator {
 
     private static int randomTileID(int[] array){
         return array[random.nextInt(array.length)];
+    }
+
+    public ArrayList<TileVector> getPortalPositions(){
+        return portalPositions;
     }
 }

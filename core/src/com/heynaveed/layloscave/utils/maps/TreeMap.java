@@ -125,8 +125,8 @@ public final class TreeMap {
             }
         }
 
-        System.out.println("Total Tree Nodes: " + nodes.size());
-        System.out.println("Actual Platforms: " + individualPlatformPositions.size());
+//        System.out.println("Total Tree Nodes: " + nodes.size());
+//        System.out.println("Actual Platforms: " + individualPlatformPositions.size());
     }
 
     private int calculateChildIndex(int parentIndex, int childNumber){

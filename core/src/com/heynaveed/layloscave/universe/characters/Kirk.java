@@ -244,7 +244,7 @@ public final class Kirk extends Character {
         fDef.filter.categoryBits = GameApp.KIRK_BIT;
         fDef.filter.maskBits = GameApp.GROUND_PLATFORM_BIT | GameApp.OBJECT_BIT |
                 GameApp.SIDE_WALL_BIT | GameApp.BOUNCY_PLATFORM_BIT |
-                GameApp.CRUMBLING_WALL_BIT | GameApp.MUDDY_PLATFORM_BIT | GameApp.ICE_PLATFORM_BIT;
+                GameApp.CRUMBLING_WALL_BIT | GameApp.MUDDY_PLATFORM_BIT | GameApp.ICE_PLATFORM_BIT | GameApp.PORTAL_BIT;
 
         PolygonShape mainBody = new PolygonShape();
         mainBody.setAsBox(FIXTURE_WIDTH / 2.5f, FIXTURE_HEIGHT / 2.5f + FIXTURE_HEIGHT / 10, new Vector2(0, -FIXTURE_HEIGHT / 1.75f), 0);
