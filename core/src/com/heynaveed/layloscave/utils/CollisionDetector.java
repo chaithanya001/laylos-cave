@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.utils.Array;
 import com.heynaveed.layloscave.GameApp;
 import com.heynaveed.layloscave.states.PlatformState;
+import com.heynaveed.layloscave.universe.Portal;
 import com.heynaveed.layloscave.universe.characters.Kirk;
 import com.heynaveed.layloscave.universe.platforms.CrumblingPlatform;
 import com.heynaveed.layloscave.screens.PlayScreen;
@@ -79,7 +80,7 @@ public final class CollisionDetector implements ContactListener {
                 bodiesToRemove.add(foreignObject.getBody());
                 break;
             case GameApp.KIRK_BIT | GameApp.PORTAL_BIT:
-                System.out.println("PORTAL ACTIVATED");
+                System.out.println(foreignObject.getUserData());
                 break;
         }
     }

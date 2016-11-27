@@ -41,6 +41,7 @@ public class Portal extends Sprite {
         bDef.position.set(position);
         bDef.type = BodyDef.BodyType.StaticBody;
         body = screen.getWorld().createBody(bDef);
+        body.setUserData(id);
 
         FixtureDef fDef = new FixtureDef();
         fDef.filter.categoryBits = GameApp.PORTAL_BIT;
@@ -48,17 +49,20 @@ public class Portal extends Sprite {
 
         CircleShape mainBody = new CircleShape();
         mainBody.setRadius(GameApp.toPPM(64));
-        mainBody.setPosition(new Vector2(GameApp.toPPM(32), -GameApp.toPPM(32)));
+        if(!isFacingRight) {
+            setPosition(position.x - GameApp.toPPM(192), position.y - GameApp.toPPM(256));
+            mainBody.setPosition(new Vector2(0, -GameApp.toPPM(48)));
+        }
+        else {
+            setPosition(position.x - GameApp.toPPM(128), position.y - GameApp.toPPM(256));
+            mainBody.setPosition(new Vector2(GameApp.toPPM(64), -GameApp.toPPM(48)));
+        }
+
         fDef.shape = mainBody;
         fDef.friction = 0;
         fDef.restitution = 0;
         fDef.isSensor = true;
         body.createFixture(fDef).setUserData(id);
-
-        if(!isFacingRight)
-            setPosition(position.x - GameApp.toPPM(192), position.y - GameApp.toPPM(256));
-        else
-            setPosition(position.x - GameApp.toPPM(128), position.y - GameApp.toPPM(256));
 
         setTexture(animationPackager.getTexture());
 
@@ -72,10 +76,10 @@ public class Portal extends Sprite {
     public TextureRegion updateRegion(float dt){
         TextureRegion region = animationPackager.getAnimations()[0].getKeyFrame(animationStateTimer);
 
-//        if(isFacingRight && !isFlipped) {
-//            region.flip(true, false);
-//            isFlipped = true;
-//        }
+        if(isFacingRight && !isFlipped) {
+            region.flip(true, false);
+            isFlipped = true;
+        }
 
         if(animationPackager.getAnimations()[0].isAnimationFinished(animationStateTimer))
             animationStateTimer = 0;
@@ -87,6 +91,10 @@ public class Portal extends Sprite {
 
     public int getId(){
         return id;
+    }
+
+    public boolean isFacingRight(){
+        return isFacingRight;
     }
 
     public void dispose(){
