@@ -37,6 +37,8 @@ import java.util.zip.GZIPOutputStream;
 
 public final class MapGenerator {
 
+    private static final int MAX_PORTAL_PLATFORM_LENGTH = 10;
+    private static final int MAX_PORTAL_PLATFORM_HEIGHT = 4;
     private static final int[] TREE_LAYER_BOUNDS_X = {16, 32, 48, 64};
     private static final int[] TREE_LAYER_BOUNDS_Y = {8, 24, 40, 56};
     private static final int[] GROUND_IDS = {1, 2, 3, 4, 5};
@@ -326,32 +328,50 @@ public final class MapGenerator {
     private static void determinePortalPositions(){
         portalPositions = new ArrayList<TileVector>();
         portalFacing = new ArrayList<Boolean>();
+        ArrayList<TileVector> potentialPositions = new ArrayList<TileVector>();
+        ArrayList<Boolean> potentialFacing = new ArrayList<Boolean>();
 
-        int minX = 40, minY = 40;
+        int minX = 30, minY = 40;
         int maxX = HEIGHT - minX;
         int maxY = WIDTH - minY;
 
-        for(int x = minX; x <= maxX; x+=10){
-            ArrayList<TileVector> potentialPositions = new ArrayList<TileVector>();
-            ArrayList<Boolean> potentialFacing = new ArrayList<Boolean>();
+        for(int x = minX; x <= maxX; x++){
 
+
+            row_loop:
             for(int y = minY; y <= maxY; y++){
-                int tempX = x;
 
-                if(isTileInArray(CAVE_IDS, workingTileIDSet[x][y]) && isTileInArray(CAVE_IDS, workingTileIDSet[x][y-1]) && workingTileIDSet[x][y+1] == 0) {
-                    if(isTileInArray(CAVE_IDS, workingTileIDSet[x-1][y+1]))
-                        tempX = x + 2;
-                    else if (isTileInArray(CAVE_IDS, workingTileIDSet[x+1][y+1]))
-                        tempX = x - 2;
-                    potentialPositions.add(new TileVector(tempX, y + 1));
+                if(workingTileIDSet[x][y] == 0 && doesTileMatchArray(CAVE_IDS, workingTileIDSet[x+1][y])
+                        && doesTileMatchArray(CAVE_IDS, workingTileIDSet[x][y-1])) {
+
+                    for(int i = y; i < y+MAX_PORTAL_PLATFORM_LENGTH; i++){
+                        for(int j = x+1; j < x+3; j++) {
+                            if (!doesTileMatchArray(CAVE_IDS, workingTileIDSet[j][i]))
+                                continue row_loop;
+                        }
+                    }
+                    for(int i = x; i < x+MAX_PORTAL_PLATFORM_HEIGHT; i++){
+                        if(!doesTileMatchArray(CAVE_IDS, workingTileIDSet[i][y-1]))
+                            continue row_loop;
+                    }
+
+                    potentialPositions.add(new TileVector(x-2, y));
                     potentialFacing.add(true);
                 }
-                else if(isTileInArray(CAVE_IDS, workingTileIDSet[x][y]) && isTileInArray(CAVE_IDS, workingTileIDSet[x][y+1]) && workingTileIDSet[x][y-1] == 0) {
-                    if(isTileInArray(CAVE_IDS, workingTileIDSet[x-1][y-1]))
-                        tempX = x + 2;
-                    else if (isTileInArray(CAVE_IDS, workingTileIDSet[x+1][y-1]))
-                        tempX = x - 2;
-                    potentialPositions.add(new TileVector(tempX, y - 1));
+                else if(workingTileIDSet[x][y] == 0 && doesTileMatchArray(CAVE_IDS, workingTileIDSet[x+1][y])
+                        && doesTileMatchArray(CAVE_IDS, workingTileIDSet[x][y+1])) {
+                    for(int i = y; i > y-MAX_PORTAL_PLATFORM_LENGTH; i--){
+                        for(int j = x+1; j < x+3; j++) {
+                            if (!doesTileMatchArray(CAVE_IDS, workingTileIDSet[j][i]))
+                                continue row_loop;
+                        }
+                    }
+                    for(int i = x; i < x+MAX_PORTAL_PLATFORM_HEIGHT; i++){
+                        if(!doesTileMatchArray(CAVE_IDS, workingTileIDSet[i][y+1]))
+                            continue row_loop;
+                    }
+
+                    potentialPositions.add(new TileVector(x-2, y));
                     potentialFacing.add(false);
                 }
             }
@@ -366,8 +386,35 @@ public final class MapGenerator {
             potentialFacing.clear();
         }
 
-//        for(int i = 0; i < portalPositions.size(); i++)
+        if(portalPositions.size() > 10){
+            do {
+                portalPositions.remove(portalPositions.size()/2);
+                portalFacing.remove(portalFacing.size()/2);
+            } while (portalPositions.size() != 10);
+        }
+
+        int x = 199;
+        int y = random.nextInt(maxY - minY)+minY;
+
+        for(int i = x; workingTileIDSet[i][y] != 0; i--)
+            x = i;
+
+        portalPositions.add(new TileVector(x-4, y));
+
+        if(y > 150)
+            portalFacing.add(false);
+        else
+            portalFacing.add(true);
+
+//        System.out.println(portalPositions.size());
+//        System.out.println(portalFacing.size());
+//
+//        for(int i = 0; i < portalPositions.size(); i++) {
 //            workingTileIDSet[portalPositions.get(i).x][portalPositions.get(i).y] = randomTileID(BOUNCY_IDS);
+//            workingTileIDSet[portalPositions.get(i).x-1][portalPositions.get(i).y] = randomTileID(BOUNCY_IDS);
+//            workingTileIDSet[portalPositions.get(i).x-2][portalPositions.get(i).y] = randomTileID(BOUNCY_IDS);
+//            workingTileIDSet[portalPositions.get(i).x-3][portalPositions.get(i).y] = randomTileID(BOUNCY_IDS);
+//        }
     }
 
     private static void calculateCaveObjectList(){
@@ -384,7 +431,7 @@ public final class MapGenerator {
             int buffer = 0;
             for(int j = 0; j < workingTileIDSet[i].length; j++, buffer++){
 
-                if (!isTileInArray(GROUND_CAVE_IDS, workingTileIDSet[i][j]) || j == WIDTH-1){
+                if (!doesTileMatchArray(GROUND_CAVE_IDS, workingTileIDSet[i][j]) || j == WIDTH-1){
                     if(buffer > 1) {
                         TileVector[] truncatedVector = new TileVector[buffer];
                         for (int l = 0; l < truncatedVector.length; l++)
@@ -401,7 +448,7 @@ public final class MapGenerator {
         platformPositions = caveObjectList;
     }
 
-    private static boolean isTileInArray(int[] array, int number){
+    private static boolean doesTileMatchArray(int[] array, int number){
         for(int i = 0; i < array.length; i++){
             if(number == array[i])
                 return true;

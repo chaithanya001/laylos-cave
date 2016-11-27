@@ -8,16 +8,11 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.heynaveed.layloscave.states.CharacterState;
 import com.heynaveed.layloscave.universe.Portal;
 import com.heynaveed.layloscave.utils.InputController;
 import com.heynaveed.layloscave.utils.maps.tools.MapGenerator;
@@ -34,9 +29,6 @@ import com.heynaveed.layloscave.utils.maps.tools.TileVector;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 
 public class PlayScreen implements Screen {
@@ -87,6 +79,7 @@ public class PlayScreen implements Screen {
 
     public void update(float dt) {
         world.step(1 / GameApp.FPS, 6, 2);
+        kirk.checkForPortalDisplacement();
         gameCam.update();
         mapRenderer.setView(gameCam);
         inputController.update(dt);
@@ -108,14 +101,15 @@ public class PlayScreen implements Screen {
         gameApp.batch.begin();
         kirk.draw(gameApp.batch);
         jini.getJiniAromaEffect().draw(gameApp.batch, dt);
-        jini.draw(gameApp.batch);
-        renderPlatforms();
         renderPortals();
+        jini.draw(gameApp.batch);
+
+        renderPlatforms();
         gameApp.batch.end();
 
         if (jini.getJiniAromaEffect().isComplete())
             jini.getJiniAromaEffect().reset();
-        debugRenderer.render(world, gameCam.combined);
+//        debugRenderer.render(world, gameCam.combined);
     }
 
     private void updatePortals(float dt) {
@@ -269,5 +263,9 @@ public class PlayScreen implements Screen {
 
     public Vector2 getRandomStartingPosition() {
         return mapGenerator.getRandomStartingPosition();
+    }
+
+    public ArrayList<Portal> getPortals(){
+        return portals;
     }
 }

@@ -12,18 +12,23 @@ import com.heynaveed.layloscave.keys.SpriteKeys;
 import com.heynaveed.layloscave.screens.PlayScreen;
 import com.heynaveed.layloscave.utils.AnimationPackager;
 
+import java.util.Random;
+
 /**
  * Created by naveed.shihab on 26/11/2016.
  */
 
 public class Portal extends Sprite {
 
-    private static int idCounter = 1;
+    public static final int RANDOM_PORTAL_BIT = 64;
+    private Vector2 position;
+    private static final Random random = new Random();
+    private static int idCounter = 0;
     private final int id;
+    private final int partnerid;
     private final AnimationPackager animationPackager;
     private final PlayScreen screen;
     private boolean isFacingRight;
-    private boolean isFlipped = false;
     private Body body;
     private float animationStateTimer;
 
@@ -31,11 +36,21 @@ public class Portal extends Sprite {
         animationPackager = new AnimationPackager(SpriteKeys.PORTAL);
         this.screen = screen;
         this.isFacingRight = isFacingRight;
-        animationStateTimer = 0;
-        id = idCounter++;
+        animationStateTimer = random.nextInt(75) / 1000;
+
+        if(idCounter != 10) {
+            id = idCounter;
+            partnerid = 9 - id;
+        }
+        else {
+            id = RANDOM_PORTAL_BIT;
+            partnerid = RANDOM_PORTAL_BIT;
+        }
+        idCounter++;
     }
 
     public Portal build(Vector2 position){
+        this.position = position;
         Body body;
         BodyDef bDef = new BodyDef();
         bDef.position.set(position);
@@ -76,10 +91,8 @@ public class Portal extends Sprite {
     public TextureRegion updateRegion(float dt){
         TextureRegion region = animationPackager.getAnimations()[0].getKeyFrame(animationStateTimer);
 
-        if(isFacingRight && !isFlipped) {
+        if(isFacingRight || !region.isFlipX())
             region.flip(true, false);
-            isFlipped = true;
-        }
 
         if(animationPackager.getAnimations()[0].isAnimationFinished(animationStateTimer))
             animationStateTimer = 0;
@@ -93,8 +106,16 @@ public class Portal extends Sprite {
         return id;
     }
 
+    public int getPartnerId(){
+        return partnerid;
+    }
+
     public boolean isFacingRight(){
         return isFacingRight;
+    }
+
+    public Vector2 getPosition(){
+        return position;
     }
 
     public void dispose(){

@@ -13,6 +13,7 @@ import com.heynaveed.layloscave.states.CharacterState;
 import com.heynaveed.layloscave.keys.SpriteKeys;
 import com.heynaveed.layloscave.keys.ControlKey;
 import com.heynaveed.layloscave.states.PlatformState;
+import com.heynaveed.layloscave.universe.Portal;
 import com.heynaveed.layloscave.utils.AnimationPackager;
 import com.heynaveed.layloscave.utils.RoundTo;
 import com.heynaveed.layloscave.keys.AnimationKey;
@@ -31,6 +32,8 @@ public final class Kirk extends Character {
     private static final float MAX_SLIDE_TIMER = 0.6f;
     private static final float MAX_BOUNCE_TIMER = 0.3f;
 
+    private Portal newPortal;
+    private boolean isPortalLocked;
     private final PlayScreen screen;
     private float xVelocity;
     private float slideTimer;
@@ -74,7 +77,7 @@ public final class Kirk extends Character {
         setRegion(updateAnimationFrame(dt));
     }
 
-    private void handleJiniImpulseRotations(){
+    private void handleJiniImpulseRotations() {
         rotate(calculateJiniImpulseRotation());
     }
 
@@ -309,6 +312,7 @@ public final class Kirk extends Character {
         isSliding = false;
         isControlDisabled = false;
         isStraightJumping = false;
+        isPortalLocked = false;
     }
 
     @Override
@@ -368,16 +372,30 @@ public final class Kirk extends Character {
         return region;
     }
 
-    private float calculateJiniImpulseRotation(){
-        if(currentCharacterState == CharacterState.Kirk.JINI_IMPULSE) {
+    private float calculateJiniImpulseRotation() {
+        if (currentCharacterState == CharacterState.Kirk.JINI_IMPULSE) {
             float rotationSpeed = KIRK_STRAIGHT_JUMP_ROTATION_SPEED;
             kirkRotationAngle += horizontalDirectionMultiplyer(-rotationSpeed);
             return horizontalDirectionMultiplyer(-rotationSpeed);
-        }
-        else {
+        } else {
             float tempRotation = kirkRotationAngle;
             kirkRotationAngle = 0;
             return -tempRotation;
+        }
+    }
+
+    public void checkForPortalDisplacement() {
+        if (isPortalLocked) {
+            if(newPortal.isFacingRight()) {
+                body.setTransform(newPortal.getPosition().x + 1, newPortal.getPosition().y, 0);
+                body.setLinearVelocity(new Vector2(10, 0));
+            }
+            else {
+                body.setTransform(newPortal.getPosition().x - 1, newPortal.getPosition().y, 0);
+                body.setLinearVelocity(new Vector2(-10, 0));
+            }
+            isFacingRight = newPortal.isFacingRight();
+            isPortalLocked = false;
         }
     }
 
@@ -456,5 +474,13 @@ public final class Kirk extends Character {
 
     public void glideDown() {
         body.setLinearVelocity(new Vector2(0, -20.0f));
+    }
+
+    public void setNewPortal(Portal newPortal){
+        this.newPortal = newPortal;
+    }
+
+    public void setPortalLocked(boolean isPortalLocked){
+        this.isPortalLocked = isPortalLocked;
     }
 }

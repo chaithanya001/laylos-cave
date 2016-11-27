@@ -1,6 +1,7 @@
 package com.heynaveed.layloscave.utils;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -15,15 +16,19 @@ import com.heynaveed.layloscave.universe.characters.Kirk;
 import com.heynaveed.layloscave.universe.platforms.CrumblingPlatform;
 import com.heynaveed.layloscave.screens.PlayScreen;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public final class CollisionDetector implements ContactListener {
 
+    private static final Random random = new Random();
     private final Array<Body> bodiesToRemove;
     private final PlayScreen screen;
     private final InputController inputController;
     private final Kirk kirk;
 
-    private static boolean checkForWalkJump = false;
     private static boolean checkForHeadCollision = false;
+    private static boolean checkForPortalCollision = false;
 
     private TiledMap map;
 
@@ -39,10 +44,11 @@ public final class CollisionDetector implements ContactListener {
     public void beginContact(Contact contact) {
         Fixture fixA = contact.getFixtureA();
         Fixture fixB = contact.getFixtureB();
-        Fixture kirk_body;
+        Fixture kirk_body = null;
+        Fixture kirk_head = null;
         Fixture diagonal = null;
         Fixture foreignObject = null;
-        checkForWalkJump = false;
+        checkForPortalCollision = false;
 
         int cDef = fixA.getFilterData().categoryBits | fixB.getFilterData().categoryBits;
 
@@ -50,8 +56,12 @@ public final class CollisionDetector implements ContactListener {
             kirk_body = fixA.getUserData() == "kirk_body" ? fixA : fixB;
             foreignObject = kirk_body == fixA ? fixB : fixA;
         }
-        if(fixA.getUserData() == "walkJumpSensor" || fixB.getUserData() == "walkJumpSensor")
-            checkForWalkJump = true;
+        if(fixA.getUserData() == "kirk_head" || fixB.getUserData() == "kirk_head"){
+            kirk_body = fixA.getUserData() == "kirk_head" ? fixA : fixB;
+            foreignObject = kirk_body == fixA ? fixB : fixA;
+            checkForPortalCollision = true;
+        }
+
 
 
         switch(cDef){
@@ -80,7 +90,22 @@ public final class CollisionDetector implements ContactListener {
                 bodiesToRemove.add(foreignObject.getBody());
                 break;
             case GameApp.KIRK_BIT | GameApp.PORTAL_BIT:
-                System.out.println(foreignObject.getUserData());
+                if(checkForPortalCollision){
+                    ArrayList<Portal> portals = screen.getPortals();
+                    Portal partnerPortal = null;
+                    for(int i = 0; i < portals.size(); i++){
+
+                        if(foreignObject.getUserData().equals(Portal.RANDOM_PORTAL_BIT))
+                            partnerPortal = portals.get(random.nextInt(10));
+                        else if(foreignObject.getUserData().equals(portals.get(i).getId()))
+                            partnerPortal = portals.get(portals.get(i).getPartnerId());
+                        else continue;
+
+                        screen.getKirk().setPortalLocked(true);
+                        screen.getKirk().setNewPortal(partnerPortal);
+                    }
+                    screen.getKirk().setControlDisabled(true);
+                }
                 break;
         }
     }
