@@ -32,7 +32,8 @@ public final class Kirk extends Character {
     private static final float MAX_SLIDE_TIMER = 0.6f;
     private static final float MAX_BOUNCE_TIMER = 0.3f;
 
-    private Portal newPortal;
+    private Portal sourcePortal;
+    private Portal targetPortal;
     private boolean isPortalLocked;
     private final PlayScreen screen;
     private float xVelocity;
@@ -386,15 +387,23 @@ public final class Kirk extends Character {
 
     public void checkForPortalDisplacement() {
         if (isPortalLocked) {
-            if(newPortal.isFacingRight()) {
-                body.setTransform(newPortal.getPosition().x, newPortal.getPosition().y + 0.5f, 0);
+
+            if(isFacingRight != targetPortal.isFacingRight()) {
+                screen.getJini().setIsTeleporting(true);
+                screen.getJini().resetAnimationStateTimer();
+            }
+
+            if(targetPortal.isFacingRight()) {
+                body.setTransform(targetPortal.getPosition().x, targetPortal.getPosition().y + 0.5f, 0);
                 body.setLinearVelocity(new Vector2(15, 0));
             }
             else {
-                body.setTransform(newPortal.getPosition().x, newPortal.getPosition().y + 0.5f, 0);
+                body.setTransform(targetPortal.getPosition().x, targetPortal.getPosition().y + 0.5f, 0);
                 body.setLinearVelocity(new Vector2(-15, 0));
             }
-            isFacingRight = newPortal.isFacingRight();
+
+            if(isFacingRight != targetPortal.isFacingRight())
+                isFacingRight = targetPortal.isFacingRight();
             isPortalLocked = false;
         }
     }
@@ -476,8 +485,12 @@ public final class Kirk extends Character {
         body.setLinearVelocity(new Vector2(0, -20.0f));
     }
 
-    public void setNewPortal(Portal newPortal){
-        this.newPortal = newPortal;
+    public void setSourcePortal(Portal sourcePortal){
+        this.sourcePortal = sourcePortal;
+    }
+
+    public void setTargetPortal(Portal targetPortal){
+        this.targetPortal = targetPortal;
     }
 
     public void setPortalLocked(boolean isPortalLocked){

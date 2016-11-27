@@ -39,9 +39,9 @@ public class Portal extends Sprite {
         this.isFacingRight = isFacingRight;
         animationStateTimer = random.nextInt(75) / 1000;
 
-        if(idCounter != MAX_PORTAL_NUMBER) {
+        if(idCounter < MAX_PORTAL_NUMBER) {
             id = idCounter;
-            partnerid = 9 - id;
+            partnerid = MAX_PORTAL_NUMBER - 1 - id;
         }
         else {
             id = RANDOM_PORTAL_BIT;

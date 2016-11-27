@@ -1,7 +1,6 @@
 package com.heynaveed.layloscave.utils;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -101,8 +100,9 @@ public final class CollisionDetector implements ContactListener {
                             partnerPortal = portals.get(portals.get(i).getPartnerId());
                         else continue;
 
-                        screen.getKirk().setPortalLocked(true);
-                        screen.getKirk().setNewPortal(partnerPortal);
+                        kirk.setPortalLocked(true);
+                        kirk.setSourcePortal(portals.get(i));
+                        kirk.setTargetPortal(partnerPortal);
                         break;
                     }
                     kirk.setControlDisabled(true);

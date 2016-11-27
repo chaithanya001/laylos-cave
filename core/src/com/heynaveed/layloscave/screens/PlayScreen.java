@@ -142,6 +142,7 @@ public class PlayScreen implements Screen {
             Portal portal = new Portal(this, portalFacing.get(i)).build(tileVectorToWorldPosition(portalPositions.get(i)));
             portal.setSize(SPRITE_SIZE * 2, SPRITE_SIZE * 2);
             portals.add(portal);
+//            System.out.println("ID: " + portals.get(i).getId() + ", Partner ID: " + portals.get(i).getPartnerId());
         }
     }
 
@@ -267,5 +268,9 @@ public class PlayScreen implements Screen {
 
     public ArrayList<Portal> getPortals(){
         return portals;
+    }
+
+    public Jini getJini() {
+        return jini;
     }
 }

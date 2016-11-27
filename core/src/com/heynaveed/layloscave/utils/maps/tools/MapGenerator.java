@@ -403,18 +403,19 @@ public final class MapGenerator {
         }
 
         int x = 199;
-        int y = random.nextInt(maxY - minY)+minY;
+        int y1 = random.nextInt(MapGenerator.WIDTH/2 - minY)+MapGenerator.WIDTH/2;
+        int y2 = random.nextInt(MapGenerator.WIDTH/2 - minY)+minY;
 
-        for(int i = x; workingTileIDSet[i][y] != 0; i--)
+        for(int i = x; workingTileIDSet[i][y1] != 0; i--)
+            x = i;
+        for(int i = x; workingTileIDSet[i][y2] != 0; i--)
             x = i;
 
-        portalPositions.add(new TileVector(x-4, y));
+        portalPositions.add(new TileVector(x-4, y1));
+        portalPositions.add(new TileVector(x-4, y2));
+        portalFacing.add(false);
+        portalFacing.add(true);
 
-        if(y > 150)
-            portalFacing.add(false);
-        else
-            portalFacing.add(true);
-//
 //        for(int i = 0; i < portalPositions.size(); i++) {
 //            workingTileIDSet[portalPositions.get(i).x+1][portalPositions.get(i).y] = randomTileID(BOUNCY_IDS);
 //            workingTileIDSet[portalPositions.get(i).x+2][portalPositions.get(i).y] = randomTileID(BOUNCY_IDS);
