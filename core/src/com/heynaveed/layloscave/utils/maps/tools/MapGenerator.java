@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
 import com.heynaveed.layloscave.GameApp;
 import com.heynaveed.layloscave.states.PathDirectionState;
+import com.heynaveed.layloscave.universe.Portal;
 import com.heynaveed.layloscave.utils.maps.TreeMap;
 
 import java.io.BufferedInputStream;
@@ -37,7 +38,7 @@ import java.util.zip.GZIPOutputStream;
 
 public final class MapGenerator {
 
-    private static final int MAX_PORTAL_PLATFORM_LENGTH = 10;
+    private static final int MAX_PORTAL_PLATFORM_LENGTH = 12;
     private static final int MAX_PORTAL_PLATFORM_HEIGHT = 4;
     private static final int[] TREE_LAYER_BOUNDS_X = {16, 32, 48, 64};
     private static final int[] TREE_LAYER_BOUNDS_Y = {8, 24, 40, 56};
@@ -345,8 +346,12 @@ public final class MapGenerator {
                         && doesTileMatchArray(CAVE_IDS, workingTileIDSet[x][y-1])) {
 
                     for(int i = y; i < y+MAX_PORTAL_PLATFORM_LENGTH; i++){
-                        for(int j = x+1; j < x+3; j++) {
-                            if (!doesTileMatchArray(CAVE_IDS, workingTileIDSet[j][i]))
+                        if (!doesTileMatchArray(CAVE_IDS, workingTileIDSet[x+1][i]))
+                            continue row_loop;
+                    }
+                    for(int i = x; i > x-4; i--){
+                        for(int j = y; j < y+MAX_PORTAL_PLATFORM_LENGTH; j++) {
+                            if (workingTileIDSet[i][j] != 0)
                                 continue row_loop;
                         }
                     }
@@ -361,8 +366,12 @@ public final class MapGenerator {
                 else if(workingTileIDSet[x][y] == 0 && doesTileMatchArray(CAVE_IDS, workingTileIDSet[x+1][y])
                         && doesTileMatchArray(CAVE_IDS, workingTileIDSet[x][y+1])) {
                     for(int i = y; i > y-MAX_PORTAL_PLATFORM_LENGTH; i--){
-                        for(int j = x+1; j < x+3; j++) {
-                            if (!doesTileMatchArray(CAVE_IDS, workingTileIDSet[j][i]))
+                        if (!doesTileMatchArray(CAVE_IDS, workingTileIDSet[x+1][i]))
+                            continue row_loop;
+                    }
+                    for(int i = x; i > x-4; i--){
+                        for(int j = y; j > y-MAX_PORTAL_PLATFORM_LENGTH; j--) {
+                            if (workingTileIDSet[i][j] != 0)
                                 continue row_loop;
                         }
                     }
@@ -386,11 +395,11 @@ public final class MapGenerator {
             potentialFacing.clear();
         }
 
-        if(portalPositions.size() > 10){
+        if(portalPositions.size() > Portal.MAX_PORTAL_NUMBER){
             do {
                 portalPositions.remove(portalPositions.size()/2);
                 portalFacing.remove(portalFacing.size()/2);
-            } while (portalPositions.size() != 10);
+            } while (portalPositions.size() != Portal.MAX_PORTAL_NUMBER);
         }
 
         int x = 199;
@@ -405,11 +414,10 @@ public final class MapGenerator {
             portalFacing.add(false);
         else
             portalFacing.add(true);
-
-//        System.out.println(portalPositions.size());
-//        System.out.println(portalFacing.size());
 //
 //        for(int i = 0; i < portalPositions.size(); i++) {
+//            workingTileIDSet[portalPositions.get(i).x+1][portalPositions.get(i).y] = randomTileID(BOUNCY_IDS);
+//            workingTileIDSet[portalPositions.get(i).x+2][portalPositions.get(i).y] = randomTileID(BOUNCY_IDS);
 //            workingTileIDSet[portalPositions.get(i).x][portalPositions.get(i).y] = randomTileID(BOUNCY_IDS);
 //            workingTileIDSet[portalPositions.get(i).x-1][portalPositions.get(i).y] = randomTileID(BOUNCY_IDS);
 //            workingTileIDSet[portalPositions.get(i).x-2][portalPositions.get(i).y] = randomTileID(BOUNCY_IDS);

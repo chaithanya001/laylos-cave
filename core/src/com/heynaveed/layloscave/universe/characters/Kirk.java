@@ -387,12 +387,12 @@ public final class Kirk extends Character {
     public void checkForPortalDisplacement() {
         if (isPortalLocked) {
             if(newPortal.isFacingRight()) {
-                body.setTransform(newPortal.getPosition().x + 1, newPortal.getPosition().y, 0);
-                body.setLinearVelocity(new Vector2(10, 0));
+                body.setTransform(newPortal.getPosition().x, newPortal.getPosition().y + 0.5f, 0);
+                body.setLinearVelocity(new Vector2(15, 0));
             }
             else {
-                body.setTransform(newPortal.getPosition().x - 1, newPortal.getPosition().y, 0);
-                body.setLinearVelocity(new Vector2(-10, 0));
+                body.setTransform(newPortal.getPosition().x, newPortal.getPosition().y + 0.5f, 0);
+                body.setLinearVelocity(new Vector2(-15, 0));
             }
             isFacingRight = newPortal.isFacingRight();
             isPortalLocked = false;
@@ -482,5 +482,9 @@ public final class Kirk extends Character {
 
     public void setPortalLocked(boolean isPortalLocked){
         this.isPortalLocked = isPortalLocked;
+    }
+
+    public boolean getPortalLocked(){
+        return isPortalLocked;
     }
 }

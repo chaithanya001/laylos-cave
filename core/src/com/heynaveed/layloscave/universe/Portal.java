@@ -20,6 +20,7 @@ import java.util.Random;
 
 public class Portal extends Sprite {
 
+    public static final int MAX_PORTAL_NUMBER = 10;
     public static final int RANDOM_PORTAL_BIT = 64;
     private Vector2 position;
     private static final Random random = new Random();
@@ -38,7 +39,7 @@ public class Portal extends Sprite {
         this.isFacingRight = isFacingRight;
         animationStateTimer = random.nextInt(75) / 1000;
 
-        if(idCounter != 10) {
+        if(idCounter != MAX_PORTAL_NUMBER) {
             id = idCounter;
             partnerid = 9 - id;
         }

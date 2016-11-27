@@ -90,21 +90,22 @@ public final class CollisionDetector implements ContactListener {
                 bodiesToRemove.add(foreignObject.getBody());
                 break;
             case GameApp.KIRK_BIT | GameApp.PORTAL_BIT:
-                if(checkForPortalCollision){
+                if(checkForPortalCollision && !kirk.getPortalLocked()){
                     ArrayList<Portal> portals = screen.getPortals();
                     Portal partnerPortal = null;
                     for(int i = 0; i < portals.size(); i++){
 
                         if(foreignObject.getUserData().equals(Portal.RANDOM_PORTAL_BIT))
-                            partnerPortal = portals.get(random.nextInt(10));
+                            partnerPortal = portals.get(random.nextInt(Portal.MAX_PORTAL_NUMBER));
                         else if(foreignObject.getUserData().equals(portals.get(i).getId()))
                             partnerPortal = portals.get(portals.get(i).getPartnerId());
                         else continue;
 
                         screen.getKirk().setPortalLocked(true);
                         screen.getKirk().setNewPortal(partnerPortal);
+                        break;
                     }
-                    screen.getKirk().setControlDisabled(true);
+                    kirk.setControlDisabled(true);
                 }
                 break;
         }
