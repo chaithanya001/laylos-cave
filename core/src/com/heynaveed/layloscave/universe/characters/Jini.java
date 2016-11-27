@@ -8,8 +8,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.heynaveed.layloscave.GameApp;
-import com.heynaveed.layloscave.keys.CharacterKey;
-import com.heynaveed.layloscave.keys.SpriteKey;
+import com.heynaveed.layloscave.keys.SpriteKeys;
+import com.heynaveed.layloscave.keys.AnimationKey;
 import com.heynaveed.layloscave.screens.PlayScreen;
 import com.heynaveed.layloscave.states.CharacterState;
 import com.heynaveed.layloscave.utils.AnimationPackager;
@@ -37,7 +37,7 @@ public final class Jini extends Character {
     public Jini(PlayScreen screen){
         super(screen);
         this.screen = screen;
-        animationPackager = new AnimationPackager(CharacterKey.JINI);
+        animationPackager = new AnimationPackager(SpriteKeys.JINI);
         setTexture(animationPackager.getTexture());
         setOrigin(GameApp.toPPM(GameApp.NEW_TILE_LENGTH)/2, GameApp.toPPM(GameApp.NEW_TILE_LENGTH)/2);
         frameSequences = animationPackager.getFrameSequences();
@@ -71,7 +71,7 @@ public final class Jini extends Character {
     private void handleTeleporting(){
         if(isTeleporting){
             isLevitateImpulse = false;
-            if(animations[SpriteKey.Jini.TELEPORTING.getKey()].isAnimationFinished(animationStateTimer)) {
+            if(animations[AnimationKey.Jini.TELEPORTING.getKey()].isAnimationFinished(animationStateTimer)) {
                 isTeleporting = false;
                 animationStateTimer = 0;
             }
@@ -80,15 +80,15 @@ public final class Jini extends Character {
 
     private void handleLevitating(){
         if(isLevitateImpulse){
-            if(animations[SpriteKey.Jini.DOUBLE_JUMP.getKey()].isAnimationFinished(animationStateTimer))
+            if(animations[AnimationKey.Jini.DOUBLE_JUMP.getKey()].isAnimationFinished(animationStateTimer))
                 isLevitateImpulse = false;
         }
     }
 
     private void followKirk(){
 
-        float halfTimer = animationPackager.getFrameSpeeds()[SpriteKey.Jini.TELEPORTING.getKey()][0]
-                * animationPackager.getFrameSequences()[SpriteKey.Jini.TELEPORTING.getKey()].length/2;
+        float halfTimer = animationPackager.getFrameSpeeds()[AnimationKey.Jini.TELEPORTING.getKey()][0]
+                * animationPackager.getFrameSequences()[AnimationKey.Jini.TELEPORTING.getKey()].length/2;
 
         if(isTeleporting && (animationStateTimer > halfTimer)) {
             isFacingRight = screen.getKirk().isFacingRight();
@@ -187,17 +187,17 @@ public final class Jini extends Character {
 
         switch(currentCharacterState){
             case FLYING:
-                region = animations[SpriteKey.Jini.FLYING.getKey()].getKeyFrame(animationStateTimer, true);
+                region = animations[AnimationKey.Jini.FLYING.getKey()].getKeyFrame(animationStateTimer, true);
                 break;
             case TELEPORTING:
-                region = animations[SpriteKey.Jini.TELEPORTING.getKey()].getKeyFrame(animationStateTimer, false);
+                region = animations[AnimationKey.Jini.TELEPORTING.getKey()].getKeyFrame(animationStateTimer, false);
                 break;
             case DOUBLE_JUMP:
-                region = animations[SpriteKey.Jini.DOUBLE_JUMP.getKey()].getKeyFrame(animationStateTimer, false);
+                region = animations[AnimationKey.Jini.DOUBLE_JUMP.getKey()].getKeyFrame(animationStateTimer, false);
                 break;
             case FLOATING:
             default:
-                region = animations[SpriteKey.Jini.FLOATING.getKey()].getKeyFrame(animationStateTimer, true);
+                region = animations[AnimationKey.Jini.FLOATING.getKey()].getKeyFrame(animationStateTimer, true);
                 break;
         }
 

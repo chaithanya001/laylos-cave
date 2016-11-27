@@ -1,13 +1,14 @@
 package com.heynaveed.layloscave.keys;
 
 
-public enum CharacterKey {
+public enum SpriteKeys {
     KIRK("kirk"),
-    JINI("jini");
+    JINI("jini"),
+    PORTAL("portal");
 
     private final String key;
 
-    CharacterKey(String key){
+    SpriteKeys(String key){
         this.key = key;
     }
 

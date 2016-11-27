@@ -10,12 +10,12 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.heynaveed.layloscave.GameApp;
 import com.heynaveed.layloscave.screens.PlayScreen;
 import com.heynaveed.layloscave.states.CharacterState;
-import com.heynaveed.layloscave.keys.CharacterKey;
+import com.heynaveed.layloscave.keys.SpriteKeys;
 import com.heynaveed.layloscave.keys.ControlKey;
 import com.heynaveed.layloscave.states.PlatformState;
 import com.heynaveed.layloscave.utils.AnimationPackager;
 import com.heynaveed.layloscave.utils.RoundTo;
-import com.heynaveed.layloscave.keys.SpriteKey;
+import com.heynaveed.layloscave.keys.AnimationKey;
 import com.heynaveed.layloscave.universe.Character;
 
 
@@ -49,7 +49,7 @@ public final class Kirk extends Character {
     public Kirk(PlayScreen screen) {
         super(screen);
         this.screen = screen;
-        animationPackager = new AnimationPackager(CharacterKey.KIRK);
+        animationPackager = new AnimationPackager(SpriteKeys.KIRK);
         setTexture(animationPackager.getTexture());
         setOrigin(GameApp.toPPM(GameApp.TILE_LENGTH * 1.5f), GameApp.toPPM(GameApp.TILE_LENGTH * 0.75f));
         frameSequences = animationPackager.getFrameSequences();
@@ -234,6 +234,8 @@ public final class Kirk extends Character {
     protected void initialiseBody() {
         BodyDef bDef = new BodyDef();
         bDef.position.set(screen.getRandomStartingPosition());
+//        bDef.position.set(GameApp.toPPM(MapGenerator.WIDTH/2)*64, GameApp.toPPM(MapGenerator.HEIGHT/2)*64);
+        bDef.type = BodyDef.BodyType.DynamicBody;
         bDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bDef);
     }
@@ -317,38 +319,38 @@ public final class Kirk extends Character {
         TextureRegion region;
         switch (currentCharacterState) {
             case JUMPING:
-                region = animations[SpriteKey.Kirk.JUMPING.getKey()].getKeyFrame(animationStateTimer);
+                region = animations[AnimationKey.Kirk.JUMPING.getKey()].getKeyFrame(animationStateTimer);
                 break;
             case RUNNING:
                 int animationSpeedPosition = currentPlatformState != PlatformState.ICE ? 0 : 1;
-                animations[SpriteKey.Kirk.RUNNING.getKey()].setFrameDuration(frameSpeeds[SpriteKey.Kirk.RUNNING.getKey()][animationSpeedPosition]);
-                region = animations[SpriteKey.Kirk.RUNNING.getKey()].getKeyFrame(animationStateTimer, true);
+                animations[AnimationKey.Kirk.RUNNING.getKey()].setFrameDuration(frameSpeeds[AnimationKey.Kirk.RUNNING.getKey()][animationSpeedPosition]);
+                region = animations[AnimationKey.Kirk.RUNNING.getKey()].getKeyFrame(animationStateTimer, true);
                 break;
             case JINI_IMPULSE:
-                region = animations[SpriteKey.Kirk.BOUNCE_JUMP.getKey()].getKeyFrame(0);
+                region = animations[AnimationKey.Kirk.BOUNCE_JUMP.getKey()].getKeyFrame(0);
                 break;
             case FALLING:
-                region = animations[SpriteKey.Kirk.JUMPING.getKey()].getKeyFrame(frameSpeeds[SpriteKey.Kirk.JUMPING.getKey()][0]
-                        * frameSequences[SpriteKey.Kirk.JUMPING.getKey()][2]);
+                region = animations[AnimationKey.Kirk.JUMPING.getKey()].getKeyFrame(frameSpeeds[AnimationKey.Kirk.JUMPING.getKey()][0]
+                        * frameSequences[AnimationKey.Kirk.JUMPING.getKey()][2]);
                 break;
             case MUDDY_RUNNING:
-                region = animations[SpriteKey.Kirk.MUDDY_RUNNING.getKey()].getKeyFrame(animationStateTimer, true);
+                region = animations[AnimationKey.Kirk.MUDDY_RUNNING.getKey()].getKeyFrame(animationStateTimer, true);
                 break;
             case BOUNCE_JUMP:
                 if (currentPlatformState == PlatformState.BOUNCY)
-                    region = animations[SpriteKey.Kirk.BOUNCE_JUMP.getKey()].getKeyFrame(frameSpeeds[SpriteKey.Kirk.BOUNCE_JUMP.getKey()][0]
-                            * frameSequences[SpriteKey.Kirk.BOUNCE_JUMP.getKey()][0]);
+                    region = animations[AnimationKey.Kirk.BOUNCE_JUMP.getKey()].getKeyFrame(frameSpeeds[AnimationKey.Kirk.BOUNCE_JUMP.getKey()][0]
+                            * frameSequences[AnimationKey.Kirk.BOUNCE_JUMP.getKey()][0]);
                 else
-                    region = animations[SpriteKey.Kirk.BOUNCE_JUMP.getKey()].getKeyFrame(frameSpeeds[SpriteKey.Kirk.BOUNCE_JUMP.getKey()][0]
-                            * frameSequences[SpriteKey.Kirk.BOUNCE_JUMP.getKey()][1]);
+                    region = animations[AnimationKey.Kirk.BOUNCE_JUMP.getKey()].getKeyFrame(frameSpeeds[AnimationKey.Kirk.BOUNCE_JUMP.getKey()][0]
+                            * frameSequences[AnimationKey.Kirk.BOUNCE_JUMP.getKey()][1]);
                 break;
             case SLIDING:
-                region = animations[SpriteKey.Kirk.SLIDING.getKey()].getKeyFrame(frameSpeeds[SpriteKey.Kirk.SLIDING.getKey()][0]
-                        * frameSequences[SpriteKey.Kirk.SLIDING.getKey()][0]);
+                region = animations[AnimationKey.Kirk.SLIDING.getKey()].getKeyFrame(frameSpeeds[AnimationKey.Kirk.SLIDING.getKey()][0]
+                        * frameSequences[AnimationKey.Kirk.SLIDING.getKey()][0]);
                 break;
             case STANDING:
             default:
-                region = animations[SpriteKey.Kirk.STANDING.getKey()].getKeyFrame(animationStateTimer, true);
+                region = animations[AnimationKey.Kirk.STANDING.getKey()].getKeyFrame(animationStateTimer, true);
                 break;
         }
 

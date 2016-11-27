@@ -66,6 +66,7 @@ public final class MapGenerator {
     private static Element mapFileRoot;
     private static ArrayList<TileVector[]> platformPositions;
     private static ArrayList<TileVector> portalPositions;
+    private static ArrayList<Boolean> portalFacing;
     private static TreeMap treeMap;
     private static PathMap pathMap;
     private static boolean isTree = false;
@@ -324,24 +325,54 @@ public final class MapGenerator {
 
     private static void determinePortalPositions(){
         portalPositions = new ArrayList<TileVector>();
-        int size = platformPositions.size();
+        portalFacing = new ArrayList<Boolean>();
 
-//        for(int i = 0; i < size; i++){
-//            if(platformPositions.get(i).length != 0)
-//                workingTileIDSet[platformPositions.get(i)[0].x][platformPositions.get(i)[0].y] = randomTileID(BOUNCY_IDS);
-//        }
-//
-        for(int i = 0; i < size; i++){
-            for(int j = -1; j <= 1; j++){
-                for(int k = -1; k <= 1; k++){
-                    if(platformPositions.get(i).length != 0 &&
-                            isTileInArray(CAVE_IDS, workingTileIDSet[platformPositions.get(i)[0].x + j][platformPositions.get(i)[0].y + k])) {
-                        workingTileIDSet[platformPositions.get(i)[0].x][platformPositions.get(i)[0].y] = randomTileID(BOUNCY_IDS);
-                        portalPositions.add(new TileVector(platformPositions.get(i)[0].x, platformPositions.get(i)[0].y));
-                    }
+        int minX = 40, minY = 40;
+        int maxX = HEIGHT - minX;
+        int maxY = WIDTH - minY;
+
+        for(int x = minX; x <= maxX; x+=20){
+            ArrayList<TileVector> potentialPositions = new ArrayList<TileVector>();
+            ArrayList<Boolean> potentialFacing = new ArrayList<Boolean>();
+
+            for(int y = minY; y <= maxY; y++){
+                int tempX = x;
+
+                if(isTileInArray(CAVE_IDS, workingTileIDSet[x][y]) && isTileInArray(CAVE_IDS, workingTileIDSet[x][y-1]) && workingTileIDSet[x][y+1] == 0) {
+                    if(isTileInArray(CAVE_IDS, workingTileIDSet[x-1][y+1]))
+                        tempX = x + 2;
+                    else if (isTileInArray(CAVE_IDS, workingTileIDSet[x+1][y+1]))
+                        tempX = x - 2;
+                    potentialPositions.add(new TileVector(tempX, y + 1));
+                    potentialFacing.add(true);
+                }
+                else if(isTileInArray(CAVE_IDS, workingTileIDSet[x][y]) && isTileInArray(CAVE_IDS, workingTileIDSet[x][y+1]) && workingTileIDSet[x][y-1] == 0) {
+                    if(isTileInArray(CAVE_IDS, workingTileIDSet[x-1][y-1]))
+                        tempX = x + 2;
+                    else if (isTileInArray(CAVE_IDS, workingTileIDSet[x+1][y-1]))
+                        tempX = x - 2;
+                    potentialPositions.add(new TileVector(tempX, y - 1));
+                    potentialFacing.add(false);
                 }
             }
+
+            if(potentialPositions.size() > 1) {
+                int firstIndex = random.nextInt(potentialPositions.size()-1);
+                int secondIndex;
+                do secondIndex = random.nextInt(potentialPositions.size() - 1);
+                while (firstIndex == secondIndex);
+                portalPositions.add(potentialPositions.get(firstIndex));
+                portalPositions.add(potentialPositions.get(secondIndex));
+                portalFacing.add(potentialFacing.get(firstIndex));
+                portalFacing.add(potentialFacing.get(secondIndex));
+            }
+
+            potentialPositions.clear();
+            potentialFacing.clear();
         }
+
+//        for(int i = 0; i < portalPositions.size(); i++)
+//            workingTileIDSet[portalPositions.get(i).x][portalPositions.get(i).y] = randomTileID(BOUNCY_IDS);
     }
 
     private static void calculateCaveObjectList(){
@@ -541,4 +572,6 @@ public final class MapGenerator {
     public ArrayList<TileVector> getPortalPositions(){
         return portalPositions;
     }
+
+    public ArrayList<Boolean> getPortalFacing(){ return portalFacing; }
 }

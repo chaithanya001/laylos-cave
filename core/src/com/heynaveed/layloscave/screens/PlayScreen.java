@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.heynaveed.layloscave.states.CharacterState;
+import com.heynaveed.layloscave.universe.Portal;
 import com.heynaveed.layloscave.utils.InputController;
 import com.heynaveed.layloscave.utils.maps.tools.MapGenerator;
 import com.heynaveed.layloscave.universe.characters.Jini;
@@ -40,7 +41,7 @@ import java.util.Set;
 
 public class PlayScreen implements Screen {
 
-    private static final Array<Body> portalBodies = new Array<Body>();
+    private static final Array<Portal> portals = new Array<Portal>();
     private static final int MAP_UNIT_SCALE = 1;
     private static final int SPRITE_SIZE = 2;
     private static final float DEFAULT_WORLD_GRAVITY = -40.0f;
@@ -91,6 +92,7 @@ public class PlayScreen implements Screen {
         inputController.update(dt);
         destroyMarkedBodies();
         updatePlatforms(dt);
+        updatePortals(dt);
         checkForNextLevel();
     }
 
@@ -108,6 +110,7 @@ public class PlayScreen implements Screen {
         jini.getJiniAromaEffect().draw(gameApp.batch, dt);
         jini.draw(gameApp.batch);
         renderPlatforms();
+        renderPortals();
         gameApp.batch.end();
 
         if(jini.getJiniAromaEffect().isComplete())
@@ -115,40 +118,36 @@ public class PlayScreen implements Screen {
 //        debugRenderer.render(world, gameCam.combined);
     }
 
+    private void updatePortals(float dt){
+        for(int i = 0; i < portals.size; i++)
+            portals.get(i).update(dt);
+    }
+
+    private void renderPortals(){
+        for(int i = 0; i < portals.size; i++)
+            portals.get(i).draw(gameApp.batch);
+    }
+
     private void initialisePortals(){
         ArrayList<TileVector> portalPositions = mapGenerator.getPortalPositions();
+        ArrayList<Boolean> portalFacing = mapGenerator.getPortalFacing();
 
         for(int i = 0; i < portalPositions.size(); i++){
             for(int j = 0; j < portalPositions.size(); j++){
                 if(i != j) {
                     if (portalPositions.get(i).x() == portalPositions.get(j).x()
-                            && portalPositions.get(i).y() == portalPositions.get(j).y()){
+                            && portalPositions.get(i).y() == portalPositions.get(j).y()) {
                         portalPositions.remove(i);
+                        portalFacing.remove(i);
                     }
                 }
             }
         }
 
-        for(int i = 0; i < portalPositions.size(); i++){
-            Body body;
-            BodyDef bDef = new BodyDef();
-            bDef.position.set(tileVectorToWorldPosition(portalPositions.get(i)));
-            bDef.type = BodyDef.BodyType.StaticBody;
-            body = world.createBody(bDef);
-
-            FixtureDef fDef = new FixtureDef();
-            fDef.filter.categoryBits = GameApp.PORTAL_BIT;
-            fDef.filter.maskBits = GameApp.KIRK_BIT;
-
-            CircleShape mainBody = new CircleShape();
-            mainBody.setRadius(GameApp.toPPM(64));
-            mainBody.setPosition(new Vector2(GameApp.toPPM(32), -GameApp.toPPM(32)));
-            fDef.shape = mainBody;
-            fDef.friction = 0;
-            fDef.restitution = 0;
-            fDef.isSensor = true;
-            body.createFixture(fDef);
-            portalBodies.add(body);
+        for(int i = 0; i < portalPositions.size(); i++) {
+            Portal portal = new Portal(this, portalFacing.get(i)).build(tileVectorToWorldPosition(portalPositions.get(i)));
+            portal.setSize(SPRITE_SIZE*2, SPRITE_SIZE*2);
+            portals.add(portal);
         }
     }
 
