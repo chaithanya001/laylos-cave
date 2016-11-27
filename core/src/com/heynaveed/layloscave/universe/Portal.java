@@ -18,9 +18,12 @@ import com.heynaveed.layloscave.utils.AnimationPackager;
 
 public class Portal extends Sprite {
 
+    private static int idCounter = 1;
+    private final int id;
     private final AnimationPackager animationPackager;
     private final PlayScreen screen;
     private boolean isFacingRight;
+    private boolean isFlipped = false;
     private Body body;
     private float animationStateTimer;
 
@@ -29,6 +32,7 @@ public class Portal extends Sprite {
         this.screen = screen;
         this.isFacingRight = isFacingRight;
         animationStateTimer = 0;
+        id = idCounter++;
     }
 
     public Portal build(Vector2 position){
@@ -49,12 +53,13 @@ public class Portal extends Sprite {
         fDef.friction = 0;
         fDef.restitution = 0;
         fDef.isSensor = true;
-        body.createFixture(fDef);
+        body.createFixture(fDef).setUserData(id);
 
         if(!isFacingRight)
             setPosition(position.x - GameApp.toPPM(192), position.y - GameApp.toPPM(256));
         else
             setPosition(position.x - GameApp.toPPM(128), position.y - GameApp.toPPM(256));
+
         setTexture(animationPackager.getTexture());
 
         return this;
@@ -67,8 +72,10 @@ public class Portal extends Sprite {
     public TextureRegion updateRegion(float dt){
         TextureRegion region = animationPackager.getAnimations()[0].getKeyFrame(animationStateTimer);
 
-        if(!isFacingRight)
-            region.flip(true, false);
+//        if(isFacingRight && !isFlipped) {
+//            region.flip(true, false);
+//            isFlipped = true;
+//        }
 
         if(animationPackager.getAnimations()[0].isAnimationFinished(animationStateTimer))
             animationStateTimer = 0;
@@ -76,5 +83,13 @@ public class Portal extends Sprite {
         animationStateTimer += dt;
 
         return region;
+    }
+
+    public int getId(){
+        return id;
+    }
+
+    public void dispose(){
+        screen.dispose();;
     }
 }

@@ -41,7 +41,7 @@ import java.util.Set;
 
 public class PlayScreen implements Screen {
 
-    private static final Array<Portal> portals = new Array<Portal>();
+    private static final ArrayList<Portal> portals = new ArrayList<Portal>();
     private static final int MAP_UNIT_SCALE = 1;
     private static final int SPRITE_SIZE = 2;
     private static final float DEFAULT_WORLD_GRAVITY = -40.0f;
@@ -113,28 +113,28 @@ public class PlayScreen implements Screen {
         renderPortals();
         gameApp.batch.end();
 
-        if(jini.getJiniAromaEffect().isComplete())
+        if (jini.getJiniAromaEffect().isComplete())
             jini.getJiniAromaEffect().reset();
 //        debugRenderer.render(world, gameCam.combined);
     }
 
-    private void updatePortals(float dt){
-        for(int i = 0; i < portals.size; i++)
+    private void updatePortals(float dt) {
+        for (int i = 0; i < portals.size(); i++)
             portals.get(i).update(dt);
     }
 
-    private void renderPortals(){
-        for(int i = 0; i < portals.size; i++)
+    private void renderPortals() {
+        for (int i = 0; i < portals.size(); i++)
             portals.get(i).draw(gameApp.batch);
     }
 
-    private void initialisePortals(){
+    private void initialisePortals() {
         ArrayList<TileVector> portalPositions = mapGenerator.getPortalPositions();
         ArrayList<Boolean> portalFacing = mapGenerator.getPortalFacing();
 
-        for(int i = 0; i < portalPositions.size(); i++){
-            for(int j = 0; j < portalPositions.size(); j++){
-                if(i != j) {
+        for (int i = 0; i < portalPositions.size(); i++) {
+            for (int j = 0; j < portalPositions.size(); j++) {
+                if (i != j) {
                     if (portalPositions.get(i).x() == portalPositions.get(j).x()
                             && portalPositions.get(i).y() == portalPositions.get(j).y()) {
                         portalPositions.remove(i);
@@ -144,15 +144,15 @@ public class PlayScreen implements Screen {
             }
         }
 
-        for(int i = 0; i < portalPositions.size(); i++) {
+        for (int i = 0; i < portalPositions.size(); i++) {
             Portal portal = new Portal(this, portalFacing.get(i)).build(tileVectorToWorldPosition(portalPositions.get(i)));
-            portal.setSize(SPRITE_SIZE*2, SPRITE_SIZE*2);
+            portal.setSize(SPRITE_SIZE * 2, SPRITE_SIZE * 2);
             portals.add(portal);
         }
     }
 
-    private Vector2 tileVectorToWorldPosition(TileVector tileVector){
-        return new Vector2(GameApp.toPPM(tileVector.y())*64, GameApp.toPPM(MapGenerator.HEIGHT - tileVector.x())*64);
+    private Vector2 tileVectorToWorldPosition(TileVector tileVector) {
+        return new Vector2(GameApp.toPPM(tileVector.y()) * 64, GameApp.toPPM(MapGenerator.HEIGHT - tileVector.x()) * 64);
     }
 
     private void loadLevels() {
@@ -247,6 +247,8 @@ public class PlayScreen implements Screen {
         kirk.dispose();
         jini.dispose();
         debugRenderer.dispose();
+        for(Portal portal : portals)
+            portal.dispose();
     }
 
     public World getWorld() {
@@ -261,11 +263,11 @@ public class PlayScreen implements Screen {
         return inputController;
     }
 
-    public Kirk getKirk(){
+    public Kirk getKirk() {
         return kirk;
     }
 
-    public Vector2 getRandomStartingPosition(){
+    public Vector2 getRandomStartingPosition() {
         return mapGenerator.getRandomStartingPosition();
     }
 }

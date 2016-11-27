@@ -331,7 +331,7 @@ public final class MapGenerator {
         int maxX = HEIGHT - minX;
         int maxY = WIDTH - minY;
 
-        for(int x = minX; x <= maxX; x+=20){
+        for(int x = minX; x <= maxX; x+=10){
             ArrayList<TileVector> potentialPositions = new ArrayList<TileVector>();
             ArrayList<Boolean> potentialFacing = new ArrayList<Boolean>();
 
@@ -356,15 +356,10 @@ public final class MapGenerator {
                 }
             }
 
-            if(potentialPositions.size() > 1) {
-                int firstIndex = random.nextInt(potentialPositions.size()-1);
-                int secondIndex;
-                do secondIndex = random.nextInt(potentialPositions.size() - 1);
-                while (firstIndex == secondIndex);
-                portalPositions.add(potentialPositions.get(firstIndex));
-                portalPositions.add(potentialPositions.get(secondIndex));
-                portalFacing.add(potentialFacing.get(firstIndex));
-                portalFacing.add(potentialFacing.get(secondIndex));
+            if(potentialPositions.size() > 0) {
+                int index = random.nextInt(potentialPositions.size());
+                portalPositions.add(potentialPositions.get(index));
+                portalFacing.add(potentialFacing.get(index));
             }
 
             potentialPositions.clear();
