@@ -31,7 +31,12 @@ public final class Kirk extends Character {
     private static final float HEAD_DISPLACEMENT = GameApp.toPPM(30);
     private static final float MAX_SLIDE_TIMER = 0.6f;
     private static final float MAX_BOUNCE_TIMER = 0.3f;
+    private static final float CAMERA_PORTAL_SPEED = 0.8f;
 
+    private float xDisplacement;
+    private float yDisplacement;
+    private float xPath = 0;
+    private float yPath = 0;
     private Portal sourcePortal;
     private Portal targetPortal;
     private boolean isPortalLocked;
@@ -70,7 +75,7 @@ public final class Kirk extends Character {
     @Override
     public void update(float dt) {
         this.dt = dt;
-        panCamera();
+        panCamera(dt);
         capVelocities();
         handlePlatformInteractions();
         handleJiniImpulseRotations();
@@ -89,16 +94,72 @@ public final class Kirk extends Character {
             body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, verticalDirectionMultiplyer(MAXIMUM_VELOCITY)));
     }
 
-    private void panCamera() {
-        if (body.getPosition().x > CAMERA_WEST_LIMIT)
-            gameCam.position.x = RoundTo.RoundToNearest(body.getPosition().x, GameApp.toPPM(1));
-        else
-            gameCam.position.x = CAMERA_WEST_LIMIT;
+    private void panCamera(float dt) {
+        if(!isPortalLocked) {
+            if (body.getPosition().x > CAMERA_WEST_LIMIT)
+                gameCam.position.x = RoundTo.RoundToNearest(body.getPosition().x, GameApp.toPPM(1));
+            else
+                gameCam.position.x = CAMERA_WEST_LIMIT;
 
-        if (body.getPosition().y > CAMERA_JUMP_THRESHOLD)
-            gameCam.position.y = RoundTo.RoundToNearest(body.getPosition().y, GameApp.toPPM(1));
-        else
-            gameCam.position.y = CAMERA_JUMP_THRESHOLD;
+            if (body.getPosition().y > CAMERA_JUMP_THRESHOLD)
+                gameCam.position.y = RoundTo.RoundToNearest(body.getPosition().y, GameApp.toPPM(1));
+            else
+                gameCam.position.y = CAMERA_JUMP_THRESHOLD;
+        }
+        else{
+            float xMovement = 0;
+            float yMovement = 0;
+
+            if(sourcePortal.getPosition().x > targetPortal.getPosition().x && xPath < xDisplacement){
+                xPath += CAMERA_PORTAL_SPEED;
+                xMovement = -CAMERA_PORTAL_SPEED;
+            }
+            if(sourcePortal.getPosition().x < targetPortal.getPosition().x && xPath < xDisplacement){
+                xPath += CAMERA_PORTAL_SPEED;
+                xMovement = CAMERA_PORTAL_SPEED;
+            }
+            if(sourcePortal.getPosition().y > targetPortal.getPosition().y && yPath < yDisplacement){
+                yPath += CAMERA_PORTAL_SPEED;
+                yMovement = -CAMERA_PORTAL_SPEED;
+            }
+            if(sourcePortal.getPosition().y < targetPortal.getPosition().y && yPath < yDisplacement){
+                yPath += CAMERA_PORTAL_SPEED;
+                yMovement = CAMERA_PORTAL_SPEED;
+            }
+
+            gameCam.position.x += xMovement;
+            gameCam.position.y += yMovement;
+
+            if(xPath > xDisplacement && yPath > yDisplacement) {
+                isPortalLocked = false;
+                xPath = 0;
+                yPath = 0;
+            }
+        }
+    }
+
+    public void checkForPortalDisplacement() {
+        if (isPortalLocked) {
+            if(isFacingRight != targetPortal.isFacingRight()) {
+                screen.getJini().setIsTeleporting(true);
+                screen.getJini().resetAnimationStateTimer();
+            }
+
+            if(targetPortal.isFacingRight()) {
+                body.setTransform(targetPortal.getPosition().x, targetPortal.getPosition().y + 0.5f, 0);
+                body.setLinearVelocity(new Vector2(15, 0));
+            }
+            else {
+                body.setTransform(targetPortal.getPosition().x, targetPortal.getPosition().y + 0.5f, 0);
+                body.setLinearVelocity(new Vector2(-15, 0));
+            }
+
+            xDisplacement = Math.abs(sourcePortal.getPosition().x - targetPortal.getPosition().x);
+            yDisplacement = Math.abs(sourcePortal.getPosition().y - targetPortal.getPosition().y);
+
+            if(isFacingRight != targetPortal.isFacingRight())
+                isFacingRight = targetPortal.isFacingRight();
+        }
     }
 
     private void handlePlatformInteractions() {
@@ -367,8 +428,10 @@ public final class Kirk extends Character {
             isFacingRight = true;
         }
 
-        animationStateTimer = currentCharacterState == previousCharacterState ? animationStateTimer + dt : 0;
-        previousCharacterState = currentCharacterState;
+        if(!isPortalLocked) {
+            animationStateTimer = currentCharacterState == previousCharacterState ? animationStateTimer + dt : 0;
+            previousCharacterState = currentCharacterState;
+        }
 
         return region;
     }
@@ -382,29 +445,6 @@ public final class Kirk extends Character {
             float tempRotation = kirkRotationAngle;
             kirkRotationAngle = 0;
             return -tempRotation;
-        }
-    }
-
-    public void checkForPortalDisplacement() {
-        if (isPortalLocked) {
-
-            if(isFacingRight != targetPortal.isFacingRight()) {
-                screen.getJini().setIsTeleporting(true);
-                screen.getJini().resetAnimationStateTimer();
-            }
-
-            if(targetPortal.isFacingRight()) {
-                body.setTransform(targetPortal.getPosition().x, targetPortal.getPosition().y + 0.5f, 0);
-                body.setLinearVelocity(new Vector2(15, 0));
-            }
-            else {
-                body.setTransform(targetPortal.getPosition().x, targetPortal.getPosition().y + 0.5f, 0);
-                body.setLinearVelocity(new Vector2(-15, 0));
-            }
-
-            if(isFacingRight != targetPortal.isFacingRight())
-                isFacingRight = targetPortal.isFacingRight();
-            isPortalLocked = false;
         }
     }
 
@@ -497,7 +537,7 @@ public final class Kirk extends Character {
         this.isPortalLocked = isPortalLocked;
     }
 
-    public boolean getPortalLocked(){
+    public boolean isPortalLocked(){
         return isPortalLocked;
     }
 }

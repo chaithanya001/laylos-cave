@@ -78,7 +78,8 @@ public class PlayScreen implements Screen {
     }
 
     public void update(float dt) {
-        world.step(1 / GameApp.FPS, 6, 2);
+        if(!kirk.isPortalLocked())
+            world.step(1 / GameApp.FPS, 6, 2);
         kirk.checkForPortalDisplacement();
         gameCam.update();
         mapRenderer.setView(gameCam);
@@ -99,10 +100,15 @@ public class PlayScreen implements Screen {
 
         gameApp.batch.setProjectionMatrix(gameCam.combined);
         gameApp.batch.begin();
-        kirk.draw(gameApp.batch);
-        jini.getJiniAromaEffect().draw(gameApp.batch, dt);
+
+        if(!kirk.isPortalLocked()) {
+            kirk.draw(gameApp.batch);
+            jini.getJiniAromaEffect().draw(gameApp.batch, dt);
+        }
         renderPortals();
-        jini.draw(gameApp.batch);
+
+        if(!kirk.isPortalLocked())
+            jini.draw(gameApp.batch);
 
         renderPlatforms();
         gameApp.batch.end();

@@ -21,7 +21,8 @@ import java.util.Random;
 public class Portal extends Sprite {
 
     public static final int MAX_PORTAL_NUMBER = 10;
-    public static final int RANDOM_PORTAL_BIT = 64;
+    public static final int RANDOM_PORTAL_BIT_ONE = 64;
+    public static final int RANDOM_PORTAL_BIT_TWO = 128;
     private Vector2 position;
     private static final Random random = new Random();
     private static int idCounter = 0;
@@ -43,9 +44,13 @@ public class Portal extends Sprite {
             id = idCounter;
             partnerid = MAX_PORTAL_NUMBER - 1 - id;
         }
-        else {
-            id = RANDOM_PORTAL_BIT;
-            partnerid = RANDOM_PORTAL_BIT;
+        else if(idCounter == MAX_PORTAL_NUMBER){
+            id = RANDOM_PORTAL_BIT_ONE;
+            partnerid = RANDOM_PORTAL_BIT_ONE;
+        }
+        else{
+            id = RANDOM_PORTAL_BIT_TWO;
+            partnerid = RANDOM_PORTAL_BIT_TWO;
         }
         idCounter++;
     }
