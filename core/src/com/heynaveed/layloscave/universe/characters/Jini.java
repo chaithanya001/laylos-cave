@@ -102,7 +102,7 @@ public final class Jini extends Character {
         }
 
         previousFacing = isFacingRight;
-        body.setTransform(screen.getKirk().getBody().getPosition().x + kirkDisplacement, screen.getKirk().getBody().getPosition().y, 0);
+        body.setTransform(screen.getKirk().getBody().getPosition().x + kirkDisplacement, screen.getKirk().getBody().getPosition().y + 1, 0);
         jiniAromaEffect.setPosition(body.getPosition().x, body.getPosition().y);
         setRotation(calculateRotation());
     }

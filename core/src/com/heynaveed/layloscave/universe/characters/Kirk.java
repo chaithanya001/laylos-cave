@@ -33,7 +33,7 @@ public final class Kirk extends Character {
     private static final float HEAD_DISPLACEMENT = GameApp.toPPM(30);
     private static final float MAX_SLIDE_TIMER = 0.6f;
     private static final float MAX_BOUNCE_TIMER = 0.3f;
-    private static final float CAMERA_PORTAL_SPEED = 1.0f;
+    private static final float CAMERA_PORTAL_SPEED = 40.0f;
     private final ParticleEffect cellularDisintegrationEffect = new ParticleEffect();
 
     private float xDisplacement;
@@ -70,6 +70,7 @@ public final class Kirk extends Character {
         animations = animationPackager.getAnimations();
         currentPlatformState = PlatformState.NONE;
         cellularDisintegrationEffect.load(Gdx.files.internal("particle-effects/cellularDisintegration"), Gdx.files.internal("particle-effects"));
+        cellularDisintegrationEffect.setDuration(0);
         initialiseWorldValues();
         initialiseTimers();
         initialiseBody();
@@ -118,25 +119,27 @@ public final class Kirk extends Character {
                 gameCam.position.y = RoundTo.RoundToNearest(body.getPosition().y, GameApp.toPPM(1));
             else
                 gameCam.position.y = CAMERA_JUMP_THRESHOLD;
-        } else {
+        }
+
+        else {
             float xMovement = 0;
             float yMovement = 0;
 
             if (sourcePortal.getPosition().x > targetPortal.getPosition().x && xPath < xDisplacement) {
-                xPath += CAMERA_PORTAL_SPEED;
-                xMovement = -CAMERA_PORTAL_SPEED;
+                xPath += CAMERA_PORTAL_SPEED*dt;
+                xMovement = -CAMERA_PORTAL_SPEED*dt;
             }
             else if (sourcePortal.getPosition().x < targetPortal.getPosition().x && xPath < xDisplacement) {
-                xPath += CAMERA_PORTAL_SPEED;
-                xMovement = CAMERA_PORTAL_SPEED;
+                xPath += CAMERA_PORTAL_SPEED*dt;
+                xMovement = CAMERA_PORTAL_SPEED*dt;
             }
             if (sourcePortal.getPosition().y > targetPortal.getPosition().y && yPath < yDisplacement) {
-                yPath += CAMERA_PORTAL_SPEED;
-                yMovement = -CAMERA_PORTAL_SPEED;
+                yPath += CAMERA_PORTAL_SPEED*dt;
+                yMovement = -CAMERA_PORTAL_SPEED*dt;
             }
             else if (sourcePortal.getPosition().y < targetPortal.getPosition().y && yPath < yDisplacement) {
-                yPath += CAMERA_PORTAL_SPEED;
-                yMovement = CAMERA_PORTAL_SPEED;
+                yPath += CAMERA_PORTAL_SPEED*dt;
+                yMovement = CAMERA_PORTAL_SPEED*dt;
             }
 
             gameCam.position.x += xMovement;

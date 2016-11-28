@@ -96,11 +96,11 @@ public final class CollisionDetector implements ContactListener {
 
                         if(foreignObject.getUserData().equals(Portal.RANDOM_PORTAL_BIT_ONE)) {
                             partnerPortal = portals.get(random.nextInt(Portal.MAX_PORTAL_NUMBER));
-                            kirk.setSourcePortal(portals.get(10));
+                            kirk.setSourcePortal(portals.get(Portal.MAX_PORTAL_NUMBER));
                         }
                         else if(foreignObject.getUserData().equals(Portal.RANDOM_PORTAL_BIT_TWO)){
                             partnerPortal = portals.get(random.nextInt(Portal.MAX_PORTAL_NUMBER));
-                            kirk.setSourcePortal(portals.get(11));
+                            kirk.setSourcePortal(portals.get(Portal.MAX_PORTAL_NUMBER+1));
                         }
                         else if(foreignObject.getUserData().equals(portals.get(i).getId())) {
                             partnerPortal = portals.get(portals.get(i).getPartnerId());
