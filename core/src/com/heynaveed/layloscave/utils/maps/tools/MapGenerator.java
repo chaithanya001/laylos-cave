@@ -31,7 +31,6 @@ import java.util.Random;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-
 /**
  * Created by naveed.shihab on 27/10/2016.
  */
@@ -506,7 +505,8 @@ public final class MapGenerator {
     }
 
     private static void loadMapRoot() throws IOException{
-        BufferedReader reader = new BufferedReader(new FileReader(new File("maps/level" + levelNumber + MAP_FILE_EXTENSION)));
+        File file = new File("maps/level" + levelNumber + MAP_FILE_EXTENSION);
+        BufferedReader reader = new BufferedReader(new FileReader(file));
         StringBuilder sb = new StringBuilder();
         String line = reader.readLine();
 

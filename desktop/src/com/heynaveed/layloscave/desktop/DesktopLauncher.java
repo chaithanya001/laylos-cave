@@ -7,7 +7,9 @@ import com.heynaveed.layloscave.GameApp;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new GameApp(), config);
+		GameApp gameApp = new GameApp();
+		GameApp.CONFIGURATION = "Desktop";
+		new LwjglApplication(gameApp, config);
 		config.title = GameApp.TITLE;
 		config.height = GameApp.HEIGHT;
 		config.width = GameApp.WIDTH;

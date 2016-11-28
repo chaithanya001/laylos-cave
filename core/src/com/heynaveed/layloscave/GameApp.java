@@ -26,6 +26,7 @@ public class GameApp extends Game {
 	public static final short JINI_BIT = 256;
 	public static final short PORTAL_BIT = 512;
 	public static final float FPS = 60;
+	public static String CONFIGURATION;
     private static final float PPM = 100;
 
 	public SpriteBatch batch;

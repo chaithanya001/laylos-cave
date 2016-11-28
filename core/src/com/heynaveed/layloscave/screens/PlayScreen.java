@@ -111,6 +111,10 @@ public class PlayScreen implements Screen {
             jini.draw(gameApp.batch);
 
         renderPlatforms();
+
+        if(kirk.isPortalLocked())
+            kirk.getCellularDisintegrationEffect().draw(gameApp.batch, dt);
+
         gameApp.batch.end();
 
         if (jini.getJiniAromaEffect().isComplete())

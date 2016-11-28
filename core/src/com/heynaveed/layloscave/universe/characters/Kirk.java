@@ -1,5 +1,7 @@
 package com.heynaveed.layloscave.universe.characters;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -31,7 +33,8 @@ public final class Kirk extends Character {
     private static final float HEAD_DISPLACEMENT = GameApp.toPPM(30);
     private static final float MAX_SLIDE_TIMER = 0.6f;
     private static final float MAX_BOUNCE_TIMER = 0.3f;
-    private static final float CAMERA_PORTAL_SPEED = 0.8f;
+    private static final float CAMERA_PORTAL_SPEED = 1.0f;
+    private final ParticleEffect cellularDisintegrationEffect = new ParticleEffect();
 
     private float xDisplacement;
     private float yDisplacement;
@@ -54,6 +57,7 @@ public final class Kirk extends Character {
     private CharacterState.Kirk currentCharacterState;
     private CharacterState.Kirk previousCharacterState;
     private PlatformState currentPlatformState;
+    private boolean hasCellularEffectStarted = false;
 
     public Kirk(PlayScreen screen) {
         super(screen);
@@ -65,6 +69,7 @@ public final class Kirk extends Character {
         frameSpeeds = animationPackager.getFrameSpeeds();
         animations = animationPackager.getAnimations();
         currentPlatformState = PlatformState.NONE;
+        cellularDisintegrationEffect.load(Gdx.files.internal("particle-effects/cellularDisintegration"), Gdx.files.internal("particle-effects"));
         initialiseWorldValues();
         initialiseTimers();
         initialiseBody();
@@ -77,10 +82,18 @@ public final class Kirk extends Character {
         this.dt = dt;
         panCamera(dt);
         capVelocities();
+        handleEffects();
         handlePlatformInteractions();
         handleJiniImpulseRotations();
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
         setRegion(updateAnimationFrame(dt));
+    }
+
+    private void handleEffects() {
+        if (isPortalLocked && !hasCellularEffectStarted) {
+            cellularDisintegrationEffect.start();
+            hasCellularEffectStarted = true;
+        }
     }
 
     private void handleJiniImpulseRotations() {
@@ -95,7 +108,7 @@ public final class Kirk extends Character {
     }
 
     private void panCamera(float dt) {
-        if(!isPortalLocked) {
+        if (!isPortalLocked) {
             if (body.getPosition().x > CAMERA_WEST_LIMIT)
                 gameCam.position.x = RoundTo.RoundToNearest(body.getPosition().x, GameApp.toPPM(1));
             else
@@ -105,33 +118,34 @@ public final class Kirk extends Character {
                 gameCam.position.y = RoundTo.RoundToNearest(body.getPosition().y, GameApp.toPPM(1));
             else
                 gameCam.position.y = CAMERA_JUMP_THRESHOLD;
-        }
-        else{
+        } else {
             float xMovement = 0;
             float yMovement = 0;
 
-            if(sourcePortal.getPosition().x > targetPortal.getPosition().x && xPath < xDisplacement){
+            if (sourcePortal.getPosition().x > targetPortal.getPosition().x && xPath < xDisplacement) {
                 xPath += CAMERA_PORTAL_SPEED;
                 xMovement = -CAMERA_PORTAL_SPEED;
             }
-            if(sourcePortal.getPosition().x < targetPortal.getPosition().x && xPath < xDisplacement){
+            if (sourcePortal.getPosition().x < targetPortal.getPosition().x && xPath < xDisplacement) {
                 xPath += CAMERA_PORTAL_SPEED;
                 xMovement = CAMERA_PORTAL_SPEED;
             }
-            if(sourcePortal.getPosition().y > targetPortal.getPosition().y && yPath < yDisplacement){
+            if (sourcePortal.getPosition().y > targetPortal.getPosition().y && yPath < yDisplacement) {
                 yPath += CAMERA_PORTAL_SPEED;
                 yMovement = -CAMERA_PORTAL_SPEED;
             }
-            if(sourcePortal.getPosition().y < targetPortal.getPosition().y && yPath < yDisplacement){
+            if (sourcePortal.getPosition().y < targetPortal.getPosition().y && yPath < yDisplacement) {
                 yPath += CAMERA_PORTAL_SPEED;
                 yMovement = CAMERA_PORTAL_SPEED;
             }
 
             gameCam.position.x += xMovement;
             gameCam.position.y += yMovement;
+            cellularDisintegrationEffect.setPosition(gameCam.position.x, gameCam.position.y);
 
-            if(xPath > xDisplacement && yPath > yDisplacement) {
+            if (xPath > xDisplacement && yPath > yDisplacement) {
                 isPortalLocked = false;
+                hasCellularEffectStarted = false;
                 xPath = 0;
                 yPath = 0;
             }
@@ -140,16 +154,15 @@ public final class Kirk extends Character {
 
     public void checkForPortalDisplacement() {
         if (isPortalLocked) {
-            if(isFacingRight != targetPortal.isFacingRight()) {
+            if (isFacingRight != targetPortal.isFacingRight()) {
                 screen.getJini().setIsTeleporting(true);
                 screen.getJini().resetAnimationStateTimer();
             }
 
-            if(targetPortal.isFacingRight()) {
+            if (targetPortal.isFacingRight()) {
                 body.setTransform(targetPortal.getPosition().x, targetPortal.getPosition().y + 0.5f, 0);
                 body.setLinearVelocity(new Vector2(15, 0));
-            }
-            else {
+            } else {
                 body.setTransform(targetPortal.getPosition().x, targetPortal.getPosition().y + 0.5f, 0);
                 body.setLinearVelocity(new Vector2(-15, 0));
             }
@@ -157,7 +170,7 @@ public final class Kirk extends Character {
             xDisplacement = Math.abs(sourcePortal.getPosition().x - targetPortal.getPosition().x);
             yDisplacement = Math.abs(sourcePortal.getPosition().y - targetPortal.getPosition().y);
 
-            if(isFacingRight != targetPortal.isFacingRight())
+            if (isFacingRight != targetPortal.isFacingRight())
                 isFacingRight = targetPortal.isFacingRight();
         }
     }
@@ -428,7 +441,7 @@ public final class Kirk extends Character {
             isFacingRight = true;
         }
 
-        if(!isPortalLocked) {
+        if (!isPortalLocked) {
             animationStateTimer = currentCharacterState == previousCharacterState ? animationStateTimer + dt : 0;
             previousCharacterState = currentCharacterState;
         }
@@ -525,19 +538,23 @@ public final class Kirk extends Character {
         body.setLinearVelocity(new Vector2(0, -20.0f));
     }
 
-    public void setSourcePortal(Portal sourcePortal){
+    public void setSourcePortal(Portal sourcePortal) {
         this.sourcePortal = sourcePortal;
     }
 
-    public void setTargetPortal(Portal targetPortal){
+    public void setTargetPortal(Portal targetPortal) {
         this.targetPortal = targetPortal;
     }
 
-    public void setPortalLocked(boolean isPortalLocked){
+    public void setPortalLocked(boolean isPortalLocked) {
         this.isPortalLocked = isPortalLocked;
     }
 
-    public boolean isPortalLocked(){
+    public boolean isPortalLocked() {
         return isPortalLocked;
+    }
+
+    public ParticleEffect getCellularDisintegrationEffect(){
+        return cellularDisintegrationEffect;
     }
 }
