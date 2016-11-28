@@ -126,7 +126,7 @@ public final class Kirk extends Character {
                 xPath += CAMERA_PORTAL_SPEED;
                 xMovement = -CAMERA_PORTAL_SPEED;
             }
-            if (sourcePortal.getPosition().x < targetPortal.getPosition().x && xPath < xDisplacement) {
+            else if (sourcePortal.getPosition().x < targetPortal.getPosition().x && xPath < xDisplacement) {
                 xPath += CAMERA_PORTAL_SPEED;
                 xMovement = CAMERA_PORTAL_SPEED;
             }
@@ -134,7 +134,7 @@ public final class Kirk extends Character {
                 yPath += CAMERA_PORTAL_SPEED;
                 yMovement = -CAMERA_PORTAL_SPEED;
             }
-            if (sourcePortal.getPosition().y < targetPortal.getPosition().y && yPath < yDisplacement) {
+            else if (sourcePortal.getPosition().y < targetPortal.getPosition().y && yPath < yDisplacement) {
                 yPath += CAMERA_PORTAL_SPEED;
                 yMovement = CAMERA_PORTAL_SPEED;
             }
@@ -143,9 +143,10 @@ public final class Kirk extends Character {
             gameCam.position.y += yMovement;
             cellularDisintegrationEffect.setPosition(gameCam.position.x, gameCam.position.y);
 
-            if (xPath > xDisplacement && yPath > yDisplacement) {
+            if (xPath >= xDisplacement && yPath >= yDisplacement) {
                 isPortalLocked = false;
                 hasCellularEffectStarted = false;
+                cellularDisintegrationEffect.setDuration(0);
                 xPath = 0;
                 yPath = 0;
             }

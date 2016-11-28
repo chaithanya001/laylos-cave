@@ -97,7 +97,7 @@ public class Portal extends Sprite {
     public TextureRegion updateRegion(float dt){
         TextureRegion region = animationPackager.getAnimations()[0].getKeyFrame(animationStateTimer);
 
-        if(isFacingRight || !region.isFlipX())
+        if(!isFacingRight || !region.isFlipX())
             region.flip(true, false);
 
         if(animationPackager.getAnimations()[0].isAnimationFinished(animationStateTimer))

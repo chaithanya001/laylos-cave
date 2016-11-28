@@ -101,19 +101,17 @@ public class PlayScreen implements Screen {
         gameApp.batch.setProjectionMatrix(gameCam.combined);
         gameApp.batch.begin();
 
-        if(!kirk.isPortalLocked()) {
-            kirk.draw(gameApp.batch);
-            jini.getJiniAromaEffect().draw(gameApp.batch, dt);
-        }
-        renderPortals();
-
         if(!kirk.isPortalLocked())
             jini.draw(gameApp.batch);
 
-        renderPlatforms();
+        jini.getJiniAromaEffect().draw(gameApp.batch, dt);
+        renderPortals();
 
-        if(kirk.isPortalLocked())
-            kirk.getCellularDisintegrationEffect().draw(gameApp.batch, dt);
+        if(!kirk.isPortalLocked())
+            kirk.draw(gameApp.batch);
+
+        kirk.getCellularDisintegrationEffect().draw(gameApp.batch, dt);
+        renderPlatforms();
 
         gameApp.batch.end();
 
