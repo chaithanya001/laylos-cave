@@ -25,7 +25,7 @@ public final class AnimationPackager {
     private static final float[][] JINI_FRAME_SPEEDS = {{0.1f}, {0.1f}, {0.03f}, {0.05f}};
     private static final Animation[] JINI_ANIMATIONS = new Animation[JINI_FRAME_SEQUENCES.length];
     private static final int[][] PORTAL_FRAME_SEQUENCES = {{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}};
-    private static final float[][] PORTAL_FRAME_SPEEDS = {{0.075f}};
+    private static final float[][] PORTAL_FRAME_SPEEDS = {{0.1f}};
     private static final Animation[] PORTAL_ANIMATIONS = new Animation[PORTAL_FRAME_SEQUENCES.length];
 
     private final Texture texture;

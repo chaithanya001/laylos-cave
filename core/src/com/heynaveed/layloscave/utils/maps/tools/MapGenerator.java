@@ -401,17 +401,17 @@ public final class MapGenerator {
             } while (portalPositions.size() != Portal.MAX_PORTAL_NUMBER);
         }
 
-        int x = 199;
+        int x1 = 199, x2 = 199;
         int y1 = random.nextInt(MapGenerator.WIDTH/2 - minY)+MapGenerator.WIDTH/2;
         int y2 = random.nextInt(MapGenerator.WIDTH/2 - minY)+minY;
 
-        for(int i = x; workingTileIDSet[i][y1] != 0; i--)
-            x = i;
-        for(int i = x; workingTileIDSet[i][y2] != 0; i--)
-            x = i;
+        for(int i = x1; workingTileIDSet[i][y1] != 0; i--)
+            x1 = i;
+        for(int i = x2; workingTileIDSet[i][y2] != 0; i--)
+            x2 = i;
 
-        portalPositions.add(new TileVector(x-4, y1));
-        portalPositions.add(new TileVector(x-4, y2));
+        portalPositions.add(new TileVector(x1-4, y1));
+        portalPositions.add(new TileVector(x2-4, y2));
         portalFacing.add(false);
         portalFacing.add(true);
 

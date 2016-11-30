@@ -44,8 +44,6 @@ public final class CollisionDetector implements ContactListener {
         Fixture fixA = contact.getFixtureA();
         Fixture fixB = contact.getFixtureB();
         Fixture kirk_body = null;
-        Fixture kirk_head = null;
-        Fixture diagonal = null;
         Fixture foreignObject = null;
         checkForPortalCollision = false;
 
@@ -60,7 +58,6 @@ public final class CollisionDetector implements ContactListener {
             foreignObject = kirk_body == fixA ? fixB : fixA;
             checkForPortalCollision = true;
         }
-
 
 
         switch(cDef){
