@@ -1,5 +1,7 @@
 package com.heynaveed.layloscave.utils.maps.tools;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Base64Coder;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -54,6 +56,7 @@ public final class MapGenerator {
     private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
     private static final String TEMPLATE_MAP_PATH = "maps/templateMap.tmx";
     private static final String NEW_MAP_PATH = "maps/level";
+    private static final String LEVEL = "level";
     private static final String MAP_FILE_EXTENSION = ".tmx";
     private static final int MIN_X_CLEAN_PADDING = 20;
     private static final int MAX_X_CLEAN_PADDING = 160;
@@ -61,7 +64,7 @@ public final class MapGenerator {
     private static final int MAX_Y_CLEAN_PADDING = 270;
     public static final int HEIGHT = 200;
     public static final int WIDTH = 300;
-    private static int levelNumber = 1;
+    private static int levelNumber = 0;
     private static int[][] workingTileIDSet = new int[HEIGHT][WIDTH];
     private static int[] finalTileIDSet = new int[WIDTH * HEIGHT];
     private static String encodedString;
@@ -74,6 +77,7 @@ public final class MapGenerator {
     private static boolean isTree = false;
     private static boolean isPath = false;
     private static int objectID = 1000;
+    private static FileHandle newMap;
 
     private static final Random random = new Random();
 
@@ -102,7 +106,7 @@ public final class MapGenerator {
     public MapGenerator buildPathMap() throws IOException{
         isPath = true;
         isTree = false;
-//        createNewMapFile();
+        createNewMapFile();
         loadMapRoot();
         generateMapBase();
         cleanMapNoise();
@@ -147,23 +151,36 @@ public final class MapGenerator {
     }
 
     private static void createNewMapFile() throws IOException{
-        FileChannel source = null;
-        FileChannel destination = null;
-        File templateMapFile = new File(TEMPLATE_MAP_PATH);
-        File newMapFile = new File(NEW_MAP_PATH + ++levelNumber + MAP_FILE_EXTENSION);
 
-        try {
-            source = new FileInputStream(templateMapFile).getChannel();
-            destination = new FileOutputStream(newMapFile).getChannel();
-            destination.transferFrom(source, 0, source.size());
+        if(GameApp.CONFIGURATION.equals("Desktop")) {
+            FileChannel source = null;
+            FileChannel destination = null;
+            File templateMapFile = new File(TEMPLATE_MAP_PATH);
+            File newMapFile = new File(NEW_MAP_PATH + ++levelNumber + MAP_FILE_EXTENSION);
+
+            try {
+                source = new FileInputStream(templateMapFile).getChannel();
+                destination = new FileOutputStream(newMapFile).getChannel();
+                destination.transferFrom(source, 0, source.size());
+            } finally {
+                if (source != null) {
+                    source.close();
+                }
+                if (destination != null) {
+                    destination.close();
+                }
+            }
         }
-        finally {
-            if (source != null) {
-                source.close();
-            }
-            if (destination != null) {
-                destination.close();
-            }
+        else if(GameApp.CONFIGURATION.equals("Android")){
+            FileHandle templateMap = Gdx.files.internal("maps/templateMap.tmx");
+            newMap = Gdx.files.local(LEVEL + ++levelNumber + MAP_FILE_EXTENSION);
+            newMap.writeString(templateMap.readString(), false);
+            FileHandle tileMapGutterOriginal = Gdx.files.internal("maps/tileMapGutter.png");
+            FileHandle tileMapGutter = Gdx.files.local("tileMapGutter.png");
+            FileHandle tileSetOriginal = Gdx.files.internal("maps/tileSet.png");
+            FileHandle tileSet = Gdx.files.local("tileSet.png");
+            tileMapGutterOriginal.copyTo(tileMapGutter);
+            tileSetOriginal.copyTo(tileSet);
         }
     }
 
@@ -505,19 +522,25 @@ public final class MapGenerator {
     }
 
     private static void loadMapRoot() throws IOException{
-        File file = new File("maps/level" + levelNumber + MAP_FILE_EXTENSION);
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        StringBuilder sb = new StringBuilder();
-        String line = reader.readLine();
 
-        while (line != null) {
-            sb.append(line);
-            sb.append("\n");
-            line = reader.readLine();
+        if(GameApp.CONFIGURATION.equals("Desktop")) {
+
+            File file = new File("maps/level" + levelNumber + MAP_FILE_EXTENSION);
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            StringBuilder sb = new StringBuilder();
+            String line = reader.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append("\n");
+                line = reader.readLine();
+            }
+
+            mapFileRoot = new XmlReader().parse(sb.toString());
+            reader.close();
         }
-
-        mapFileRoot = new XmlReader().parse(sb.toString());
-        reader.close();
+        else if(GameApp.CONFIGURATION.equals("Android"))
+            mapFileRoot = new XmlReader().parse(newMap.readString());
     }
 
     private static void updateTerrainLayer() throws IOException{
@@ -528,10 +551,15 @@ public final class MapGenerator {
     }
 
     private static void writeToMap() throws IOException{
-        PrintWriter writer = new PrintWriter(new File("maps/level" + levelNumber + MAP_FILE_EXTENSION));
-        writer.print("");
-        writer.print(XML_HEADER + "\n" + mapFileRoot.toString());
-        writer.close();
+
+        if(GameApp.CONFIGURATION.equals("Desktop")) {
+            PrintWriter writer = new PrintWriter(new File("maps/level" + levelNumber + MAP_FILE_EXTENSION));
+            writer.print("");
+            writer.print(XML_HEADER + "\n" + mapFileRoot.toString());
+            writer.close();
+        }
+        else if(GameApp.CONFIGURATION.equals("Android"))
+            newMap.writeString(XML_HEADER + "\n" + mapFileRoot.toString(), false);
     }
 
     private static void smoothMap(int iterations){

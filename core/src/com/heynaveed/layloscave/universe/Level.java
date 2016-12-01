@@ -1,11 +1,13 @@
 package com.heynaveed.layloscave.universe;
 
+import com.badlogic.gdx.assets.loaders.resolvers.LocalFileHandleResolver;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.heynaveed.layloscave.GameApp;
 import com.heynaveed.layloscave.keys.LayerKey;
 import com.heynaveed.layloscave.universe.platforms.BouncyPlatform;
 import com.heynaveed.layloscave.universe.platforms.CrumblingPlatform;
@@ -19,10 +21,11 @@ import com.heynaveed.layloscave.screens.PlayScreen;
 public class Level {
 
     public static final int NUMBER_OF_LEVELS = 1;
-    private static final String MAP_PATH = "maps/level";
+    private static final String MAP_PATH = "maps/";
+    private static final String LEVEL_PATH = "level";
     private static final String MAP_LEVEL = "1";
     private static final String MAP_FILE_EXTENSION = ".tmx";
-    private static final TmxMapLoader mapLoader = new TmxMapLoader();
+    private static TmxMapLoader mapLoader;
 
     private final PlayScreen screen;
     private final World world;
@@ -37,7 +40,16 @@ public class Level {
     public Level(PlayScreen screen, int levelNumber){
         this.screen = screen;
         world = screen.getWorld();
-        map = mapLoader.load(MAP_PATH + MAP_LEVEL + MAP_FILE_EXTENSION);
+
+        if(GameApp.CONFIGURATION.equals("Desktop")) {
+            mapLoader = new TmxMapLoader();
+            map = mapLoader.load(MAP_PATH + LEVEL_PATH + MAP_LEVEL + MAP_FILE_EXTENSION);
+        }
+        else{
+            mapLoader = new TmxMapLoader(new LocalFileHandleResolver());
+            map = mapLoader.load(LEVEL_PATH + MAP_LEVEL + MAP_FILE_EXTENSION);
+        }
+
         groundPlatforms = new Array<NormalPlatform>();
         rotationPlatforms = new Array<RotationPlatform>();
         icePlatforms = new Array<IcePlatform>();
