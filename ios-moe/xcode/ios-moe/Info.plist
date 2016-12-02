@@ -2,44 +2,44 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleDevelopmentRegion</key>
+	<index>CFBundleDevelopmentRegion</index>
 	<string>en</string>
-	<key>CFBundleExecutable</key>
+	<index>CFBundleExecutable</index>
 	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
+	<index>CFBundleIdentifier</index>
 	<string>com.heynaveed.layloscave</string>
-	<key>CFBundleInfoDictionaryVersion</key>
+	<index>CFBundleInfoDictionaryVersion</index>
 	<string>6.0</string>
-	<key>CFBundleName</key>
+	<index>CFBundleName</index>
 	<string>Laylos Cave</string>
-	<key>CFBundlePackageType</key>
+	<index>CFBundlePackageType</index>
 	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
+	<index>CFBundleShortVersionString</index>
 	<string></string>
-	<key>CFBundleSignature</key>
+	<index>CFBundleSignature</index>
 	<string>????</string>
-	<key>CFBundleVersion</key>
+	<index>CFBundleVersion</index>
 	<string></string>
-	<key>LSRequiresIPhoneOS</key>
+	<index>LSRequiresIPhoneOS</index>
 	<true/>
-	<key>UIRequiresFullScreen</key>
+	<index>UIRequiresFullScreen</index>
 	<true/>
-	<key>MOE.Main.Class</key>
+	<index>MOE.Main.Class</index>
 	<string>com.heynaveed.layloscave.IOSMoeLauncher</string>
-	<key>UIApplicationExitsOnSuspend</key>
+	<index>UIApplicationExitsOnSuspend</index>
 	<false/>
-	<key>UIRequiredDeviceCapabilities</key>
+	<index>UIRequiredDeviceCapabilities</index>
 	<array>
 		<string>armv7</string>
 	</array>
-	<key>UISupportedInterfaceOrientations</key>
+	<index>UISupportedInterfaceOrientations</index>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
+	<index>UISupportedInterfaceOrientations~ipad</index>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>

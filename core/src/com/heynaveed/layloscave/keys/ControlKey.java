@@ -5,13 +5,9 @@ public enum ControlKey {
 
     LEFT(0), RIGHT(1), UP(2), JINI(3), DOWN(4);
 
-    private final int key;
+    public final int index;
 
-    ControlKey(int key){
-        this.key = key;
-    }
-
-    public int getKey(){
-        return key;
+    ControlKey(int index){
+        this.index = index;
     }
 }

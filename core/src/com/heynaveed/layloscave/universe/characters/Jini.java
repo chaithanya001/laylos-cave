@@ -71,7 +71,7 @@ public final class Jini extends Character {
     private void handleTeleporting(){
         if(isTeleporting){
             isLevitateImpulse = false;
-            if(animations[AnimationKey.Jini.TELEPORTING.getKey()].isAnimationFinished(animationStateTimer)) {
+            if(animations[AnimationKey.Jini.TELEPORTING.index].isAnimationFinished(animationStateTimer)) {
                 isTeleporting = false;
                 animationStateTimer = 0;
             }
@@ -80,15 +80,15 @@ public final class Jini extends Character {
 
     private void handleLevitating(){
         if(isLevitateImpulse){
-            if(animations[AnimationKey.Jini.DOUBLE_JUMP.getKey()].isAnimationFinished(animationStateTimer))
+            if(animations[AnimationKey.Jini.DOUBLE_JUMP.index].isAnimationFinished(animationStateTimer))
                 isLevitateImpulse = false;
         }
     }
 
     private void followKirk(){
 
-        float halfTimer = animationPackager.getFrameSpeeds()[AnimationKey.Jini.TELEPORTING.getKey()][0]
-                * animationPackager.getFrameSequences()[AnimationKey.Jini.TELEPORTING.getKey()].length/2;
+        float halfTimer = animationPackager.getFrameSpeeds()[AnimationKey.Jini.TELEPORTING.index][0]
+                * animationPackager.getFrameSequences()[AnimationKey.Jini.TELEPORTING.index].length/2;
 
         if(isTeleporting && (animationStateTimer > halfTimer)) {
             isFacingRight = screen.getKirk().isFacingRight();
@@ -187,17 +187,17 @@ public final class Jini extends Character {
 
         switch(currentCharacterState){
             case FLYING:
-                region = animations[AnimationKey.Jini.FLYING.getKey()].getKeyFrame(animationStateTimer, true);
+                region = animations[AnimationKey.Jini.FLYING.index].getKeyFrame(animationStateTimer, true);
                 break;
             case TELEPORTING:
-                region = animations[AnimationKey.Jini.TELEPORTING.getKey()].getKeyFrame(animationStateTimer, false);
+                region = animations[AnimationKey.Jini.TELEPORTING.index].getKeyFrame(animationStateTimer, false);
                 break;
             case DOUBLE_JUMP:
-                region = animations[AnimationKey.Jini.DOUBLE_JUMP.getKey()].getKeyFrame(animationStateTimer, false);
+                region = animations[AnimationKey.Jini.DOUBLE_JUMP.index].getKeyFrame(animationStateTimer, false);
                 break;
             case FLOATING:
             default:
-                region = animations[AnimationKey.Jini.FLOATING.getKey()].getKeyFrame(animationStateTimer, true);
+                region = animations[AnimationKey.Jini.FLOATING.index].getKeyFrame(animationStateTimer, true);
                 break;
         }
 
@@ -209,8 +209,10 @@ public final class Jini extends Character {
             isFacingRight = true;
         }
 
-        animationStateTimer = currentCharacterState == previousCharacterState ? animationStateTimer + dt : 0;
-        previousCharacterState = currentCharacterState;
+        if(!screen.getKirk().isPortalLocked()) {
+            animationStateTimer = currentCharacterState == previousCharacterState ? animationStateTimer + dt : 0;
+            previousCharacterState = currentCharacterState;
+        }
 
         return region;
     }

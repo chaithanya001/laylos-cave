@@ -35,7 +35,7 @@ public final class InputController implements InputProcessor {
     public void update(float dt){
 
         for(int i = 0; i < ControlKey.values().length; i++) {
-            if(controls[ControlKey.values()[i].getKey()])
+            if(controls[ControlKey.values()[i].index])
                 applyInputControl(ControlKey.values()[i]);
         }
 
@@ -97,7 +97,7 @@ public final class InputController implements InputProcessor {
     public boolean keyDown(int keycode) {
         switch(keycode){
             case Input.Keys.LEFT:
-                controls[ControlKey.LEFT.getKey()] = true;
+                controls[ControlKey.LEFT.index] = true;
 
                 if(!jini.isTeleporting() && kirk.isFacingRight()) {
                     jini.setIsTeleporting(true);
@@ -105,7 +105,7 @@ public final class InputController implements InputProcessor {
                 }
                 break;
             case Input.Keys.RIGHT:
-                controls[ControlKey.RIGHT.getKey()] = true;
+                controls[ControlKey.RIGHT.index] = true;
 
                 if(!jini.isTeleporting() && !kirk.isFacingRight()) {
                     jini.setIsTeleporting(true);
@@ -117,7 +117,7 @@ public final class InputController implements InputProcessor {
                     kirk.jump();
                 break;
             case Input.Keys.DOWN:
-                controls[ControlKey.DOWN.getKey()] = true;
+                controls[ControlKey.DOWN.index] = true;
                 break;
             case Input.Keys.SPACE:
                 if(kirk.getCurrentPlatformState() == PlatformState.ICE && !kirk.isSliding())
@@ -138,18 +138,18 @@ public final class InputController implements InputProcessor {
             case Input.Keys.LEFT:
                 if(kirk.getCurrentPlatformState() == PlatformState.ICE && !kirk.isSliding())
                     kirk.applySlide();
-                controls[ControlKey.LEFT.getKey()] = false;
+                controls[ControlKey.LEFT.index] = false;
                 break;
             case Input.Keys.RIGHT:
                 if(kirk.getCurrentPlatformState() == PlatformState.ICE && !kirk.isSliding())
                     kirk.applySlide();
-                controls[ControlKey.RIGHT.getKey()] = false;
+                controls[ControlKey.RIGHT.index] = false;
                 break;
             case Input.Keys.UP:
-                controls[ControlKey.UP.getKey()] = false;
+                controls[ControlKey.UP.index] = false;
                 break;
             case Input.Keys.DOWN:
-                controls[ControlKey.DOWN.getKey()] = false;
+                controls[ControlKey.DOWN.index] = false;
                 break;
             case Input.Keys.SPACE:
                 break;
@@ -166,7 +166,7 @@ public final class InputController implements InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if(screenX < GameApp.WIDTH/2) {
-            controls[ControlKey.LEFT.getKey()] = true;
+            controls[ControlKey.LEFT.index] = true;
 
             if(!jini.isTeleporting() && kirk.isFacingRight()) {
                 jini.setIsTeleporting(true);
@@ -174,7 +174,7 @@ public final class InputController implements InputProcessor {
             }
         }
         else {
-            controls[ControlKey.RIGHT.getKey()] = true;
+            controls[ControlKey.RIGHT.index] = true;
 
             if(!jini.isTeleporting() && !kirk.isFacingRight()) {
                 jini.setIsTeleporting(true);
@@ -197,12 +197,12 @@ public final class InputController implements InputProcessor {
         if(screenX < GameApp.WIDTH/2) {
             if(kirk.getCurrentPlatformState() == PlatformState.ICE)
                 kirk.applySlide();
-            controls[ControlKey.LEFT.getKey()] = false;
+            controls[ControlKey.LEFT.index] = false;
         }
         else {
             if(kirk.getCurrentPlatformState() == PlatformState.ICE)
                 kirk.applySlide();
-            controls[ControlKey.RIGHT.getKey()] = false;
+            controls[ControlKey.RIGHT.index] = false;
         }
 
         return true;

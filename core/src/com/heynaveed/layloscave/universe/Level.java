@@ -70,33 +70,33 @@ public class Level {
     }
 
     private void createGroundPlatforms(){
-        for(MapObject object : map.getLayers().get(LayerKey.GROUND.getKey()).getObjects().getByType(RectangleMapObject.class))
+        for(MapObject object : map.getLayers().get(LayerKey.GROUND.index).getObjects().getByType(RectangleMapObject.class))
             groundPlatforms.add(new NormalPlatform(world, object));
     }
 
     private void createRotationPlatform(){
-        for(MapObject object : map.getLayers().get(LayerKey.ROTATION.getKey()).getObjects().getByType(RectangleMapObject.class))
+        for(MapObject object : map.getLayers().get(LayerKey.ROTATION.index).getObjects().getByType(RectangleMapObject.class))
             rotationPlatforms.add(new RotationPlatform(world, object));
     }
 
     private void createIcePlatforms(){
-        for(MapObject object : map.getLayers().get(LayerKey.ICE.getKey()).getObjects().getByType(RectangleMapObject.class))
+        for(MapObject object : map.getLayers().get(LayerKey.ICE.index).getObjects().getByType(RectangleMapObject.class))
             icePlatforms.add(new IcePlatform(world, object));
     }
 
     private void createMuddyPlatforms(){
-        for(MapObject object : map.getLayers().get(LayerKey.MUDDY.getKey()).getObjects().getByType(RectangleMapObject.class))
+        for(MapObject object : map.getLayers().get(LayerKey.MUDDY.index).getObjects().getByType(RectangleMapObject.class))
             muddyPlatforms.add(new MuddyPlatform(world, object));
     }
 
     private void createBouncyPlatforms() {
-        for (MapObject object : map.getLayers().get(LayerKey.BOUNCY.getKey()).getObjects().getByType(RectangleMapObject.class)) {
+        for (MapObject object : map.getLayers().get(LayerKey.BOUNCY.index).getObjects().getByType(RectangleMapObject.class)) {
             bouncyPlatforms.add(new BouncyPlatform(world, object).applyLighting(screen));
         }
     }
 
     private void createCrumblingPlatforms() {
-        for (MapObject object : map.getLayers().get(LayerKey.CRUMBLING.getKey()).getObjects().getByType(RectangleMapObject.class))
+        for (MapObject object : map.getLayers().get(LayerKey.CRUMBLING.index).getObjects().getByType(RectangleMapObject.class))
             crumblingPlatforms.add(new CrumblingPlatform(world, object));
     }
 
