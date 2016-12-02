@@ -1,6 +1,8 @@
 package com.heynaveed.layloscave.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -115,6 +117,8 @@ public class PlayScreen implements Screen {
 
         gameApp.batch.end();
 
+        inputController.getStage().draw();
+
         if (jini.getJiniAromaEffect().isComplete())
             jini.getJiniAromaEffect().reset();
 //        debugRenderer.render(world, gameCam.combined);
@@ -219,12 +223,18 @@ public class PlayScreen implements Screen {
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(inputController);
+        if(GameApp.CONFIGURATION == "Desktop")
+            Gdx.input.setInputProcessor(inputController);
+        else if(GameApp.CONFIGURATION == "Android")
+            Gdx.input.setInputProcessor(inputController.getStage());
     }
 
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
+
+        if(GameApp.CONFIGURATION == "Android")
+            inputController.getStage().getViewport().update(width, height);
     }
 
     @Override
@@ -250,6 +260,7 @@ public class PlayScreen implements Screen {
         kirk.dispose();
         jini.dispose();
         debugRenderer.dispose();
+        inputController.dispose();
         for(Portal portal : portals)
             portal.dispose();
     }

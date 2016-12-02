@@ -82,6 +82,7 @@ public final class MapGenerator {
     private static final Random random = new Random();
 
     public static void main(String[] args) throws IOException{
+        GameApp.CONFIGURATION = "Desktop";
         new MapGenerator().buildPathMap();
     }
 
@@ -354,7 +355,6 @@ public final class MapGenerator {
 
         for(int x = minX; x <= maxX; x++){
 
-
             row_loop:
             for(int y = minY; y <= maxY; y++){
 
@@ -411,7 +411,9 @@ public final class MapGenerator {
             potentialFacing.clear();
         }
 
-        if(portalPositions.size() > Portal.MAX_PORTAL_NUMBER){
+        int portalPositionsSize = portalPositions.size();
+
+        if(portalPositionsSize > Portal.MAX_PORTAL_NUMBER){
             do {
                 portalPositions.remove(portalPositions.size()/2);
                 portalFacing.remove(portalFacing.size()/2);

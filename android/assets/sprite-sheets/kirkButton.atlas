@@ -1,0 +1,19 @@
+
+controlButtons.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+controlButtonsUnpressed
+	rotate: false
+	xy: 2, 1034,
+	size: 256, 256
+	orig: 256, 256
+	offset: 0, 0
+	index: -1
+controlButtonsPressed
+	rotate: false
+	xy: 260, 1034
+	size: 256, 256
+	orig: 256, 256
+	offset: 0, 0
+	index: -1
