@@ -49,7 +49,6 @@ public final class Kirk extends Character {
     private float bounceTimer;
     private float maxJumpVelocity;
     private float dt;
-    private float kirkRotationAngle;
     private boolean isBounceJump;
     private boolean isSliding;
     private boolean isControlDisabled;
@@ -302,7 +301,6 @@ public final class Kirk extends Character {
     protected void initialiseWorldValues() {
         xVelocity = 10.0f;
         maxJumpVelocity = 7.5f;
-        kirkRotationAngle = 0;
     }
 
     @Override
@@ -455,12 +453,10 @@ public final class Kirk extends Character {
     private float calculateJiniImpulseRotation() {
         if (currentCharacterState == CharacterState.Kirk.JINI_IMPULSE) {
             float rotationSpeed = KIRK_STRAIGHT_JUMP_ROTATION_SPEED;
-            kirkRotationAngle += horizontalDirectionMultiplyer(-rotationSpeed);
             return horizontalDirectionMultiplyer(-rotationSpeed);
         } else {
-            float tempRotation = kirkRotationAngle;
-            kirkRotationAngle = 0;
-            return -tempRotation;
+            setRotation(0);
+            return 0;
         }
     }
 

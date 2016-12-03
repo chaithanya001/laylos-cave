@@ -33,8 +33,7 @@ public final class InputController implements InputProcessor {
     private Kirk kirk;
     private Jini jini;
 
-
-
+    private Vector2 dragStart;
     private boolean bounceJumpImpulse;
     private boolean doubleJumpImpulse;
     private boolean iceBurstImpulse;
@@ -247,7 +246,7 @@ public final class InputController implements InputProcessor {
                     jini.setIsTeleporting(true);
                     jini.resetAnimationStateTimer();
                 }
-                break;
+                return true;
             case Input.Keys.RIGHT:
                 controls[ControlKey.RIGHT.index] = true;
 
@@ -255,14 +254,14 @@ public final class InputController implements InputProcessor {
                     jini.setIsTeleporting(true);
                     jini.resetAnimationStateTimer();
                 }
-                break;
+                return true;
             case Input.Keys.UP:
                 if(kirk.getCurrentPlatformState() != PlatformState.BOUNCY && !kirk.isSliding())
                     kirk.jump();
-                break;
+                return true;
             case Input.Keys.DOWN:
                 controls[ControlKey.DOWN.index] = true;
-                break;
+                return true;
             case Input.Keys.SPACE:
                 if(kirk.getCurrentPlatformState() == PlatformState.ICE && !kirk.isSliding())
                     applyJiniImpulse(CharacterState.Jini.ICE_BURST_IMPULSE);
@@ -270,10 +269,10 @@ public final class InputController implements InputProcessor {
                     applyJiniImpulse(CharacterState.Jini.DOUBLE_JUMP);
                 else if(kirk.isBounceJumping())
                     applyJiniImpulse(CharacterState.Jini.BOUNCE_IMPULSE);
-                break;
+                return true;
         }
 
-        return true;
+        return false;
     }
 
     @Override
@@ -283,23 +282,23 @@ public final class InputController implements InputProcessor {
                 if(kirk.getCurrentPlatformState() == PlatformState.ICE && !kirk.isSliding())
                     kirk.applySlide();
                 controls[ControlKey.LEFT.index] = false;
-                break;
+                return true;
             case Input.Keys.RIGHT:
                 if(kirk.getCurrentPlatformState() == PlatformState.ICE && !kirk.isSliding())
                     kirk.applySlide();
                 controls[ControlKey.RIGHT.index] = false;
-                break;
+                return true;
             case Input.Keys.UP:
                 controls[ControlKey.UP.index] = false;
-                break;
+                return true;
             case Input.Keys.DOWN:
                 controls[ControlKey.DOWN.index] = false;
-                break;
+                return true;
             case Input.Keys.SPACE:
-                break;
+                return true;
         }
 
-        return true;
+        return false;
     }
 
     @Override
@@ -309,16 +308,29 @@ public final class InputController implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return true;
+        dragStart = new Vector2(screenX, screenY);
+        return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return true;
+
+        if(controls[ControlKey.DOWN.index]){
+            controls[ControlKey.DOWN.index] = false;
+            return true;
+        }
+
+        return false;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
+
+        if(dragStart.y - screenY < 0){
+            controls[ControlKey.DOWN.index] = true;
+            return true;
+        }
+
         return false;
     }
 

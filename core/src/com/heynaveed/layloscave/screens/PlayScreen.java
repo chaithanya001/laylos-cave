@@ -43,6 +43,7 @@ public class PlayScreen implements Screen {
     private static final Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
     private static OrthogonalTiledMapRenderer mapRenderer;
 
+    private final InputMultiplexer inputMultiplexer;
     private final GameApp gameApp;
     private final OrthographicCamera gameCam;
     private final Viewport viewport;
@@ -59,6 +60,7 @@ public class PlayScreen implements Screen {
     public PlayScreen(GameApp gameApp) throws IOException {
         this.gameApp = gameApp;
         gameCam = new OrthographicCamera();
+        inputMultiplexer = new InputMultiplexer();
 //        mapGenerator = new MapGenerator().buildTreeMap();
         mapGenerator = new MapGenerator().buildPathMap();
         viewport = new FitViewport(GameApp.toPPM(GameApp.VIEWPORT_WIDTH), GameApp.toPPM(GameApp.VIEWPORT_HEIGHT), gameCam);
@@ -77,6 +79,11 @@ public class PlayScreen implements Screen {
         mapRenderer = new OrthogonalTiledMapRenderer(currentMap, GameApp.toPPM(MAP_UNIT_SCALE));
         world.setContactListener(contactListener);
         initialisePortals();
+
+        if(GameApp.CONFIGURATION == "Android")
+            inputMultiplexer.addProcessor(inputController.getStage());
+
+        inputMultiplexer.addProcessor(inputController);
     }
 
     public void update(float dt) {
@@ -223,10 +230,7 @@ public class PlayScreen implements Screen {
 
     @Override
     public void show() {
-        if(GameApp.CONFIGURATION == "Desktop")
-            Gdx.input.setInputProcessor(inputController);
-        else if(GameApp.CONFIGURATION == "Android")
-            Gdx.input.setInputProcessor(inputController.getStage());
+        Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
     @Override
