@@ -385,8 +385,14 @@ public final class InputController implements InputProcessor {
     public void dispose(){
         screen.dispose();
         stage.dispose();
+        kirkSkin.dispose();
         jiniSkin.dispose();
+        leftSkin.dispose();
+        rightSkin.dispose();
+        kirkAtlas.dispose();
         jiniAtlas.dispose();
+        leftAtlas.dispose();
+        rightAtlas.dispose();
     }
 
     public Stage getStage(){

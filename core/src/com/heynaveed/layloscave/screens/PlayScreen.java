@@ -82,7 +82,6 @@ public class PlayScreen implements Screen {
 
         if(GameApp.CONFIGURATION == "Android")
             inputMultiplexer.addProcessor(inputController.getStage());
-
         inputMultiplexer.addProcessor(inputController);
     }
 

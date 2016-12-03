@@ -26,8 +26,10 @@ public final class Kirk extends Character {
 
     private static final float KIRK_STRAIGHT_JUMP_ROTATION_SPEED = 25.0f;
     private static final float MAXIMUM_VELOCITY = 15.0f;
-    private static final float CAMERA_WEST_LIMIT = 12.0f;
-    private static final float CAMERA_JUMP_THRESHOLD = 6.8f;
+    private static final float CAMERA_WEST_LIMIT = 15.0f;
+    private static final float CAMERA_EAST_LIMIT = 177.0f;
+    private static final float CAMERA_NORTH_LIMIT = 119.0f;
+    private static final float CAMERA_SOUTH_LIMIT = 8.5f;
     private static final float FIXTURE_WIDTH = GameApp.toPPM(48);
     private static final float FIXTURE_HEIGHT = GameApp.toPPM(92);
     private static final float HEAD_DISPLACEMENT = GameApp.toPPM(30);
@@ -109,15 +111,20 @@ public final class Kirk extends Character {
 
     private void panCamera(float dt) {
         if (!isPortalLocked) {
-            if (body.getPosition().x > CAMERA_WEST_LIMIT)
+            if (body.getPosition().x > CAMERA_WEST_LIMIT && body.getPosition().x < CAMERA_EAST_LIMIT)
                 gameCam.position.x = RoundTo.RoundToNearest(body.getPosition().x, GameApp.toPPM(1));
-            else
+            else if(body.getPosition().x < CAMERA_WEST_LIMIT)
                 gameCam.position.x = CAMERA_WEST_LIMIT;
+            else if(body.getPosition().x > CAMERA_EAST_LIMIT)
+                gameCam.position.x = CAMERA_EAST_LIMIT;
 
-            if (body.getPosition().y > CAMERA_JUMP_THRESHOLD)
+
+            if (body.getPosition().y > CAMERA_SOUTH_LIMIT && body.getPosition().y < CAMERA_NORTH_LIMIT)
                 gameCam.position.y = RoundTo.RoundToNearest(body.getPosition().y, GameApp.toPPM(1));
-            else
-                gameCam.position.y = CAMERA_JUMP_THRESHOLD;
+            else if(body.getPosition().y < CAMERA_SOUTH_LIMIT)
+                gameCam.position.y = CAMERA_SOUTH_LIMIT;
+            else if(body.getPosition().y > CAMERA_NORTH_LIMIT)
+                gameCam.position.y = CAMERA_NORTH_LIMIT;
         }
 
         else {
@@ -153,6 +160,8 @@ public final class Kirk extends Character {
                 yPath = 0;
             }
         }
+
+        System.out.println("(x: " + gameCam.position.x + ", y: " + gameCam.position.y + ")");
     }
 
     public void checkForPortalDisplacement() {
