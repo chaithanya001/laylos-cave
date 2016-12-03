@@ -17,7 +17,7 @@ import com.heynaveed.layloscave.universe.platforms.NormalPlatform;
 import com.heynaveed.layloscave.universe.platforms.IcePlatform;
 import com.heynaveed.layloscave.universe.platforms.RotationPlatform;
 import com.heynaveed.layloscave.screens.PlayScreen;
-import com.heynaveed.layloscave.utils.maps.tools.MapGenerator;
+import com.heynaveed.layloscave.utils.maps.MapGenerator;
 
 
 public class Level {

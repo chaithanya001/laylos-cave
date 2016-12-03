@@ -1,8 +1,6 @@
-package com.heynaveed.layloscave.utils.maps.tools;
+package com.heynaveed.layloscave.utils.maps;
 
-/**
- * Created by Naveed PC on 05/11/2016.
- */
+
 public final class TileVector {
 
     protected final int x;

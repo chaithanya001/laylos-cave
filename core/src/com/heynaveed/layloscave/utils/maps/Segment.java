@@ -1,4 +1,4 @@
-package com.heynaveed.layloscave.utils.maps.tools;
+package com.heynaveed.layloscave.utils.maps;
 
 import com.heynaveed.layloscave.states.PathDirectionState;
 
@@ -9,7 +9,7 @@ import java.util.Arrays;
  * Created by naveed.shihab on 16/11/2016.
  */
 
-class Segment {
+final class Segment {
 
     private final TileVector[] tileVectors;
     private final PathDirectionState direction;

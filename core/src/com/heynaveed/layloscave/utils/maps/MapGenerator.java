@@ -1,4 +1,4 @@
-package com.heynaveed.layloscave.utils.maps.tools;
+package com.heynaveed.layloscave.utils.maps;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;

@@ -2,7 +2,6 @@ package com.heynaveed.layloscave.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -17,7 +16,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.heynaveed.layloscave.universe.Portal;
 import com.heynaveed.layloscave.utils.InputController;
-import com.heynaveed.layloscave.utils.maps.tools.MapGenerator;
+import com.heynaveed.layloscave.utils.maps.MapGenerator;
 import com.heynaveed.layloscave.universe.characters.Jini;
 import com.heynaveed.layloscave.universe.characters.Kirk;
 import com.heynaveed.layloscave.universe.platforms.CrumblingPlatform;
@@ -27,7 +26,7 @@ import com.heynaveed.layloscave.universe.platforms.RotationPlatform.RotationBloc
 import com.heynaveed.layloscave.utils.CollisionDetector;
 import com.heynaveed.layloscave.universe.Level;
 import com.heynaveed.layloscave.GameApp;
-import com.heynaveed.layloscave.utils.maps.tools.TileVector;
+import com.heynaveed.layloscave.utils.maps.TileVector;
 
 import java.io.IOException;
 import java.util.ArrayList;

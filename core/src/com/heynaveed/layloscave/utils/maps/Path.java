@@ -1,4 +1,4 @@
-package com.heynaveed.layloscave.utils.maps.tools;
+package com.heynaveed.layloscave.utils.maps;
 
 
 import com.heynaveed.layloscave.states.PathDirectionState;
@@ -10,7 +10,7 @@ import java.util.Random;
  * Created by naveed.shihab on 16/11/2016.
  */
 
-public class Path {
+final class Path {
 
     private static final Random random = new Random();
 
@@ -22,8 +22,8 @@ public class Path {
     private static final int MAX_SEGMENTS = 250;
     private static final int[] VERTICAL_SEGMENT_SIZES = {8, 9, 10, 11, 12, 13};
     private static final int[] HORIZONTAL_SEGMENT_SIZES = {20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35};
-    private static final ArrayList<Segment> pathSegments = new ArrayList<com.heynaveed.layloscave.utils.maps.tools.Segment>();
-    private static final ArrayList<TileVector[]> individualSegmentPositions = new ArrayList<com.heynaveed.layloscave.utils.maps.tools.TileVector[]>();
+    private static final ArrayList<Segment> pathSegments = new ArrayList<Segment>();
+    private static final ArrayList<TileVector[]> individualSegmentPositions = new ArrayList<TileVector[]>();
     private static final PathDirectionState[] directionStates = truncateDirectionArray(PathDirectionState.values());
     private static final boolean[] directionPotential = new boolean[directionStates.length];
     private static final ArrayList<PathDirectionState> finalDirectionStates = new ArrayList<PathDirectionState>();
@@ -41,7 +41,7 @@ public class Path {
         individualSegmentPositions.clear();
         finalDirectionStates.clear();
 
-        WORKING_POSITION = new com.heynaveed.layloscave.utils.maps.tools.TileVector(
+        WORKING_POSITION = new TileVector(
                 random.nextInt(MapGenerator.PLATFORM_MAX_X - MapGenerator.PLATFORM_MIN_X) + MapGenerator.PLATFORM_MIN_X,
                 random.nextInt(MapGenerator.PLATFORM_MAX_Y - MapGenerator.PLATFORM_MIN_Y) + MapGenerator.PLATFORM_MIN_Y);
         CURRENT_DIRECTION = decideDirection();
@@ -70,7 +70,7 @@ public class Path {
     }
 
     private TileVector calculateRandomTileVector(){
-        com.heynaveed.layloscave.utils.maps.tools.TileVector tileVector = new com.heynaveed.layloscave.utils.maps.tools.TileVector(
+        TileVector tileVector = new TileVector(
                 random.nextInt(MapGenerator.PLATFORM_MAX_X - MapGenerator.PLATFORM_MIN_X) + MapGenerator.PLATFORM_MIN_X,
                 random.nextInt(MapGenerator.PLATFORM_MAX_Y - MapGenerator.PLATFORM_MIN_Y) + MapGenerator.PLATFORM_MIN_Y);
 
@@ -205,7 +205,7 @@ public class Path {
         down_loop:
         for (int x = WORKING_POSITION.x; x < downMaxPotential; x++) {
             for (int i = 0; i < pathSegments.size() - 1; i++) {
-                com.heynaveed.layloscave.utils.maps.tools.TileVector[] currentSegment = pathSegments.get(i).getTileVectorsAsArray();
+                TileVector[] currentSegment = pathSegments.get(i).getTileVectorsAsArray();
 
                 for (int j = 0; j < currentSegment.length; j++) {
                     if (x == currentSegment[j].x && WORKING_POSITION.y == currentSegment[j].y) {
@@ -236,7 +236,7 @@ public class Path {
         left_loop:
         for (int y = WORKING_POSITION.y; y > leftMaxPotential; y--) {
             for (int i = 0; i < pathSegments.size() - 1; i++) {
-                com.heynaveed.layloscave.utils.maps.tools.TileVector[] currentSegment = pathSegments.get(i).getTileVectorsAsArray();
+                TileVector[] currentSegment = pathSegments.get(i).getTileVectorsAsArray();
 
                 for (int j = 0; j < currentSegment.length; j++) {
                     if (WORKING_POSITION.x == currentSegment[j].x && y == currentSegment[j].y) {

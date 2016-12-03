@@ -1,19 +1,13 @@
-package com.heynaveed.layloscave.utils.maps.tools;
+package com.heynaveed.layloscave.utils.maps;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 
-/**
- * Created by Naveed PC on 05/11/2016.
- */
-public final class Tree {
+final class Tree {
 
     private static final int MINIMUM_X_DIFFERENCE = 8;
     private static final int MIN_PLATFORM_LENGTH = 5;
-    private static final Random random = new Random();
     private static final int CHILDREN_PER_PARENT = 4;
-    private static final int LAYER_NUM = 2;
     private static final ArrayList<Node> nodes = new ArrayList<Node>();
     private static final ArrayList<TileVector[]> individualPlatformPositions = new ArrayList<TileVector[]>();
     private static final ArrayList<TileVector> globalPlatformPositions = new ArrayList<TileVector>();
