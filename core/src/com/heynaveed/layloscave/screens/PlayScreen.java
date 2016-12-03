@@ -61,7 +61,6 @@ public class PlayScreen implements Screen {
         this.gameApp = gameApp;
         gameCam = new OrthographicCamera();
         inputMultiplexer = new InputMultiplexer();
-//        mapGenerator = new MapGenerator().buildTreeMap();
         mapGenerator = new MapGenerator().buildPathMap();
         viewport = new FitViewport(GameApp.toPPM(GameApp.VIEWPORT_WIDTH), GameApp.toPPM(GameApp.VIEWPORT_HEIGHT), gameCam);
         gameCam.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight() / 2, 0);
@@ -170,7 +169,7 @@ public class PlayScreen implements Screen {
 
     private void loadLevels() {
         for (int i = 1; i <= Level.NUMBER_OF_LEVELS; i++)
-            levels.add(new Level(this, i));
+            levels.add(new Level(this));
     }
 
     private void checkForNextLevel() {

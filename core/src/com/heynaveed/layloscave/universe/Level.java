@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.heynaveed.layloscave.GameApp;
 import com.heynaveed.layloscave.keys.LayerKey;
+import com.heynaveed.layloscave.states.MapState;
 import com.heynaveed.layloscave.universe.platforms.BouncyPlatform;
 import com.heynaveed.layloscave.universe.platforms.CrumblingPlatform;
 import com.heynaveed.layloscave.universe.platforms.MuddyPlatform;
@@ -16,15 +17,13 @@ import com.heynaveed.layloscave.universe.platforms.NormalPlatform;
 import com.heynaveed.layloscave.universe.platforms.IcePlatform;
 import com.heynaveed.layloscave.universe.platforms.RotationPlatform;
 import com.heynaveed.layloscave.screens.PlayScreen;
+import com.heynaveed.layloscave.utils.maps.tools.MapGenerator;
 
 
 public class Level {
 
     public static final int NUMBER_OF_LEVELS = 1;
-    private static final String MAP_PATH = "maps/";
-    private static final String LEVEL_PATH = "level";
-    private static final String MAP_LEVEL = "1";
-    private static final String MAP_FILE_EXTENSION = ".tmx";
+    private static int levelNumber = 1;
     private static TmxMapLoader mapLoader;
 
     private final PlayScreen screen;
@@ -37,17 +36,17 @@ public class Level {
     private final Array<BouncyPlatform> bouncyPlatforms;
     private final Array<CrumblingPlatform> crumblingPlatforms;
 
-    public Level(PlayScreen screen, int levelNumber){
+    public Level(PlayScreen screen){
         this.screen = screen;
         world = screen.getWorld();
 
         if(GameApp.CONFIGURATION.equals("Desktop")) {
             mapLoader = new TmxMapLoader();
-            map = mapLoader.load(MAP_PATH + LEVEL_PATH + MAP_LEVEL + MAP_FILE_EXTENSION);
+            map = mapLoader.load(MapGenerator.MAP_PATH + MapState.HUB.name + levelNumber + MapGenerator.TMX_EXTENSION);
         }
         else{
             mapLoader = new TmxMapLoader(new LocalFileHandleResolver());
-            map = mapLoader.load(LEVEL_PATH + MAP_LEVEL + MAP_FILE_EXTENSION);
+            map = mapLoader.load(MapState.HUB.name + levelNumber + MapGenerator.TMX_EXTENSION);
         }
 
         groundPlatforms = new Array<NormalPlatform>();

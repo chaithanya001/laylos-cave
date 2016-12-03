@@ -1,8 +1,4 @@
-package com.heynaveed.layloscave.utils.maps;
-
-import com.heynaveed.layloscave.utils.maps.tools.MapGenerator;
-import com.heynaveed.layloscave.utils.maps.tools.Node;
-import com.heynaveed.layloscave.utils.maps.tools.TileVector;
+package com.heynaveed.layloscave.utils.maps.tools;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -11,7 +7,7 @@ import java.util.Random;
 /**
  * Created by Naveed PC on 05/11/2016.
  */
-public final class TreeMap {
+public final class Tree {
 
     private static final int MINIMUM_X_DIFFERENCE = 8;
     private static final int MIN_PLATFORM_LENGTH = 5;
@@ -22,7 +18,7 @@ public final class TreeMap {
     private static final ArrayList<TileVector[]> individualPlatformPositions = new ArrayList<TileVector[]>();
     private static final ArrayList<TileVector> globalPlatformPositions = new ArrayList<TileVector>();
 
-    public TreeMap build(int layerNum, TileVector[] rootTileVector){
+    public Tree build(int layerNum, TileVector[] rootTileVector){
         initialise(rootTileVector);
         createTree(layerNum);
         return this;

@@ -10,7 +10,7 @@ import java.util.Random;
  * Created by naveed.shihab on 16/11/2016.
  */
 
-public class PathMap {
+public class Path {
 
     private static final Random random = new Random();
 
@@ -29,7 +29,7 @@ public class PathMap {
     private static final ArrayList<PathDirectionState> finalDirectionStates = new ArrayList<PathDirectionState>();
 
 
-    public PathMap build(){
+    public Path build(){
         initialise();
         createPath();
 //        System.out.println("Segments: " + pathSegments.size());
@@ -76,8 +76,8 @@ public class PathMap {
 
         for(int i = 0; i < pathSegments.size(); i++){
             for(int j = 0; j < pathSegments.get(i).getTileVectorsAsArray().length; j++){
-                if(tileVector.x == pathSegments.get(i).getTileVectorsAsArray()[j].x
-                        && tileVector.y == pathSegments.get(i).getTileVectorsAsArray()[j].y)
+                if(tileVector.x() == pathSegments.get(i).getTileVectorsAsArray()[j].x()
+                        && tileVector.y() == pathSegments.get(i).getTileVectorsAsArray()[j].y())
                     calculateRandomTileVector();
                 else break;
             }
@@ -94,8 +94,8 @@ public class PathMap {
             float tempX = 0;
             float tempY = 0;
             for(int j = 0; j < pathSegments.get(i).getTileVectorsAsArray().length; j++){
-                tempX += pathSegments.get(i).getTileVectorsAsArray()[j].x;
-                tempY += pathSegments.get(i).getTileVectorsAsArray()[j].y;
+                tempX += pathSegments.get(i).getTileVectorsAsArray()[j].x();
+                tempY += pathSegments.get(i).getTileVectorsAsArray()[j].y();
             }
             x += (tempX/pathSegments.get(i).getTileVectorsAsArray().length);
             y += (tempY/pathSegments.get(i).getTileVectorsAsArray().length);
@@ -115,21 +115,21 @@ public class PathMap {
 
     private PathDirectionState decideDirection() {
 
-        int upMaxPotential = WORKING_POSITION.x
+        int upMaxPotential = WORKING_POSITION.x()
                 - VERTICAL_SEGMENT_SIZES[VERTICAL_SEGMENT_SIZES.length - 1] - PATH_SPACING*2;
-        int downMaxPotential = WORKING_POSITION.x
+        int downMaxPotential = WORKING_POSITION.x()
                 + VERTICAL_SEGMENT_SIZES[VERTICAL_SEGMENT_SIZES.length - 1] + PATH_SPACING*2;
-        int leftMaxPotential = WORKING_POSITION.y
+        int leftMaxPotential = WORKING_POSITION.y()
                 - HORIZONTAL_SEGMENT_SIZES[HORIZONTAL_SEGMENT_SIZES.length - 1] - PATH_SPACING*2;
-        int rightMaxPotential = WORKING_POSITION.y
+        int rightMaxPotential = WORKING_POSITION.y()
                 + HORIZONTAL_SEGMENT_SIZES[HORIZONTAL_SEGMENT_SIZES.length - 1] + PATH_SPACING*2;
-        int upMinPotential = WORKING_POSITION.x
+        int upMinPotential = WORKING_POSITION.x()
                 - VERTICAL_SEGMENT_SIZES[VERTICAL_SEGMENT_SIZES.length - 1] - PATH_SPACING*2;
-        int downMinPotential = WORKING_POSITION.x
+        int downMinPotential = WORKING_POSITION.x()
                 + VERTICAL_SEGMENT_SIZES[VERTICAL_SEGMENT_SIZES.length - 1] + PATH_SPACING*2;
-        int leftMinPotential = WORKING_POSITION.y
+        int leftMinPotential = WORKING_POSITION.y()
                 - HORIZONTAL_SEGMENT_SIZES[HORIZONTAL_SEGMENT_SIZES.length - 1] - PATH_SPACING*2;
-        int rightMinPotential = WORKING_POSITION.y
+        int rightMinPotential = WORKING_POSITION.y()
                 + HORIZONTAL_SEGMENT_SIZES[HORIZONTAL_SEGMENT_SIZES.length - 1] + PATH_SPACING*2;
 
         for (int i = 0; i < directionPotential.length; i++)

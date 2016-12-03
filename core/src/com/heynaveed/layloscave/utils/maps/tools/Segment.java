@@ -15,8 +15,8 @@ class Segment {
     private final PathDirectionState direction;
 
     Segment(){
-        direction = PathMap.CURRENT_DIRECTION;
-        tileVectors = createPathSegment(PathMap.SEGMENT_LENGTH, PathMap.WORKING_POSITION);
+        direction = Path.CURRENT_DIRECTION;
+        tileVectors = createPathSegment(Path.SEGMENT_LENGTH, Path.WORKING_POSITION);
     }
 
     private TileVector[] createPathSegment(int segmentLength, TileVector workingPosition){

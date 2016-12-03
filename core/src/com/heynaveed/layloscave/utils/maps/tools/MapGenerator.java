@@ -9,9 +9,9 @@ import com.badlogic.gdx.utils.StreamUtils;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
 import com.heynaveed.layloscave.GameApp;
+import com.heynaveed.layloscave.states.MapState;
 import com.heynaveed.layloscave.states.PathDirectionState;
 import com.heynaveed.layloscave.universe.Portal;
-import com.heynaveed.layloscave.utils.maps.TreeMap;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -41,30 +41,24 @@ public final class MapGenerator {
 
     private static final int MAX_PORTAL_PLATFORM_LENGTH = 12;
     private static final int MAX_PORTAL_PLATFORM_HEIGHT = 4;
-    private static final int[] TREE_LAYER_BOUNDS_X = {16, 32, 48, 64};
-    private static final int[] TREE_LAYER_BOUNDS_Y = {8, 24, 40, 56};
     private static final int[] GROUND_IDS = {1, 2, 3, 4, 5};
     private static final int[] CAVE_IDS = {6, 7, 8, 9, 10};
-    private static final int[] BOUNCY_IDS = {21, 22, 23};
     public static final int PLATFORM_MIN_X = 20;
     public static final int PLATFORM_MAX_X = 180;
     public static final int PLATFORM_MIN_Y = 20;
     public static final int PLATFORM_MAX_Y = 280;
-    private static final int PORTAL_PADDING_X = 25;
-    private static final int PORTAL_PADDING_Y = 40;
     private static final int PATH_PADDING = 8;
     private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-    private static final String TEMPLATE_MAP_PATH = "maps/templateMap.tmx";
-    private static final String NEW_MAP_PATH = "maps/level";
-    private static final String LEVEL = "level";
-    private static final String MAP_FILE_EXTENSION = ".tmx";
+    public static final String MAP_PATH = "maps/";
+    public static final String TEMPLATE_PATH = "template";
+    public static final String TMX_EXTENSION = ".tmx";
     private static final int MIN_X_CLEAN_PADDING = 20;
     private static final int MAX_X_CLEAN_PADDING = 160;
     private static final int MIN_Y_CLEAN_PADDING = 20;
     private static final int MAX_Y_CLEAN_PADDING = 270;
     public static final int HEIGHT = 200;
     public static final int WIDTH = 300;
-    private static int levelNumber = 0;
+    private static int hubNumber = 0;
     private static int[][] workingTileIDSet = new int[HEIGHT][WIDTH];
     private static int[] finalTileIDSet = new int[WIDTH * HEIGHT];
     private static String encodedString;
@@ -72,12 +66,9 @@ public final class MapGenerator {
     private static ArrayList<TileVector[]> platformPositions;
     private static ArrayList<TileVector> portalPositions;
     private static ArrayList<Boolean> portalFacing;
-    private static TreeMap treeMap;
-    private static PathMap pathMap;
-    private static boolean isTree = false;
-    private static boolean isPath = false;
+    private static Path path;
     private static int objectID = 1000;
-    private static FileHandle newMap;
+    private static FileHandle newHubMap;
 
     private static final Random random = new Random();
 
@@ -86,33 +77,12 @@ public final class MapGenerator {
         new MapGenerator().buildPathMap();
     }
 
-    public MapGenerator buildTreeMap() throws IOException{
-        isTree = true;
-        isPath = false;
-//        createNewMapFile();
-        loadMapRoot();
-        generateMapBase();
-        cleanMapNoise();
-        generateTreePlatforms();
-        deleteOldObjects();
-        generateObjects();
-        calculateCaveObjectList();
-        generateObjects();
-        compressTileIDSet();
-        updateTerrainLayer();
-        writeToMap();
-        return this;
-    }
-
     public MapGenerator buildPathMap() throws IOException{
-        isPath = true;
-        isTree = false;
         createNewMapFile();
         loadMapRoot();
         generateMapBase();
         cleanMapNoise();
         generatePathPlatforms();
-//        squeezeTreePlatforms();
         determinePortalPositions();
         deleteOldObjects();
         calculateCaveObjectList();
@@ -156,12 +126,12 @@ public final class MapGenerator {
         if(GameApp.CONFIGURATION.equals("Desktop")) {
             FileChannel source = null;
             FileChannel destination = null;
-            File templateMapFile = new File(TEMPLATE_MAP_PATH);
-            File newMapFile = new File(NEW_MAP_PATH + ++levelNumber + MAP_FILE_EXTENSION);
+            File templateHubMap = new File(MAP_PATH + TEMPLATE_PATH + MapState.HUB.name + TMX_EXTENSION);
+            File newHubMap = new File(MAP_PATH + MapState.HUB.name + ++hubNumber + TMX_EXTENSION);
 
             try {
-                source = new FileInputStream(templateMapFile).getChannel();
-                destination = new FileOutputStream(newMapFile).getChannel();
+                source = new FileInputStream(templateHubMap).getChannel();
+                destination = new FileOutputStream(newHubMap).getChannel();
                 destination.transferFrom(source, 0, source.size());
             } finally {
                 if (source != null) {
@@ -173,9 +143,9 @@ public final class MapGenerator {
             }
         }
         else if(GameApp.CONFIGURATION.equals("Android")){
-            FileHandle templateMap = Gdx.files.internal("maps/templateMap.tmx");
-            newMap = Gdx.files.local(LEVEL + ++levelNumber + MAP_FILE_EXTENSION);
-            newMap.writeString(templateMap.readString(), false);
+            FileHandle templateHubMap = Gdx.files.internal("maps/templateHubMap.tmx");
+            newHubMap = Gdx.files.local(MapState.HUB.name + ++hubNumber + TMX_EXTENSION);
+            newHubMap.writeString(templateHubMap.readString(), false);
             FileHandle tileMapGutterOriginal = Gdx.files.internal("maps/tileMapGutter.png");
             FileHandle tileMapGutter = Gdx.files.local("tileMapGutter.png");
             FileHandle tileSetOriginal = Gdx.files.internal("maps/tileSet.png");
@@ -203,12 +173,8 @@ public final class MapGenerator {
     private static void cleanMapNoise(){
         for(int x = 0; x < HEIGHT; x++){
             for(int y = 0; y < WIDTH; y++){
-                if(x > offsetRandom(MIN_X_CLEAN_PADDING) && x < offsetRandom(MAX_X_CLEAN_PADDING) && y > offsetRandom(MIN_Y_CLEAN_PADDING) && y < offsetRandom(MAX_Y_CLEAN_PADDING)) {
-                    if(isPath)
-                        workingTileIDSet[x][y] = randomTileID(CAVE_IDS);
-                    else
-                        workingTileIDSet[x][y] = 0;
-                }
+                if(x > offsetRandom(MIN_X_CLEAN_PADDING) && x < offsetRandom(MAX_X_CLEAN_PADDING) && y > offsetRandom(MIN_Y_CLEAN_PADDING) && y < offsetRandom(MAX_Y_CLEAN_PADDING))
+                    workingTileIDSet[x][y] = randomTileID(CAVE_IDS);
             }
         }
         smoothMap(7);
@@ -221,17 +187,6 @@ public final class MapGenerator {
                     mapFileRoot.getChild(i).removeChild(j);
             }
         }
-    }
-
-    private static void generateTreePlatforms(){
-
-//        treeMap = new TreeMap().build(3);
-        TileVector[] treeTileVectors = treeMap.getGlobalPlatformPositions();
-
-        for(int i = 0; i < treeTileVectors.length; i++)
-            workingTileIDSet[treeTileVectors[i].x][treeTileVectors[i].y] = random.nextInt(5)+1;
-
-        platformPositions = treeMap.getIndividualPlatformPositions();
     }
 
     public Vector2 getRandomStartingPosition() {
@@ -253,9 +208,9 @@ public final class MapGenerator {
     }
 
     private static void generatePathPlatforms(){
-        pathMap = new PathMap().build();
-        platformPositions = pathMap.getIndividualSegmentPositions();
-        ArrayList<Segment> pathSegments = pathMap.getPathSegments();
+        path = new Path().build();
+        platformPositions = path.getIndividualSegmentPositions();
+        ArrayList<Segment> pathSegments = path.getPathSegments();
 
         for(int i = 0; i < platformPositions.size(); i++){
             for(int j = 0; j < platformPositions.get(i).length; j++)
@@ -297,50 +252,6 @@ public final class MapGenerator {
         }
 
         smoothMap(5);
-    }
-
-    private static void squeezeTreePlatforms(){
-
-        ArrayList<TileVector> layerOnePotentials = new ArrayList<TileVector>();
-
-        int minXY = TREE_LAYER_BOUNDS_Y[TREE_LAYER_BOUNDS_Y.length-1];
-        int maxX = HEIGHT - minXY;
-        int maxY = WIDTH - minXY;
-        int layerNumber = 1;
-
-        for(int i = minXY; i < maxX; i++){
-            row_loop:
-            for(int j = minXY; j < maxY; j++){
-                for (int l = -TREE_LAYER_BOUNDS_X[layerNumber] / 2; l < TREE_LAYER_BOUNDS_X[layerNumber] / 2; l++) {
-                    for (int m = -TREE_LAYER_BOUNDS_Y[layerNumber] / 2; m < TREE_LAYER_BOUNDS_Y[layerNumber] / 2; m++) {
-                        if (workingTileIDSet[i + l][j + m] != 0)
-                            continue row_loop;
-                    }
-                }
-                layerOnePotentials.add(new TileVector(i, j-4));
-            }
-        }
-
-//        for(int i = 0; i < layerOnePotentials.size(); i++)
-//            workingTileIDSet[layerOnePotentials.get(i).x][layerOnePotentials.get(i).y] = randomTileID(BOUNCY_IDS);
-
-        if(!layerOnePotentials.isEmpty()) {
-            TileVector[] rootTileVector = new TileVector[8];
-            int xPos;
-            int yPos;
-            int randomPosition = random.nextInt(layerOnePotentials.size());
-            for (int i = 0; i < rootTileVector.length && !layerOnePotentials.isEmpty(); i++) {
-                xPos = layerOnePotentials.get(randomPosition).x;
-                yPos = layerOnePotentials.get(randomPosition).y + i;
-                rootTileVector[i] = new TileVector(xPos, yPos);
-            }
-
-            TreeMap tree = new TreeMap().build(layerNumber, rootTileVector);
-            TileVector[] treeTileVectors = tree.getGlobalPlatformPositions();
-
-            for (int i = 0; i < treeTileVectors.length; i++)
-                workingTileIDSet[treeTileVectors[i].x][treeTileVectors[i].y] = randomTileID(GROUND_IDS);
-        }
     }
 
     private static void determinePortalPositions(){
@@ -486,11 +397,7 @@ public final class MapGenerator {
 
     private static void generateObjects() throws IOException{
 
-        int offset;
-        if(isPath)
-            offset = GameApp.TILE_LENGTH;
-        else
-            offset = 0;
+        int offset = GameApp.TILE_LENGTH;
 
         TileVector[] vector;
         Element object;
@@ -527,7 +434,7 @@ public final class MapGenerator {
 
         if(GameApp.CONFIGURATION.equals("Desktop")) {
 
-            File file = new File("maps/level" + levelNumber + MAP_FILE_EXTENSION);
+            File file = new File(MAP_PATH + MapState.HUB.name + hubNumber + TMX_EXTENSION);
             BufferedReader reader = new BufferedReader(new FileReader(file));
             StringBuilder sb = new StringBuilder();
             String line = reader.readLine();
@@ -542,7 +449,7 @@ public final class MapGenerator {
             reader.close();
         }
         else if(GameApp.CONFIGURATION.equals("Android"))
-            mapFileRoot = new XmlReader().parse(newMap.readString());
+            mapFileRoot = new XmlReader().parse(newHubMap.readString());
     }
 
     private static void updateTerrainLayer() throws IOException{
@@ -555,13 +462,13 @@ public final class MapGenerator {
     private static void writeToMap() throws IOException{
 
         if(GameApp.CONFIGURATION.equals("Desktop")) {
-            PrintWriter writer = new PrintWriter(new File("maps/level" + levelNumber + MAP_FILE_EXTENSION));
+            PrintWriter writer = new PrintWriter(new File(MAP_PATH + MapState.HUB.name + hubNumber + TMX_EXTENSION));
             writer.print("");
             writer.print(XML_HEADER + "\n" + mapFileRoot.toString());
             writer.close();
         }
         else if(GameApp.CONFIGURATION.equals("Android"))
-            newMap.writeString(XML_HEADER + "\n" + mapFileRoot.toString(), false);
+            newHubMap.writeString(XML_HEADER + "\n" + mapFileRoot.toString(), false);
     }
 
     private static void smoothMap(int iterations){

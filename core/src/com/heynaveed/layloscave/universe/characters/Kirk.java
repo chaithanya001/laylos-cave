@@ -126,7 +126,6 @@ public final class Kirk extends Character {
             else if(body.getPosition().y > CAMERA_NORTH_LIMIT)
                 gameCam.position.y = CAMERA_NORTH_LIMIT;
         }
-
         else {
             float xMovement = 0;
             float yMovement = 0;
@@ -160,8 +159,6 @@ public final class Kirk extends Character {
                 yPath = 0;
             }
         }
-
-        System.out.println("(x: " + gameCam.position.x + ", y: " + gameCam.position.y + ")");
     }
 
     public void checkForPortalDisplacement() {
