@@ -539,6 +539,8 @@ public final class Kirk extends Character {
 
     public void glideDown() {
         body.setLinearVelocity(new Vector2(0, -20.0f));
+        setRotation(0);
+        screen.getInputController().setDoubleJumpImpulse(false);
     }
 
     public void setSourcePortal(Portal sourcePortal) {
