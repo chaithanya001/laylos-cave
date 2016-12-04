@@ -1,7 +1,5 @@
 package com.heynaveed.layloscave.utils.maps;
 
-import com.heynaveed.layloscave.states.PathDirectionState;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -12,7 +10,7 @@ import java.util.Arrays;
 final class HubSegment {
 
     private final TileVector[] tileVectors;
-    private final PathDirectionState direction;
+    private final PathDirection.Hub direction;
 
     HubSegment(){
         direction = HubPath.CURRENT_DIRECTION;
@@ -29,7 +27,7 @@ final class HubSegment {
         return temp;
     }
 
-    PathDirectionState getDirection(){
+    PathDirection.Hub getDirection(){
         return direction;
     }
 

@@ -10,7 +10,6 @@ import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
 import com.heynaveed.layloscave.GameApp;
 import com.heynaveed.layloscave.states.MapState;
-import com.heynaveed.layloscave.states.PathDirectionState;
 import com.heynaveed.layloscave.universe.Portal;
 
 import java.io.BufferedInputStream;
@@ -80,6 +79,8 @@ public final class MapGenerator {
     private static int workingHeight;
     private static final int[] TOP_LEFT_X_BLOCK_POSITIONS = {2, 30, 58, 86};
     private static final int[] TOP_LEFT_Y_BLOCK_POSITIONS = {2, 50, 98, 146};
+    private static final int[] X_BLOCK_MIDPOINTS = {13, 13, 13, 13, 41, 41, 41, 41, 69, 69, 69, 69, 97, 97, 97, 97};
+    private static final int[] Y_BLOCK_MIDPOINTS = {23, 71, 119, 167, 23, 71, 119, 167, 23, 71, 119, 167, 23, 71, 119, 167};
 
     private static final Random random = new Random();
 
@@ -134,7 +135,54 @@ public final class MapGenerator {
     }
 
     private static void generateCavernPathway(){
+        CavernPath cavernPath = new CavernPath();
+        ArrayList<CavernBlock> cavernBlocks = cavernPath.getCavernBlocks();
 
+        for(int i = 0; i < cavernBlocks.size(); i++){
+            if(!cavernBlocks.get(i).isPathBlock()){
+
+                int tempX = TOP_LEFT_X_BLOCK_POSITIONS[0];
+                int tempY = ((i%4)*48)+2;
+
+                tempX_loop:
+                for(int j = 0; j < TOP_LEFT_X_BLOCK_POSITIONS.length; j++){
+                    if(i < (j+1)*4) {
+                        tempX = TOP_LEFT_X_BLOCK_POSITIONS[j];
+                        break tempX_loop;
+                    }
+                }
+
+                for(int y = tempY; y <= tempY+44; y++){
+                    for(int x = tempX; x <= tempX+24; x++)
+                        workingTileIDSet[x][y] = randomTileID(CAVE_IDS);
+                }
+            }
+
+            if(cavernBlocks.get(i).getDirection().equals(PathDirection.Cavern.UP)){
+                for(int j = X_BLOCK_MIDPOINTS[i]; j > X_BLOCK_MIDPOINTS[i]-28; j--){
+                    for(int k = Y_BLOCK_MIDPOINTS[i]-2; k <= Y_BLOCK_MIDPOINTS[i]+2; k++)
+                        workingTileIDSet[j][k] = 0;
+                }
+            }
+            else if(cavernBlocks.get(i).getDirection().equals(PathDirection.Cavern.DOWN)){
+                for(int j = X_BLOCK_MIDPOINTS[i]; j < X_BLOCK_MIDPOINTS[i]+28; j++){
+                    for(int k = Y_BLOCK_MIDPOINTS[i]-2; k <= Y_BLOCK_MIDPOINTS[i]+2; k++)
+                        workingTileIDSet[j][k] = 0;
+                }
+            }
+            else if(cavernBlocks.get(i).getDirection().equals(PathDirection.Cavern.LEFT)){
+                for(int j = Y_BLOCK_MIDPOINTS[i]; j > Y_BLOCK_MIDPOINTS[i]-45; j--){
+                    for(int k = X_BLOCK_MIDPOINTS[i]-2; k <= X_BLOCK_MIDPOINTS[i]+2; k++)
+                        workingTileIDSet[k][j] = 0;
+                }
+            }
+            else if(cavernBlocks.get(i).getDirection().equals(PathDirection.Cavern.RIGHT)){
+                for(int j = Y_BLOCK_MIDPOINTS[i]; j < Y_BLOCK_MIDPOINTS[i]+45; j++){
+                    for(int k = X_BLOCK_MIDPOINTS[i]-2; k <= X_BLOCK_MIDPOINTS[i]+2; k++)
+                        workingTileIDSet[k][j] = 0;
+                }
+            }
+        }
     }
 
     private static void generateCavernBase(){
@@ -299,7 +347,7 @@ public final class MapGenerator {
         }
 
         for(int i = 0; i < pathHubSegments.size(); i++){
-            PathDirectionState directionState = pathHubSegments.get(i).getDirection();
+            PathDirection.Hub directionState = pathHubSegments.get(i).getDirection();
             TileVector[] tileVector = pathHubSegments.get(i).getTileVectorsAsArray();
 
             boolean isXAxis = false;
