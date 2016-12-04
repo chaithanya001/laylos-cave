@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-final class Node {
+final class TreeNode {
 
     private final TileVector[] tileVectors;
     private boolean isRootNode;
 
-    Node(TileVector[] tileVectors){
+    TreeNode(TileVector[] tileVectors){
         this.tileVectors = tileVectors;
     }
 
-    Node isRootNode(boolean isRootNode){
+    TreeNode isRootNode(boolean isRootNode){
         this.isRootNode = isRootNode;
         return this;
     }

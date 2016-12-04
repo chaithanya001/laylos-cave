@@ -71,13 +71,15 @@ public final class MapGenerator {
     private static ArrayList<TileVector[]> platformPositions;
     private static ArrayList<TileVector> portalPositions;
     private static ArrayList<Boolean> portalFacing;
-    private static Path path;
+    private static HubPath hubPath;
     private static int objectID = 1000;
     private static FileHandle newMap;
     private static MapState workingMapState;
     private static int levelNumber = 0;
     private static int workingWidth;
     private static int workingHeight;
+    private static final int[] TOP_LEFT_X_BLOCK_POSITIONS = {2, 30, 58, 86};
+    private static final int[] TOP_LEFT_Y_BLOCK_POSITIONS = {2, 50, 98, 146};
 
     private static final Random random = new Random();
 
@@ -114,21 +116,25 @@ public final class MapGenerator {
 
     private static void populateWorkingArray(){
         for(int i = 0; i < workingTileIDSet.length; i++){
-            for(int j = 0; j < workingTileIDSet[i].length; j++){
+            for(int j = 0; j < workingTileIDSet[i].length; j++)
                 workingTileIDSet[i][j] = 0;
-            }
         }
     }
 
     private static void buildHubMap() throws IOException{
         generateHubBase();
         cleanMapNoise();
-        generatePathways();
+        generateHubPathway();
         determinePortalPositions();
     }
 
     private static void buildCavernMap() throws IOException{
         generateCavernBase();
+        generateCavernPathway();
+    }
+
+    private static void generateCavernPathway(){
+
     }
 
     private static void generateCavernBase(){
@@ -138,17 +144,15 @@ public final class MapGenerator {
                 workingTileIDSet[x][y] = randomTileID(CAVE_IDS);
         }
 
-        int[] xPositions = {2, 30, 58, 86};
-        int[] yPositions = {2, 50, 98, 146};
-
-        for(int i = 0; i < xPositions.length; i++){
-            for(int j = 0; j < yPositions.length; j++){
-                for(int x = xPositions[i]; x < xPositions[i]+CAVERN_BLOCK_HEIGHT; x++){
-                    for(int y = yPositions[j]; y < yPositions[j]+CAVERN_BLOCK_WIDTH; y++)
+        for(int i = 0; i < TOP_LEFT_X_BLOCK_POSITIONS.length; i++){
+            for(int j = 0; j < TOP_LEFT_Y_BLOCK_POSITIONS.length; j++){
+                for(int x = TOP_LEFT_X_BLOCK_POSITIONS[i]; x < TOP_LEFT_X_BLOCK_POSITIONS[i]+CAVERN_BLOCK_HEIGHT; x++){
+                    for(int y = TOP_LEFT_Y_BLOCK_POSITIONS[j]; y < TOP_LEFT_Y_BLOCK_POSITIONS[j]+CAVERN_BLOCK_WIDTH; y++)
                         workingTileIDSet[x][y] = 0;
                 }
             }
         }
+
 
     }
 
@@ -284,19 +288,19 @@ public final class MapGenerator {
         return new Vector2(GameApp.toPPM(y) * 64, GameApp.toPPM(MapGenerator.HUB_HEIGHT - x - (padding - 2)) * 64);
     }
 
-    private static void generatePathways(){
-        path = new Path().build();
-        platformPositions = path.getIndividualSegmentPositions();
-        ArrayList<Segment> pathSegments = path.getPathSegments();
+    private static void generateHubPathway(){
+        hubPath = new HubPath().build();
+        platformPositions = hubPath.getIndividualSegmentPositions();
+        ArrayList<HubSegment> pathHubSegments = hubPath.getPathSegments();
 
         for(int i = 0; i < platformPositions.size(); i++){
             for(int j = 0; j < platformPositions.get(i).length; j++)
                 workingTileIDSet[platformPositions.get(i)[j].x][platformPositions.get(i)[j].y] = 0;
         }
 
-        for(int i = 0; i < pathSegments.size(); i++){
-            PathDirectionState directionState = pathSegments.get(i).getDirection();
-            TileVector[] tileVector = pathSegments.get(i).getTileVectorsAsArray();
+        for(int i = 0; i < pathHubSegments.size(); i++){
+            PathDirectionState directionState = pathHubSegments.get(i).getDirection();
+            TileVector[] tileVector = pathHubSegments.get(i).getTileVectorsAsArray();
 
             boolean isXAxis = false;
 

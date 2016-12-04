@@ -10,7 +10,7 @@ import java.util.Random;
  * Created by naveed.shihab on 16/11/2016.
  */
 
-final class Path {
+final class HubPath {
 
     private static final Random random = new Random();
 
@@ -22,22 +22,22 @@ final class Path {
     private static final int MAX_SEGMENTS = 250;
     private static final int[] VERTICAL_SEGMENT_SIZES = {8, 9, 10, 11, 12, 13};
     private static final int[] HORIZONTAL_SEGMENT_SIZES = {20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35};
-    private static final ArrayList<Segment> pathSegments = new ArrayList<Segment>();
+    private static final ArrayList<HubSegment> PATH_HUB_SEGMENTs = new ArrayList<HubSegment>();
     private static final ArrayList<TileVector[]> individualSegmentPositions = new ArrayList<TileVector[]>();
     private static final PathDirectionState[] directionStates = truncateDirectionArray(PathDirectionState.values());
     private static final boolean[] directionPotential = new boolean[directionStates.length];
     private static final ArrayList<PathDirectionState> finalDirectionStates = new ArrayList<PathDirectionState>();
 
 
-    public Path build(){
+    public HubPath build(){
         initialise();
         createPath();
-//        System.out.println("Segments: " + pathSegments.size());
+//        System.out.println("Segments: " + PATH_HUB_SEGMENTs.size());
         return this;
     }
 
     private void initialise() {
-        pathSegments.clear();
+        PATH_HUB_SEGMENTs.clear();
         individualSegmentPositions.clear();
         finalDirectionStates.clear();
 
@@ -74,10 +74,10 @@ final class Path {
                 random.nextInt(MapGenerator.PLATFORM_MAX_X - MapGenerator.PLATFORM_MIN_X) + MapGenerator.PLATFORM_MIN_X,
                 random.nextInt(MapGenerator.PLATFORM_MAX_Y - MapGenerator.PLATFORM_MIN_Y) + MapGenerator.PLATFORM_MIN_Y);
 
-        for(int i = 0; i < pathSegments.size(); i++){
-            for(int j = 0; j < pathSegments.get(i).getTileVectorsAsArray().length; j++){
-                if(tileVector.x() == pathSegments.get(i).getTileVectorsAsArray()[j].x()
-                        && tileVector.y() == pathSegments.get(i).getTileVectorsAsArray()[j].y())
+        for(int i = 0; i < PATH_HUB_SEGMENTs.size(); i++){
+            for(int j = 0; j < PATH_HUB_SEGMENTs.get(i).getTileVectorsAsArray().length; j++){
+                if(tileVector.x() == PATH_HUB_SEGMENTs.get(i).getTileVectorsAsArray()[j].x()
+                        && tileVector.y() == PATH_HUB_SEGMENTs.get(i).getTileVectorsAsArray()[j].y())
                     calculateRandomTileVector();
                 else break;
             }
@@ -90,27 +90,27 @@ final class Path {
         float x = 0;
         float y = 0;
 
-        for(int i = 0; i < pathSegments.size(); i++){
+        for(int i = 0; i < PATH_HUB_SEGMENTs.size(); i++){
             float tempX = 0;
             float tempY = 0;
-            for(int j = 0; j < pathSegments.get(i).getTileVectorsAsArray().length; j++){
-                tempX += pathSegments.get(i).getTileVectorsAsArray()[j].x();
-                tempY += pathSegments.get(i).getTileVectorsAsArray()[j].y();
+            for(int j = 0; j < PATH_HUB_SEGMENTs.get(i).getTileVectorsAsArray().length; j++){
+                tempX += PATH_HUB_SEGMENTs.get(i).getTileVectorsAsArray()[j].x();
+                tempY += PATH_HUB_SEGMENTs.get(i).getTileVectorsAsArray()[j].y();
             }
-            x += (tempX/pathSegments.get(i).getTileVectorsAsArray().length);
-            y += (tempY/pathSegments.get(i).getTileVectorsAsArray().length);
+            x += (tempX/ PATH_HUB_SEGMENTs.get(i).getTileVectorsAsArray().length);
+            y += (tempY/ PATH_HUB_SEGMENTs.get(i).getTileVectorsAsArray().length);
         }
 
-        x = x / pathSegments.size();
-        y = y / pathSegments.size();
+        x = x / PATH_HUB_SEGMENTs.size();
+        y = y / PATH_HUB_SEGMENTs.size();
 
         System.out.println("AVERAGE POINT: (" + (int)y + ", " + (int)x + ")");
     }
 
     private void appendSegment() {
-        Segment newestSegment = new Segment();
-        pathSegments.add(newestSegment);
-        individualSegmentPositions.add(newestSegment.getTileVectorsAsArray());
+        HubSegment newestHubSegment = new HubSegment();
+        PATH_HUB_SEGMENTs.add(newestHubSegment);
+        individualSegmentPositions.add(newestHubSegment.getTileVectorsAsArray());
     }
 
     private PathDirectionState decideDirection() {
@@ -135,12 +135,12 @@ final class Path {
         for (int i = 0; i < directionPotential.length; i++)
             directionPotential[i] = true;
 
-        if (pathSegments.isEmpty()) {
+        if (PATH_HUB_SEGMENTs.isEmpty()) {
             directionPotential[0] = false;
             directionPotential[1] = false;
         }
 
-//        printDirectionPotential("After First Segment Check");
+//        printDirectionPotential("After First HubSegment Check");
 
         if (upMinPotential < MapGenerator.PLATFORM_MIN_X)
             directionPotential[0] = false;
@@ -153,7 +153,7 @@ final class Path {
 
 //        printDirectionPotential("After Map Limitation Check");
 
-        if (!pathSegments.isEmpty()) {
+        if (!PATH_HUB_SEGMENTs.isEmpty()) {
             switch (getLastSegment(1).getDirection()) {
                 case UP:
                 case DOWN:
@@ -169,12 +169,12 @@ final class Path {
             }
         }
 
-//        printDirectionPotential("After Previous Segment Check");
+//        printDirectionPotential("After Previous HubSegment Check");
 
         up_loop:
         for (int x = WORKING_POSITION.x; x > upMaxPotential; x--) {
-            for (int i = 0; i < pathSegments.size() - 1; i++) {
-                TileVector[] currentSegment = pathSegments.get(i).getTileVectorsAsArray();
+            for (int i = 0; i < PATH_HUB_SEGMENTs.size() - 1; i++) {
+                TileVector[] currentSegment = PATH_HUB_SEGMENTs.get(i).getTileVectorsAsArray();
 
                 for (int j = 0; j < currentSegment.length; j++) {
                     if (x == currentSegment[j].x && WORKING_POSITION.y == currentSegment[j].y) {
@@ -204,8 +204,8 @@ final class Path {
 
         down_loop:
         for (int x = WORKING_POSITION.x; x < downMaxPotential; x++) {
-            for (int i = 0; i < pathSegments.size() - 1; i++) {
-                TileVector[] currentSegment = pathSegments.get(i).getTileVectorsAsArray();
+            for (int i = 0; i < PATH_HUB_SEGMENTs.size() - 1; i++) {
+                TileVector[] currentSegment = PATH_HUB_SEGMENTs.get(i).getTileVectorsAsArray();
 
                 for (int j = 0; j < currentSegment.length; j++) {
                     if (x == currentSegment[j].x && WORKING_POSITION.y == currentSegment[j].y) {
@@ -235,8 +235,8 @@ final class Path {
 
         left_loop:
         for (int y = WORKING_POSITION.y; y > leftMaxPotential; y--) {
-            for (int i = 0; i < pathSegments.size() - 1; i++) {
-                TileVector[] currentSegment = pathSegments.get(i).getTileVectorsAsArray();
+            for (int i = 0; i < PATH_HUB_SEGMENTs.size() - 1; i++) {
+                TileVector[] currentSegment = PATH_HUB_SEGMENTs.get(i).getTileVectorsAsArray();
 
                 for (int j = 0; j < currentSegment.length; j++) {
                     if (WORKING_POSITION.x == currentSegment[j].x && y == currentSegment[j].y) {
@@ -266,8 +266,8 @@ final class Path {
 
         right_loop:
         for (int y = WORKING_POSITION.y; y < rightMaxPotential; y++) {
-            for (int i = 0; i < pathSegments.size() - 1; i++) {
-                TileVector[] currentSegment = pathSegments.get(i).getTileVectorsAsArray();
+            for (int i = 0; i < PATH_HUB_SEGMENTs.size() - 1; i++) {
+                TileVector[] currentSegment = PATH_HUB_SEGMENTs.get(i).getTileVectorsAsArray();
 
                 for (int j = 0; j < currentSegment.length; j++) {
                     if (WORKING_POSITION.x == currentSegment[j].x && y == currentSegment[j].y) {
@@ -315,8 +315,8 @@ final class Path {
             return PathDirectionState.NONE;
     }
 
-    private Segment getLastSegment(int previousNumber) {
-        return pathSegments.get(pathSegments.size() - previousNumber);
+    private HubSegment getLastSegment(int previousNumber) {
+        return PATH_HUB_SEGMENTs.get(PATH_HUB_SEGMENTs.size() - previousNumber);
     }
 
     private TileVector getWorkingPosition() {
@@ -325,7 +325,7 @@ final class Path {
 
     private void printDirectionPotential(String title) {
         System.out.println("============================================================================================");
-        System.out.println(title + "\t-\tSegment No.: " + Integer.toString(pathSegments.size() + 1) + "\t-\tWorking Pos.: (" + WORKING_POSITION.x + ", " + WORKING_POSITION.y + ")");
+        System.out.println(title + "\t-\tHubSegment No.: " + Integer.toString(PATH_HUB_SEGMENTs.size() + 1) + "\t-\tWorking Pos.: (" + WORKING_POSITION.x + ", " + WORKING_POSITION.y + ")");
         System.out.println("============================================================================================");
         for (int i = 0; i < directionPotential.length; i++)
             System.out.println(directionStates[i] + ": " + directionPotential[i]);
@@ -360,8 +360,8 @@ final class Path {
         return temp;
     }
 
-    public ArrayList<Segment> getPathSegments() {
-        return pathSegments;
+    public ArrayList<HubSegment> getPathSegments() {
+        return PATH_HUB_SEGMENTs;
     }
 
     public ArrayList<TileVector[]> getIndividualSegmentPositions() {

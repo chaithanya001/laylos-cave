@@ -9,14 +9,14 @@ import java.util.Arrays;
  * Created by naveed.shihab on 16/11/2016.
  */
 
-final class Segment {
+final class HubSegment {
 
     private final TileVector[] tileVectors;
     private final PathDirectionState direction;
 
-    Segment(){
-        direction = Path.CURRENT_DIRECTION;
-        tileVectors = createPathSegment(Path.SEGMENT_LENGTH, Path.WORKING_POSITION);
+    HubSegment(){
+        direction = HubPath.CURRENT_DIRECTION;
+        tileVectors = createPathSegment(HubPath.SEGMENT_LENGTH, HubPath.WORKING_POSITION);
     }
 
     private TileVector[] createPathSegment(int segmentLength, TileVector workingPosition){
