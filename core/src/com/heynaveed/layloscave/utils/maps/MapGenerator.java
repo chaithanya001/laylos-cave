@@ -39,28 +39,33 @@ import java.util.zip.GZIPOutputStream;
 
 public final class MapGenerator {
 
+    private static final int CAVERN_BLOCK_WIDTH = 43;
+    private static final int CAVERN_BLOCK_HEIGHT = 23;
     private static final int MAX_PORTAL_PLATFORM_LENGTH = 12;
     private static final int MAX_PORTAL_PLATFORM_HEIGHT = 4;
     private static final int[] GROUND_IDS = {1, 2, 3, 4, 5};
     private static final int[] CAVE_IDS = {6, 7, 8, 9, 10};
-    public static final int PLATFORM_MIN_X = 20;
-    public static final int PLATFORM_MAX_X = 180;
-    public static final int PLATFORM_MIN_Y = 20;
-    public static final int PLATFORM_MAX_Y = 280;
+    static final int PLATFORM_MIN_X = 20;
+    static final int PLATFORM_MAX_X = 180;
+    static final int PLATFORM_MIN_Y = 20;
+    static final int PLATFORM_MAX_Y = 280;
     private static final int PATH_PADDING = 8;
     private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
     public static final String MAP_PATH = "maps/";
-    public static final String TEMPLATE_PATH = "template";
+    private static final String TEMPLATE_PATH = "template";
     public static final String TMX_EXTENSION = ".tmx";
     private static final int MIN_X_CLEAN_PADDING = 20;
     private static final int MAX_X_CLEAN_PADDING = 160;
     private static final int MIN_Y_CLEAN_PADDING = 20;
     private static final int MAX_Y_CLEAN_PADDING = 270;
-    public static final int HEIGHT = 200;
-    public static final int WIDTH = 300;
+    public static final int HUB_HEIGHT = 200;
+    private static final int HUB_WIDTH = 300;
+    private static final int CAVERN_WIDTH = 191;
+    private static final int CAVERN_HEIGHT = 111;
     private static int hubNumber = 0;
-    private static int[][] workingTileIDSet = new int[HEIGHT][WIDTH];
-    private static int[] finalTileIDSet = new int[WIDTH * HEIGHT];
+    private static int cavernNumber = 0;
+    private static int[][] workingTileIDSet;
+    private static int[] finalTileIDSet;
     private static String encodedString;
     private static Element mapFileRoot;
     private static ArrayList<TileVector[]> platformPositions;
@@ -68,29 +73,83 @@ public final class MapGenerator {
     private static ArrayList<Boolean> portalFacing;
     private static Path path;
     private static int objectID = 1000;
-    private static FileHandle newHubMap;
+    private static FileHandle newMap;
+    private static MapState workingMapState;
+    private static int levelNumber = 0;
+    private static int workingWidth;
+    private static int workingHeight;
 
     private static final Random random = new Random();
 
     public static void main(String[] args) throws IOException{
         GameApp.CONFIGURATION = "Desktop";
-        new MapGenerator().buildPathMap();
+//        new MapGenerator().buildMap(MapState.HUB);
+        new MapGenerator().buildMap(MapState.CAVERN);
     }
 
-    public MapGenerator buildPathMap() throws IOException{
+    public MapGenerator buildMap(MapState mapState) throws IOException{
+        workingMapState = mapState;
+        determineWorkingVariables();
+        populateWorkingArray();
         createNewMapFile();
         loadMapRoot();
-        generateMapBase();
-        cleanMapNoise();
-        generatePathPlatforms();
-        determinePortalPositions();
+
+        switch(workingMapState){
+            case HUB:
+                buildHubMap();
+                break;
+            case CAVERN:
+                buildCavernMap();
+                break;
+        }
+
         deleteOldObjects();
-        calculateCaveObjectList();
+        calculateTerrainObjectList();
         generateObjects();
         compressTileIDSet();
         updateTerrainLayer();
         writeToMap();
         return this;
+    }
+
+    private static void populateWorkingArray(){
+        for(int i = 0; i < workingTileIDSet.length; i++){
+            for(int j = 0; j < workingTileIDSet[i].length; j++){
+                workingTileIDSet[i][j] = 0;
+            }
+        }
+    }
+
+    private static void buildHubMap() throws IOException{
+        generateHubBase();
+        cleanMapNoise();
+        generatePathways();
+        determinePortalPositions();
+    }
+
+    private static void buildCavernMap() throws IOException{
+        generateCavernBase();
+    }
+
+    private static void generateCavernBase(){
+
+        for(int x = 0; x < CAVERN_HEIGHT; x++){
+            for(int y = 0; y < CAVERN_WIDTH; y++)
+                workingTileIDSet[x][y] = randomTileID(CAVE_IDS);
+        }
+
+        int[] xPositions = {2, 30, 58, 86};
+        int[] yPositions = {2, 50, 98, 146};
+
+        for(int i = 0; i < xPositions.length; i++){
+            for(int j = 0; j < yPositions.length; j++){
+                for(int x = xPositions[i]; x < xPositions[i]+CAVERN_BLOCK_HEIGHT; x++){
+                    for(int y = yPositions[j]; y < yPositions[j]+CAVERN_BLOCK_WIDTH; y++)
+                        workingTileIDSet[x][y] = 0;
+                }
+            }
+        }
+
     }
 
     public static void extractTileIDSet(byte[] data){
@@ -100,8 +159,8 @@ public final class MapGenerator {
             is = new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(data), data.length));
             byte[] temp = new byte[4];
             int count = 0;
-            for (int y = 0; y < HEIGHT; y++) {
-                for (int x = 0; x < WIDTH; x++) {
+            for (int y = 0; y < HUB_HEIGHT; y++) {
+                for (int x = 0; x < HUB_WIDTH; x++) {
                     int read = is.read(temp);
                     for(int i = 0; i < temp.length; i++)
                         while (read < temp.length) {
@@ -112,7 +171,7 @@ public final class MapGenerator {
                         }
                     if (read != temp.length)
                         throw new GdxRuntimeException("Error Reading TMX Layer Data: Premature end of tile data");
-                    finalTileIDSet[y * WIDTH + x] = unsignedByteToInt(temp[0]) | unsignedByteToInt(temp[1]) << 8
+                    finalTileIDSet[y * HUB_WIDTH + x] = unsignedByteToInt(temp[0]) | unsignedByteToInt(temp[1]) << 8
                             | unsignedByteToInt(temp[2]) << 16 | unsignedByteToInt(temp[3]) << 24;
                 }
             }
@@ -121,17 +180,37 @@ public final class MapGenerator {
         finally { StreamUtils.closeQuietly(is); }
     }
 
+    private static void determineWorkingVariables(){
+        switch(workingMapState){
+            case HUB:
+                levelNumber = ++hubNumber;
+                workingWidth = HUB_WIDTH;
+                workingHeight = HUB_HEIGHT;
+                break;
+            case CAVERN:
+                levelNumber = ++cavernNumber;
+                workingWidth = CAVERN_WIDTH;
+                workingHeight = CAVERN_HEIGHT;
+                break;
+            default:
+                levelNumber = 1;
+        }
+
+        workingTileIDSet = new int[workingHeight][workingWidth];
+        finalTileIDSet = new int[workingWidth*workingHeight];
+    }
+
     private static void createNewMapFile() throws IOException{
 
         if(GameApp.CONFIGURATION.equals("Desktop")) {
             FileChannel source = null;
             FileChannel destination = null;
-            File templateHubMap = new File(MAP_PATH + TEMPLATE_PATH + MapState.HUB.name + TMX_EXTENSION);
-            File newHubMap = new File(MAP_PATH + MapState.HUB.name + ++hubNumber + TMX_EXTENSION);
+            File templateMap = new File(MAP_PATH + TEMPLATE_PATH + workingMapState.name + TMX_EXTENSION);
+            File newMap = new File(MAP_PATH + workingMapState.name + levelNumber + TMX_EXTENSION);
 
             try {
-                source = new FileInputStream(templateHubMap).getChannel();
-                destination = new FileOutputStream(newHubMap).getChannel();
+                source = new FileInputStream(templateMap).getChannel();
+                destination = new FileOutputStream(newMap).getChannel();
                 destination.transferFrom(source, 0, source.size());
             } finally {
                 if (source != null) {
@@ -143,23 +222,21 @@ public final class MapGenerator {
             }
         }
         else if(GameApp.CONFIGURATION.equals("Android")){
-            FileHandle templateHubMap = Gdx.files.internal("maps/templateHubMap.tmx");
-            newHubMap = Gdx.files.local(MapState.HUB.name + ++hubNumber + TMX_EXTENSION);
-            newHubMap.writeString(templateHubMap.readString(), false);
+            FileHandle templateMap = Gdx.files.internal(MAP_PATH + TEMPLATE_PATH + workingMapState.name + TMX_EXTENSION);
+            newMap = Gdx.files.local(workingMapState.name + levelNumber + TMX_EXTENSION);
+            newMap.writeString(templateMap.readString(), false);
             FileHandle tileMapGutterOriginal = Gdx.files.internal("maps/tileMapGutter.png");
-            FileHandle tileMapGutter = Gdx.files.local("tileMapGutter.png");
             FileHandle tileSetOriginal = Gdx.files.internal("maps/tileSet.png");
-            FileHandle tileSet = Gdx.files.local("tileSet.png");
-            tileMapGutterOriginal.copyTo(tileMapGutter);
-            tileSetOriginal.copyTo(tileSet);
+            tileMapGutterOriginal.copyTo(Gdx.files.local("tileMapGutter.png"));
+            tileSetOriginal.copyTo(Gdx.files.local("tileSet.png"));
         }
     }
 
-    private static void generateMapBase() {
+    private static void generateHubBase() {
         int fillPercent = 45;
 
-        for (int i = 0; i < HEIGHT; i++) {
-            for (int j = 0; j < WIDTH; j++) {
+        for (int i = 0; i < HUB_HEIGHT; i++) {
+            for (int j = 0; j < HUB_WIDTH; j++) {
                 if (isWallTile(i, j))
                     workingTileIDSet[i][j] = randomTileID(CAVE_IDS);
                 else
@@ -171,8 +248,8 @@ public final class MapGenerator {
     }
 
     private static void cleanMapNoise(){
-        for(int x = 0; x < HEIGHT; x++){
-            for(int y = 0; y < WIDTH; y++){
+        for(int x = 0; x < HUB_HEIGHT; x++){
+            for(int y = 0; y < HUB_WIDTH; y++){
                 if(x > offsetRandom(MIN_X_CLEAN_PADDING) && x < offsetRandom(MAX_X_CLEAN_PADDING) && y > offsetRandom(MIN_Y_CLEAN_PADDING) && y < offsetRandom(MAX_Y_CLEAN_PADDING))
                     workingTileIDSet[x][y] = randomTileID(CAVE_IDS);
             }
@@ -204,10 +281,10 @@ public final class MapGenerator {
             }
         }
 
-        return new Vector2(GameApp.toPPM(y) * 64, GameApp.toPPM(MapGenerator.HEIGHT - x - (padding - 2)) * 64);
+        return new Vector2(GameApp.toPPM(y) * 64, GameApp.toPPM(MapGenerator.HUB_HEIGHT - x - (padding - 2)) * 64);
     }
 
-    private static void generatePathPlatforms(){
+    private static void generatePathways(){
         path = new Path().build();
         platformPositions = path.getIndividualSegmentPositions();
         ArrayList<Segment> pathSegments = path.getPathSegments();
@@ -261,8 +338,8 @@ public final class MapGenerator {
         ArrayList<Boolean> potentialFacing = new ArrayList<Boolean>();
 
         int minX = 30, minY = 40;
-        int maxX = HEIGHT - minX;
-        int maxY = WIDTH - minY;
+        int maxX = HUB_HEIGHT - minX;
+        int maxY = HUB_WIDTH - minY;
 
         for(int x = minX; x <= maxX; x++){
 
@@ -332,8 +409,8 @@ public final class MapGenerator {
         }
 
         int x1 = 199, x2 = 199;
-        int y1 = random.nextInt(MapGenerator.WIDTH/2 - minY)+MapGenerator.WIDTH/2;
-        int y2 = random.nextInt(MapGenerator.WIDTH/2 - minY)+minY;
+        int y1 = random.nextInt(MapGenerator.HUB_WIDTH /2 - minY)+MapGenerator.HUB_WIDTH /2;
+        int y2 = random.nextInt(MapGenerator.HUB_WIDTH /2 - minY)+minY;
 
         for(int i = x1; workingTileIDSet[i][y1] != 0; i--)
             x1 = i;
@@ -355,7 +432,7 @@ public final class MapGenerator {
 //        }
     }
 
-    private static void calculateCaveObjectList(){
+    private static void calculateTerrainObjectList(){
 
         ArrayList<TileVector[]> caveObjectList = new ArrayList<TileVector[]>();
         int[] GROUND_CAVE_IDS = new int[CAVE_IDS.length + GROUND_IDS.length];
@@ -365,16 +442,16 @@ public final class MapGenerator {
             GROUND_CAVE_IDS[i+(CAVE_IDS.length)] = GROUND_IDS[i];
 
         for(int i = 0; i < workingTileIDSet.length; i++){
-            TileVector[] tileVector = new TileVector[WIDTH];
+            TileVector[] tileVector = new TileVector[workingWidth];
             int buffer = 0;
             for(int j = 0; j < workingTileIDSet[i].length; j++, buffer++){
 
-                if (!doesTileMatchArray(GROUND_CAVE_IDS, workingTileIDSet[i][j]) || j == WIDTH-1){
+                if (!doesTileMatchArray(GROUND_CAVE_IDS, workingTileIDSet[i][j]) || j == workingWidth -1){
                     if(buffer > 1) {
                         TileVector[] truncatedVector = new TileVector[buffer];
                         for (int l = 0; l < truncatedVector.length; l++)
                             truncatedVector[l] = tileVector[l];
-                        tileVector = new TileVector[WIDTH];
+                        tileVector = new TileVector[workingWidth];
                         caveObjectList.add(truncatedVector);
                     }
                     buffer = 0;
@@ -434,7 +511,7 @@ public final class MapGenerator {
 
         if(GameApp.CONFIGURATION.equals("Desktop")) {
 
-            File file = new File(MAP_PATH + MapState.HUB.name + hubNumber + TMX_EXTENSION);
+            File file = new File(MAP_PATH + workingMapState.name + levelNumber + TMX_EXTENSION);
             BufferedReader reader = new BufferedReader(new FileReader(file));
             StringBuilder sb = new StringBuilder();
             String line = reader.readLine();
@@ -449,7 +526,7 @@ public final class MapGenerator {
             reader.close();
         }
         else if(GameApp.CONFIGURATION.equals("Android"))
-            mapFileRoot = new XmlReader().parse(newHubMap.readString());
+            mapFileRoot = new XmlReader().parse(newMap.readString());
     }
 
     private static void updateTerrainLayer() throws IOException{
@@ -462,19 +539,19 @@ public final class MapGenerator {
     private static void writeToMap() throws IOException{
 
         if(GameApp.CONFIGURATION.equals("Desktop")) {
-            PrintWriter writer = new PrintWriter(new File(MAP_PATH + MapState.HUB.name + hubNumber + TMX_EXTENSION));
+            PrintWriter writer = new PrintWriter(new File(MAP_PATH + workingMapState.name + levelNumber + TMX_EXTENSION));
             writer.print("");
             writer.print(XML_HEADER + "\n" + mapFileRoot.toString());
             writer.close();
         }
         else if(GameApp.CONFIGURATION.equals("Android"))
-            newHubMap.writeString(XML_HEADER + "\n" + mapFileRoot.toString(), false);
+            newMap.writeString(XML_HEADER + "\n" + mapFileRoot.toString(), false);
     }
 
     private static void smoothMap(int iterations){
         for(int i = 0; i < iterations; i++) {
-            for (int j = 0; j < HEIGHT; j++) {
-                for (int k = 0; k < WIDTH; k++) {
+            for (int j = 0; j < HUB_HEIGHT; j++) {
+                for (int k = 0; k < HUB_WIDTH; k++) {
                     int neighbourWallTileCount = calculateSurroundingWallCount(j, k);
 
                     if (neighbourWallTileCount > 4)
@@ -495,7 +572,7 @@ public final class MapGenerator {
 
         for(int neighbourX = gridX - 1; neighbourX <= gridX + 1; neighbourX++){
             for(int neighbourY = gridY -1; neighbourY <= gridY +1; neighbourY++){
-                if(neighbourX >= 0 && neighbourX < HEIGHT && neighbourY >= 0 && neighbourY < WIDTH){
+                if(neighbourX >= 0 && neighbourX < HUB_HEIGHT && neighbourY >= 0 && neighbourY < HUB_WIDTH){
                     if(neighbourX != gridX || neighbourY != gridY)
                         wallCount += workingTileIDSet[neighbourX][neighbourY] == 0?0:1;
                 }
@@ -518,12 +595,12 @@ public final class MapGenerator {
     }
 
     private static boolean isWallTile(int x, int y){
-        return x < 6 || x > HEIGHT -10 || y < 6 || y > WIDTH -8;
+        return x < 6 || x > HUB_HEIGHT -10 || y < 6 || y > HUB_WIDTH -8;
     }
 
     private static int[] convertToFinalArray(int[][] array){
 
-        int[] newArray = new int[WIDTH * HEIGHT];
+        int[] newArray = new int[workingWidth * workingHeight];
         int count = 0;
 
         for(int i = 0; i < array.length; i++){
@@ -536,13 +613,13 @@ public final class MapGenerator {
     }
 
     private static int[][] convertToWorkingArray(int[] array){
-        int[][] newArray = new int[WIDTH][HEIGHT];
+        int[][] newArray = new int[HUB_WIDTH][HUB_HEIGHT];
         int j = 0;
 
         for(int i = 0; i < array.length; i++){
             newArray[j][i] = array[i];
 
-            if(i+1 % WIDTH == 0)
+            if(i+1 % HUB_WIDTH == 0)
                 j++;
         }
 

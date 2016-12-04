@@ -320,7 +320,7 @@ public final class Kirk extends Character {
     protected void initialiseBody() {
         BodyDef bDef = new BodyDef();
         bDef.position.set(screen.getRandomStartingPosition());
-//        bDef.position.set(GameApp.toPPM(MapGenerator.WIDTH/2)*64, GameApp.toPPM(MapGenerator.HEIGHT/2)*64);
+//        bDef.position.set(GameApp.toPPM(MapGenerator.WIDTH/2)*64, GameApp.toPPM(MapGenerator.HUB_HEIGHT/2)*64);
         bDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bDef);
     }

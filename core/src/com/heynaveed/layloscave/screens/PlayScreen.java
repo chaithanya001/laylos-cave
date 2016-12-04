@@ -14,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.heynaveed.layloscave.states.MapState;
 import com.heynaveed.layloscave.universe.Portal;
 import com.heynaveed.layloscave.utils.InputController;
 import com.heynaveed.layloscave.utils.maps.MapGenerator;
@@ -52,7 +53,8 @@ public class PlayScreen implements Screen {
     private final Jini jini;
     private final InputController inputController;
 
-    private TiledMap currentMap;
+    private TiledMap currentTileMap;
+    private MapState currentMapState;
     private MapGenerator mapGenerator;
     private int currentLevel;
 
@@ -60,7 +62,9 @@ public class PlayScreen implements Screen {
         this.gameApp = gameApp;
         gameCam = new OrthographicCamera();
         inputMultiplexer = new InputMultiplexer();
-        mapGenerator = new MapGenerator().buildPathMap();
+        mapGenerator = new MapGenerator().buildMap(MapState.HUB);
+//        mapGenerator = new MapGenerator().buildMap(MapState.CAVERN);
+        currentMapState = MapState.HUB;
         viewport = new FitViewport(GameApp.toPPM(GameApp.VIEWPORT_WIDTH), GameApp.toPPM(GameApp.VIEWPORT_HEIGHT), gameCam);
         gameCam.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight() / 2, 0);
         currentLevel = 1;
@@ -72,9 +76,9 @@ public class PlayScreen implements Screen {
         jini.setSize(SPRITE_SIZE, SPRITE_SIZE);
         inputController = new InputController(this).setKirk(kirk).setJini(jini);
         contactListener = new CollisionDetector(this, kirk);
-        contactListener.setMap(currentMap);
-        currentMap = levels.get(levelNumberOffset()).getMap();
-        mapRenderer = new OrthogonalTiledMapRenderer(currentMap, GameApp.toPPM(MAP_UNIT_SCALE));
+        contactListener.setMap(currentTileMap);
+        currentTileMap = levels.get(levelNumberOffset()).getMap();
+        mapRenderer = new OrthogonalTiledMapRenderer(currentTileMap, GameApp.toPPM(MAP_UNIT_SCALE));
         world.setContactListener(contactListener);
         initialisePortals();
 
@@ -163,7 +167,7 @@ public class PlayScreen implements Screen {
     }
 
     private Vector2 tileVectorToWorldPosition(TileVector tileVector) {
-        return new Vector2(GameApp.toPPM(tileVector.y()) * 64, GameApp.toPPM(MapGenerator.HEIGHT - tileVector.x()) * 64);
+        return new Vector2(GameApp.toPPM(tileVector.y()) * 64, GameApp.toPPM(MapGenerator.HUB_HEIGHT - tileVector.x()) * 64);
     }
 
     private void loadLevels() {
@@ -174,8 +178,8 @@ public class PlayScreen implements Screen {
     private void checkForNextLevel() {
         if (levels.get(levelNumberOffset()).isCompleted() && levelNumberOffset() != Level.NUMBER_OF_LEVELS) {
             currentLevel++;
-            currentMap = levels.get(levelNumberOffset()).getMap();
-            mapRenderer = new OrthogonalTiledMapRenderer(currentMap, GameApp.toPPM(MAP_UNIT_SCALE));
+            currentTileMap = levels.get(levelNumberOffset()).getMap();
+            mapRenderer = new OrthogonalTiledMapRenderer(currentTileMap, GameApp.toPPM(MAP_UNIT_SCALE));
         }
     }
 
@@ -253,7 +257,7 @@ public class PlayScreen implements Screen {
     @Override
     public void dispose() {
         gameApp.dispose();
-        currentMap.dispose();
+        currentTileMap.dispose();
         mapRenderer.dispose();
         for (Level level : levels)
             level.dispose();
