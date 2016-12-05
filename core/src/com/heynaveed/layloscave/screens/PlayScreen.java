@@ -62,9 +62,9 @@ public class PlayScreen implements Screen {
         this.gameApp = gameApp;
         gameCam = new OrthographicCamera();
         inputMultiplexer = new InputMultiplexer();
-        mapGenerator = new MapGenerator().buildMap(MapState.HUB);
-//        mapGenerator = new MapGenerator().buildMap(MapState.CAVERN);
         currentMapState = MapState.HUB;
+//        currentMapState = MapState.CAVERN;
+        mapGenerator = new MapGenerator().buildMap(currentMapState);
         viewport = new FitViewport(GameApp.toPPM(GameApp.VIEWPORT_WIDTH), GameApp.toPPM(GameApp.VIEWPORT_HEIGHT), gameCam);
         gameCam.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight() / 2, 0);
         currentLevel = 1;
@@ -80,7 +80,9 @@ public class PlayScreen implements Screen {
         currentTileMap = levels.get(levelNumberOffset()).getMap();
         mapRenderer = new OrthogonalTiledMapRenderer(currentTileMap, GameApp.toPPM(MAP_UNIT_SCALE));
         world.setContactListener(contactListener);
-        initialisePortals();
+
+        if(currentMapState.equals(MapState.HUB))
+            initialisePortals();
 
         if(GameApp.CONFIGURATION == "Android")
             inputMultiplexer.addProcessor(inputController.getStage());
@@ -107,6 +109,8 @@ public class PlayScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         mapRenderer.render();
+
+        Gdx.gl.glClearColor(0, 0, 0, 1);
 
         gameApp.batch.setProjectionMatrix(gameCam.combined);
         gameApp.batch.begin();
@@ -296,5 +300,9 @@ public class PlayScreen implements Screen {
 
     public Jini getJini() {
         return jini;
+    }
+
+    public MapState getCurrentMapState(){
+        return currentMapState;
     }
 }

@@ -35,7 +35,7 @@ public final class Kirk extends Character {
     private static final float HEAD_DISPLACEMENT = GameApp.toPPM(30);
     private static final float MAX_SLIDE_TIMER = 0.6f;
     private static final float MAX_BOUNCE_TIMER = 0.3f;
-    private static final float CAMERA_PORTAL_SPEED = 50.0f;
+    private static final float CAMERA_PORTAL_SPEED = 75.0f;
     private final ParticleEffect cellularDisintegrationEffect = new ParticleEffect();
 
     private float xDisplacement;

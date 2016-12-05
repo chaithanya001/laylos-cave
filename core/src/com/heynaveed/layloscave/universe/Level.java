@@ -42,11 +42,11 @@ public class Level {
 
         if(GameApp.CONFIGURATION.equals("Desktop")) {
             mapLoader = new TmxMapLoader();
-            map = mapLoader.load(MapGenerator.MAP_PATH + MapState.HUB.name + levelNumber + MapGenerator.TMX_EXTENSION);
+            map = mapLoader.load(MapGenerator.MAP_PATH + screen.getCurrentMapState().name + levelNumber + MapGenerator.TMX_EXTENSION);
         }
         else{
             mapLoader = new TmxMapLoader(new LocalFileHandleResolver());
-            map = mapLoader.load(MapState.HUB.name + levelNumber + MapGenerator.TMX_EXTENSION);
+            map = mapLoader.load(screen.getCurrentMapState().name + levelNumber + MapGenerator.TMX_EXTENSION);
         }
 
         groundPlatforms = new Array<NormalPlatform>();

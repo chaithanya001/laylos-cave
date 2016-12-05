@@ -74,6 +74,7 @@ public final class MapGenerator {
     private static int objectID = 1000;
     private static FileHandle newMap;
     private static MapState workingMapState;
+    private static CavernPath cavernPath;
     private static int levelNumber = 0;
     private static int workingWidth;
     private static int workingHeight;
@@ -99,10 +100,14 @@ public final class MapGenerator {
 
         switch(workingMapState){
             case HUB:
-                buildHubMap();
+                generateHubBase();
+                cleanMapNoise();
+                generateHubPathway();
+                determinePortalPositions();
                 break;
             case CAVERN:
-                buildCavernMap();
+                generateCavernBase();
+                generateCavernPathway();
                 break;
         }
 
@@ -115,27 +120,15 @@ public final class MapGenerator {
         return this;
     }
 
-    private static void populateWorkingArray(){
-        for(int i = 0; i < workingTileIDSet.length; i++){
-            for(int j = 0; j < workingTileIDSet[i].length; j++)
+    private static void populateWorkingArray() {
+        for (int i = 0; i < workingTileIDSet.length; i++) {
+            for (int j = 0; j < workingTileIDSet[i].length; j++)
                 workingTileIDSet[i][j] = 0;
         }
     }
 
-    private static void buildHubMap() throws IOException{
-        generateHubBase();
-        cleanMapNoise();
-        generateHubPathway();
-        determinePortalPositions();
-    }
-
-    private static void buildCavernMap() throws IOException{
-        generateCavernBase();
-        generateCavernPathway();
-    }
-
     private static void generateCavernPathway(){
-        CavernPath cavernPath = new CavernPath();
+        cavernPath = new CavernPath();
         ArrayList<CavernBlock> cavernBlocks = cavernPath.getCavernBlocks();
 
         for(int i = 0; i < cavernBlocks.size(); i++){
@@ -300,8 +293,8 @@ public final class MapGenerator {
     }
 
     private static void cleanMapNoise(){
-        for(int x = 0; x < HUB_HEIGHT; x++){
-            for(int y = 0; y < HUB_WIDTH; y++){
+        for(int x = 0; x < workingHeight; x++){
+            for(int y = 0; y < workingWidth; y++){
                 if(x > offsetRandom(MIN_X_CLEAN_PADDING) && x < offsetRandom(MAX_X_CLEAN_PADDING) && y > offsetRandom(MIN_Y_CLEAN_PADDING) && y < offsetRandom(MAX_Y_CLEAN_PADDING))
                     workingTileIDSet[x][y] = randomTileID(CAVE_IDS);
             }
@@ -319,21 +312,28 @@ public final class MapGenerator {
     }
 
     public Vector2 getRandomStartingPosition() {
-        int padding = 10;
-        int x = random.nextInt(MapGenerator.PLATFORM_MAX_X - MapGenerator.PLATFORM_MIN_X) + MapGenerator.PLATFORM_MIN_X;
-        int y = random.nextInt(MapGenerator.PLATFORM_MAX_Y - MapGenerator.PLATFORM_MIN_Y) + MapGenerator.PLATFORM_MIN_Y;
 
-        for (int i = -padding; i <= padding; i++) {
-            for (int j = -padding; j <= padding; j++) {
-                if (i == padding) {
-                    if (workingTileIDSet[x + i][y + j] == 0)
+        if(workingMapState == MapState.HUB) {
+            int padding = 10;
+
+            int x = random.nextInt(PLATFORM_MAX_X - PLATFORM_MIN_X) + PLATFORM_MIN_X;
+            int y = random.nextInt(PLATFORM_MAX_Y - PLATFORM_MIN_Y) + PLATFORM_MIN_Y;
+
+            for (int i = -padding; i <= padding; i++) {
+                for (int j = -padding; j <= padding; j++) {
+                    if (i == padding) {
+                        if (workingTileIDSet[x + i][y + j] == 0)
+                            return getRandomStartingPosition();
+                    } else if (workingTileIDSet[x + i][y + j] != 0)
                         return getRandomStartingPosition();
-                } else if (workingTileIDSet[x + i][y + j] != 0)
-                    return getRandomStartingPosition();
+                }
             }
-        }
 
-        return new Vector2(GameApp.toPPM(y) * 64, GameApp.toPPM(MapGenerator.HUB_HEIGHT - x - (padding - 2)) * 64);
+            return new Vector2(GameApp.toPPM(y) * 64, GameApp.toPPM(workingHeight - x - (padding - 2)) * 64);
+        }
+        else{
+            return new Vector2(tileVectorToWorldPosition(cavernPath.getCavernBlocks().get(0).getMidPoint()));
+        }
     }
 
     private static void generateHubPathway(){
@@ -461,8 +461,8 @@ public final class MapGenerator {
         }
 
         int x1 = 199, x2 = 199;
-        int y1 = random.nextInt(MapGenerator.HUB_WIDTH /2 - minY)+MapGenerator.HUB_WIDTH /2;
-        int y2 = random.nextInt(MapGenerator.HUB_WIDTH /2 - minY)+minY;
+        int y1 = random.nextInt(HUB_WIDTH /2 - minY)+ HUB_WIDTH /2;
+        int y2 = random.nextInt(HUB_WIDTH /2 - minY)+minY;
 
         for(int i = x1; workingTileIDSet[i][y1] != 0; i--)
             x1 = i;
@@ -600,10 +600,14 @@ public final class MapGenerator {
             newMap.writeString(XML_HEADER + "\n" + mapFileRoot.toString(), false);
     }
 
+    private Vector2 tileVectorToWorldPosition(TileVector tileVector) {
+        return new Vector2(GameApp.toPPM(tileVector.y()) * 64, GameApp.toPPM(workingHeight - tileVector.x()) * 64);
+    }
+
     private static void smoothMap(int iterations){
         for(int i = 0; i < iterations; i++) {
-            for (int j = 0; j < HUB_HEIGHT; j++) {
-                for (int k = 0; k < HUB_WIDTH; k++) {
+            for (int j = 0; j < workingHeight; j++) {
+                for (int k = 0; k < workingWidth; k++) {
                     int neighbourWallTileCount = calculateSurroundingWallCount(j, k);
 
                     if (neighbourWallTileCount > 4)
@@ -624,7 +628,7 @@ public final class MapGenerator {
 
         for(int neighbourX = gridX - 1; neighbourX <= gridX + 1; neighbourX++){
             for(int neighbourY = gridY -1; neighbourY <= gridY +1; neighbourY++){
-                if(neighbourX >= 0 && neighbourX < HUB_HEIGHT && neighbourY >= 0 && neighbourY < HUB_WIDTH){
+                if(neighbourX >= 0 && neighbourX < workingHeight && neighbourY >= 0 && neighbourY < workingWidth){
                     if(neighbourX != gridX || neighbourY != gridY)
                         wallCount += workingTileIDSet[neighbourX][neighbourY] == 0?0:1;
                 }
@@ -647,7 +651,7 @@ public final class MapGenerator {
     }
 
     private static boolean isWallTile(int x, int y){
-        return x < 6 || x > HUB_HEIGHT -10 || y < 6 || y > HUB_WIDTH -8;
+        return x < 6 || x > workingHeight -10 || y < 6 || y > workingWidth -8;
     }
 
     private static int[] convertToFinalArray(int[][] array){
@@ -665,13 +669,13 @@ public final class MapGenerator {
     }
 
     private static int[][] convertToWorkingArray(int[] array){
-        int[][] newArray = new int[HUB_WIDTH][HUB_HEIGHT];
+        int[][] newArray = new int[workingWidth][workingHeight];
         int j = 0;
 
         for(int i = 0; i < array.length; i++){
             newArray[j][i] = array[i];
 
-            if(i+1 % HUB_WIDTH == 0)
+            if(i+1 % workingWidth == 0)
                 j++;
         }
 
