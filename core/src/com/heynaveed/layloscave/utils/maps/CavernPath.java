@@ -44,14 +44,19 @@ public class CavernPath {
                 potentialDirections.add(PathDirection.Cavern.LEFT);
 
             check_loop:
-            for(int j = 0; j < potentialDirections.size(); j++){
-                for(int k = 0; k < cavernBlockPath.size(); k++) {
-                    if (currentBlock.getBlockNumber() + potentialDirections.get(j).direction == cavernBlockPath.get(k)+1) {
+            for (int j = 0; j < potentialDirections.size(); j++) {
+                for (int k = 0; k < cavernBlockPath.size(); k++) {
+                    if (currentBlock.getBlockNumber() + potentialDirections.get(j).direction == cavernBlockPath.get(k) + 1) {
                         potentialDirections.remove(j);
                         j--;
                         continue check_loop;
                     }
                 }
+            }
+
+            if(i == 1){
+                potentialDirections.remove(PathDirection.Cavern.DOWN);
+                potentialDirections.remove(PathDirection.Cavern.UP);
             }
 
             if(!potentialDirections.isEmpty()) {

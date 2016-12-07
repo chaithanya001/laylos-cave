@@ -170,8 +170,8 @@ public class PlayScreen implements Screen {
         }
     }
 
-    private Vector2 tileVectorToWorldPosition(TileVector tileVector) {
-        return new Vector2(GameApp.toPPM(tileVector.y()) * 64, GameApp.toPPM(MapGenerator.HUB_HEIGHT - tileVector.x()) * 64);
+    public Vector2 tileVectorToWorldPosition(TileVector tileVector) {
+        return new Vector2(GameApp.toPPM(tileVector.y()) * 64, GameApp.toPPM(MapGenerator.workingHeight - tileVector.x()) * 64);
     }
 
     private void loadLevels() {

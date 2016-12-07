@@ -20,6 +20,10 @@ import com.heynaveed.layloscave.utils.AnimationPackager;
 import com.heynaveed.layloscave.utils.RoundTo;
 import com.heynaveed.layloscave.keys.AnimationKey;
 import com.heynaveed.layloscave.universe.Character;
+import com.heynaveed.layloscave.utils.maps.CavernBlock;
+import com.heynaveed.layloscave.utils.maps.TileVector;
+
+import java.util.ArrayList;
 
 
 public final class Kirk extends Character {
@@ -37,6 +41,7 @@ public final class Kirk extends Character {
     private static final float MAX_BOUNCE_TIMER = 0.3f;
     private static final float CAMERA_PORTAL_SPEED = 75.0f;
     private final ParticleEffect cellularDisintegrationEffect = new ParticleEffect();
+    private Vector2 cavernGameCamPosition;
 
     private float xDisplacement;
     private float yDisplacement;
@@ -59,6 +64,7 @@ public final class Kirk extends Character {
     private CharacterState.Kirk previousCharacterState;
     private PlatformState currentPlatformState;
     private boolean hasCellularEffectStarted = false;
+    private ArrayList<Vector2> cavernBlockMidpoints = new ArrayList<Vector2>();
 
     public Kirk(PlayScreen screen) {
         super(screen);
@@ -75,6 +81,7 @@ public final class Kirk extends Character {
         initialiseWorldValues();
         initialiseTimers();
         initialiseBody();
+        initialiseMapLogic();
         initialiseFixtures();
         initialiseStates();
     }
@@ -82,7 +89,19 @@ public final class Kirk extends Character {
     @Override
     public void update(float dt) {
         this.dt = dt;
-        panCamera(dt);
+
+        switch(screen.getCurrentMapState()){
+            case HUB:
+                panHubCamera(dt);
+                break;
+            case CAVERN:
+                panCavernCamera();
+                break;
+            case TUNNEL:
+                panTunnelCamera(dt);
+                break;
+        }
+
         capVelocities();
         handleEffects();
         handlePlatformInteractions();
@@ -109,7 +128,42 @@ public final class Kirk extends Character {
             body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, verticalDirectionMultiplyer(MAXIMUM_VELOCITY)));
     }
 
-    private void panCamera(float dt) {
+    private void panCavernCamera(){
+
+        Vector2 closestMidPoint = cavernBlockMidpoints.get(0);
+
+        for(int i = 1; i < cavernBlockMidpoints.size(); i++){
+            if(distanceBetweenPoints(cavernBlockMidpoints.get(i), body.getPosition()) < distanceBetweenPoints(closestMidPoint, body.getPosition()))
+                closestMidPoint = cavernBlockMidpoints.get(i);
+        }
+
+        gameCam.position.x = closestMidPoint.x;
+        gameCam.position.y = closestMidPoint.y;
+    }
+
+    private void initialiseMapLogic() {
+        switch(screen.getCurrentMapState()){
+            case HUB:
+                break;
+            case CAVERN:
+                for(int i = 0; i < CavernBlock.X_BLOCK_MIDPOINTS.length; i++)
+                    cavernBlockMidpoints.add(screen.tileVectorToWorldPosition(
+                            new TileVector(CavernBlock.X_BLOCK_MIDPOINTS[i], CavernBlock.Y_BLOCK_MIDPOINTS[i])));
+                break;
+            case TUNNEL:
+                break;
+        }
+    }
+
+    private float distanceBetweenPoints(Vector2 point1, Vector2 point2){
+        return (float)Math.abs(Math.sqrt(Math.pow((point2.x - point1.x), 2) + Math.pow((point2.y - point1.y), 2)));
+    }
+
+    private void panTunnelCamera(float dt){
+
+    }
+
+    private void panHubCamera(float dt) {
         if (!isPortalLocked) {
             if (body.getPosition().x > CAMERA_WEST_LIMIT && body.getPosition().x < CAMERA_EAST_LIMIT)
                 gameCam.position.x = RoundTo.RoundToNearest(body.getPosition().x, GameApp.toPPM(1));
@@ -318,8 +372,10 @@ public final class Kirk extends Character {
 
     @Override
     protected void initialiseBody() {
+        Vector2 randomStartingPosition = screen.getRandomStartingPosition();
+        cavernGameCamPosition = randomStartingPosition;
         BodyDef bDef = new BodyDef();
-        bDef.position.set(screen.getRandomStartingPosition());
+        bDef.position.set(randomStartingPosition);
 //        bDef.position.set(GameApp.toPPM(MapGenerator.WIDTH/2)*64, GameApp.toPPM(MapGenerator.HUB_HEIGHT/2)*64);
         bDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bDef);

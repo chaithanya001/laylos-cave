@@ -6,8 +6,8 @@ public final class CavernBlock {
     private final int blockNumber;
     private boolean isPathBlock = false;
     private boolean isStartBlock = false;
-    private static final int[] X_BLOCK_MIDPOINTS = {13, 13, 13, 13, 41, 41, 41, 41, 69, 69, 69, 69, 97, 97, 97, 97};
-    private static final int[] Y_BLOCK_MIDPOINTS = {23, 71, 119, 167, 23, 71, 119, 167, 23, 71, 119, 167, 23, 71, 119, 167};
+    public static final int[] X_BLOCK_MIDPOINTS = {13, 13, 13, 13, 41, 41, 41, 41, 69, 69, 69, 69, 97, 97, 97, 97};
+    public static final int[] Y_BLOCK_MIDPOINTS = {23, 71, 119, 167, 23, 71, 119, 167, 23, 71, 119, 167, 23, 71, 119, 167};
     private PathDirection.Cavern direction = PathDirection.Cavern.NONE;
     private final TileVector midPoint;
 

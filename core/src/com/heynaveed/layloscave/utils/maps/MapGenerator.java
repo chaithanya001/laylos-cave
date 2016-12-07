@@ -29,12 +29,9 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Random;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
-import sun.misc.BASE64Encoder;
 
 /**
  * Created by naveed.shihab on 27/10/2016.
@@ -83,8 +80,8 @@ public final class MapGenerator {
     private static MapState workingMapState;
     private static CavernPath cavernPath;
     private static int levelNumber = 0;
-    private static int workingWidth;
-    private static int workingHeight;
+    public static int workingWidth;
+    public static int workingHeight;
     private static final int[] TOP_LEFT_X_BLOCK_POSITIONS = {2, 30, 58, 86};
     private static final int[] TOP_LEFT_Y_BLOCK_POSITIONS = {2, 50, 98, 146};
     private static final int[] X_BLOCK_MIDPOINTS = {13, 13, 13, 13, 41, 41, 41, 41, 69, 69, 69, 69, 97, 97, 97, 97};
@@ -177,13 +174,13 @@ public final class MapGenerator {
             }
             else if(cavernBlocks.get(i).getDirection().equals(PathDirection.Cavern.LEFT)){
                 for(int j = Y_BLOCK_MIDPOINTS[i]; j > Y_BLOCK_MIDPOINTS[i]-45; j--){
-                    for(int k = X_BLOCK_MIDPOINTS[i]-2; k <= X_BLOCK_MIDPOINTS[i]+2; k++)
+                    for(int k = X_BLOCK_MIDPOINTS[i]-3; k <= X_BLOCK_MIDPOINTS[i]+3; k++)
                         workingTileIDSet[k][j] = 0;
                 }
             }
             else if(cavernBlocks.get(i).getDirection().equals(PathDirection.Cavern.RIGHT)){
                 for(int j = Y_BLOCK_MIDPOINTS[i]; j < Y_BLOCK_MIDPOINTS[i]+45; j++){
-                    for(int k = X_BLOCK_MIDPOINTS[i]-2; k <= X_BLOCK_MIDPOINTS[i]+2; k++)
+                    for(int k = X_BLOCK_MIDPOINTS[i]-3; k <= X_BLOCK_MIDPOINTS[i]+3; k++)
                         workingTileIDSet[k][j] = 0;
                 }
             }
@@ -371,9 +368,8 @@ public final class MapGenerator {
 
             return new Vector2(GameApp.toPPM(y) * 64, GameApp.toPPM(workingHeight - x - (padding - 2)) * 64);
         }
-        else{
-            return new Vector2(tileVectorToWorldPosition(cavernPath.getCavernBlocks().get(0).getMidPoint()));
-        }
+        else
+            return new Vector2(tileVectorToWorldPosition(cavernPath.getCavernBlocks().get(cavernPath.getCavernBlockPath().get(0)).getMidPoint()));
     }
 
     private static void generateHubPathway(){
@@ -587,7 +583,6 @@ public final class MapGenerator {
     }
 
     private static void compressTileIDSet() throws IOException{
-        BASE64Encoder encoder = new BASE64Encoder();
         finalTileIDSet = convertToFinalArray(workingTileIDSet);
         byte[] byteArray = intToUnsignedByte(finalTileIDSet);
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream(byteArray.length);
