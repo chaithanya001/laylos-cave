@@ -10,50 +10,87 @@ import java.util.Random;
 public class TunnelMap {
 
     private static final Random random = new Random();
-    private static final int WALL_GIRTH = 3;
     private static final int TUNNEL_WIDTH = 15;
+    private static final int SLOT_HEIGHT = TUNNEL_WIDTH;
     private static final int MIN_X = 15;
     private static final int MIN_Y = 15;
     private static final int MAX_X = 185;
     private static final int MAX_Y = 285;
+    private static final int STREAM_AREA_CUTOFF = 200;
+    private static final int MIN_ISLAND_GIRTH = 10;
     private static final int[] TUNNEL_X_POINTS = {MIN_X, 100};
-    private static final int MAIN_FLOOR_HEIGHT = 100;
-    private int workingHeight = MAX_X;
-    private int workingWidth = MIN_Y;
+    private static final int TUNNEL_LENGTH = 69;
 
-    private final ArrayList<BoxIsland> boxIslands;
+    private final ArrayList<BoxIsland> topBoxIslands;
+    private final ArrayList<BoxIsland> bottomBoxIslands;
+    private final ArrayList<BoxIsland> slotIslands;
 
     public TunnelMap(){
-        boxIslands = new ArrayList<BoxIsland>();
+        topBoxIslands = new ArrayList<BoxIsland>();
+        bottomBoxIslands = new ArrayList<BoxIsland>();
+        slotIslands = new ArrayList<BoxIsland>();
         generateTunnelIslands();
     }
 
     private void generateTunnelIslands(){
+
         int randomYLength;
-        for(int i = 0; i < TUNNEL_X_POINTS.length; i++) {
-            for (int y = MIN_Y; y < MAX_Y; y++) {
-                if (y < 240) {
-                    BoxIsland island;
-                    randomYLength = (random.nextInt(WALL_GIRTH) + WALL_GIRTH) * (random.nextInt(WALL_GIRTH) + WALL_GIRTH);
-                    island = new BoxIsland(new TileVector(TUNNEL_X_POINTS[i], y), new TileVector(TUNNEL_X_POINTS[i]+60, y + randomYLength));
-                    boxIslands.add(island);
-                    y += (randomYLength - 1) + TUNNEL_WIDTH;
-                } else break;
-            }
+        int workingY = MIN_Y;
+
+        while(workingY < STREAM_AREA_CUTOFF){
+            BoxIsland island;
+            randomYLength = random.nextInt(26)+MIN_ISLAND_GIRTH;
+
+            if(workingY + randomYLength > STREAM_AREA_CUTOFF)
+                randomYLength = STREAM_AREA_CUTOFF - workingY;
+
+            island = new BoxIsland(new TileVector(TUNNEL_X_POINTS[0], workingY), new TileVector(TUNNEL_X_POINTS[0]+TUNNEL_LENGTH, workingY + randomYLength));
+            topBoxIslands.add(island);
+
+            if(workingY + randomYLength + TUNNEL_WIDTH > STREAM_AREA_CUTOFF)
+                workingY += randomYLength;
+            else
+                workingY += randomYLength + TUNNEL_WIDTH;
         }
 
-        int halfSize = boxIslands.size()/2+1;
-        for(int i = 0; i < halfSize-1; i++){
-            TileVector topRight = boxIslands.get(i+halfSize).getTopRight();
-            if(random.nextInt(2) == 0){
-                boxIslands.add(new BoxIsland(
+        workingY = MIN_Y;
+
+        while(workingY < STREAM_AREA_CUTOFF){
+            BoxIsland island;
+            randomYLength = random.nextInt(26)+MIN_ISLAND_GIRTH;
+
+            if(workingY + randomYLength > STREAM_AREA_CUTOFF)
+                randomYLength = STREAM_AREA_CUTOFF - workingY;
+
+            island = new BoxIsland(new TileVector(TUNNEL_X_POINTS[1], workingY), new TileVector(TUNNEL_X_POINTS[1]+TUNNEL_LENGTH, workingY + randomYLength));
+            bottomBoxIslands.add(island);
+
+            if(workingY + randomYLength + TUNNEL_WIDTH > STREAM_AREA_CUTOFF)
+                workingY += randomYLength;
+            else
+                workingY += randomYLength + TUNNEL_WIDTH;
+        }
+
+        for(int i = 0; i < bottomBoxIslands.size()-2; i++){
+            BoxIsland referenceIsland = bottomBoxIslands.get(i);
+            TileVector topRight = referenceIsland.getTopRight();
+
+            if(random.nextInt(2) == 0)
+                slotIslands.add(new BoxIsland(
                         new TileVector(topRight.x, topRight.y),
-                        new TileVector(topRight.x+TUNNEL_WIDTH, topRight.y+TUNNEL_WIDTH)));
-            }
+                        new TileVector(topRight.x + SLOT_HEIGHT, topRight.y + TUNNEL_WIDTH)));
         }
     }
 
-    public ArrayList<BoxIsland> getBoxIslands(){
-        return boxIslands;
+    public ArrayList<BoxIsland> getBottomBoxIslands(){
+        return bottomBoxIslands;
+    }
+
+    public ArrayList<BoxIsland> getTopBoxIslands(){
+        return topBoxIslands;
+    }
+
+    public ArrayList<BoxIsland> getSlotIslands(){
+        return slotIslands;
     }
 }

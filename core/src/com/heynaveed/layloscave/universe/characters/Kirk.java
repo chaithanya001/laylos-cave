@@ -30,10 +30,11 @@ public final class Kirk extends Character {
 
     private static final float KIRK_STRAIGHT_JUMP_ROTATION_SPEED = 25.0f;
     private static final float MAXIMUM_VELOCITY = 15.0f;
-    private static final float CAMERA_WEST_LIMIT = 15.0f;
-    private static final float CAMERA_EAST_LIMIT = 177.0f;
-    private static final float CAMERA_NORTH_LIMIT = 119.0f;
-    private static final float CAMERA_SOUTH_LIMIT = 8.5f;
+    private static final float HUB_CAMERA_WEST_LIMIT = 15.0f;
+    private static final float HUB_CAMERA_EAST_LIMIT = 177.0f;
+    private static final float HUB_CAMERA_NORTH_LIMIT = 119.0f;
+    private static final float HUB_CAMERA_SOUTH_LIMIT = 8.5f;
+    private static final float TUNNEL_CAMERA_SOUTH_LIMIT = 16.0f;
     private static final float FIXTURE_WIDTH = GameApp.toPPM(48);
     private static final float FIXTURE_HEIGHT = GameApp.toPPM(92);
     private static final float HEAD_DISPLACEMENT = GameApp.toPPM(30);
@@ -41,7 +42,6 @@ public final class Kirk extends Character {
     private static final float MAX_BOUNCE_TIMER = 0.3f;
     private static final float CAMERA_PORTAL_SPEED = 75.0f;
     private final ParticleEffect cellularDisintegrationEffect = new ParticleEffect();
-    private Vector2 cavernGameCamPosition;
 
     private float xDisplacement;
     private float yDisplacement;
@@ -98,7 +98,7 @@ public final class Kirk extends Character {
                 panCavernCamera();
                 break;
             case TUNNEL:
-                panTunnelCamera(dt);
+                panTunnelCamera();
                 break;
         }
 
@@ -159,26 +159,38 @@ public final class Kirk extends Character {
         return (float)Math.abs(Math.sqrt(Math.pow((point2.x - point1.x), 2) + Math.pow((point2.y - point1.y), 2)));
     }
 
-    private void panTunnelCamera(float dt){
+    private void panTunnelCamera(){
+        if (body.getPosition().x > HUB_CAMERA_WEST_LIMIT && body.getPosition().x < HUB_CAMERA_EAST_LIMIT)
+            gameCam.position.x = RoundTo.RoundToNearest(body.getPosition().x, GameApp.toPPM(1));
+        else if(body.getPosition().x < HUB_CAMERA_WEST_LIMIT)
+            gameCam.position.x = HUB_CAMERA_WEST_LIMIT;
+        else if(body.getPosition().x > HUB_CAMERA_EAST_LIMIT)
+            gameCam.position.x = HUB_CAMERA_EAST_LIMIT;
 
+        if (body.getPosition().y > TUNNEL_CAMERA_SOUTH_LIMIT && body.getPosition().y < HUB_CAMERA_NORTH_LIMIT)
+            gameCam.position.y = RoundTo.RoundToNearest(body.getPosition().y, GameApp.toPPM(1));
+        else if(body.getPosition().y < TUNNEL_CAMERA_SOUTH_LIMIT)
+            gameCam.position.y = TUNNEL_CAMERA_SOUTH_LIMIT;
+        else if(body.getPosition().y > HUB_CAMERA_NORTH_LIMIT)
+            gameCam.position.y = HUB_CAMERA_NORTH_LIMIT;
     }
 
     private void panHubCamera(float dt) {
         if (!isPortalLocked) {
-            if (body.getPosition().x > CAMERA_WEST_LIMIT && body.getPosition().x < CAMERA_EAST_LIMIT)
+            if (body.getPosition().x > HUB_CAMERA_WEST_LIMIT && body.getPosition().x < HUB_CAMERA_EAST_LIMIT)
                 gameCam.position.x = RoundTo.RoundToNearest(body.getPosition().x, GameApp.toPPM(1));
-            else if(body.getPosition().x < CAMERA_WEST_LIMIT)
-                gameCam.position.x = CAMERA_WEST_LIMIT;
-            else if(body.getPosition().x > CAMERA_EAST_LIMIT)
-                gameCam.position.x = CAMERA_EAST_LIMIT;
+            else if(body.getPosition().x < HUB_CAMERA_WEST_LIMIT)
+                gameCam.position.x = HUB_CAMERA_WEST_LIMIT;
+            else if(body.getPosition().x > HUB_CAMERA_EAST_LIMIT)
+                gameCam.position.x = HUB_CAMERA_EAST_LIMIT;
 
 
-            if (body.getPosition().y > CAMERA_SOUTH_LIMIT && body.getPosition().y < CAMERA_NORTH_LIMIT)
+            if (body.getPosition().y > HUB_CAMERA_SOUTH_LIMIT && body.getPosition().y < HUB_CAMERA_NORTH_LIMIT)
                 gameCam.position.y = RoundTo.RoundToNearest(body.getPosition().y, GameApp.toPPM(1));
-            else if(body.getPosition().y < CAMERA_SOUTH_LIMIT)
-                gameCam.position.y = CAMERA_SOUTH_LIMIT;
-            else if(body.getPosition().y > CAMERA_NORTH_LIMIT)
-                gameCam.position.y = CAMERA_NORTH_LIMIT;
+            else if(body.getPosition().y < HUB_CAMERA_SOUTH_LIMIT)
+                gameCam.position.y = HUB_CAMERA_SOUTH_LIMIT;
+            else if(body.getPosition().y > HUB_CAMERA_NORTH_LIMIT)
+                gameCam.position.y = HUB_CAMERA_NORTH_LIMIT;
         }
         else {
             float xMovement = 0;
@@ -373,10 +385,8 @@ public final class Kirk extends Character {
     @Override
     protected void initialiseBody() {
         Vector2 randomStartingPosition = screen.getRandomStartingPosition();
-        cavernGameCamPosition = randomStartingPosition;
         BodyDef bDef = new BodyDef();
         bDef.position.set(randomStartingPosition);
-//        bDef.position.set(GameApp.toPPM(MapGenerator.WIDTH/2)*64, GameApp.toPPM(MapGenerator.HUB_HEIGHT/2)*64);
         bDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bDef);
     }

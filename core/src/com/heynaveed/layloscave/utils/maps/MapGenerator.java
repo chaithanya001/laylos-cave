@@ -117,9 +117,9 @@ public final class MapGenerator {
                 break;
         }
 
-//        deleteOldObjects();
-//        calculateTerrainObjectList();
-//        generateObjects();
+        deleteOldObjects();
+        calculateTerrainObjectList();
+        generateObjects();
         compressTileIDSet();
         updateTerrainLayer();
         writeToMap();
@@ -215,14 +215,26 @@ public final class MapGenerator {
     }
 
     private static void generateTunnelPathway(){
-        ArrayList<BoxIsland> boxIslands = new TunnelMap().getBoxIslands();
+        TunnelMap tunnelMap = new TunnelMap();
+        ArrayList<BoxIsland> mainIslands = tunnelMap.getTopBoxIslands();
+        mainIslands.addAll(tunnelMap.getBottomBoxIslands());
+        ArrayList<BoxIsland> slotIslands = tunnelMap.getSlotIslands();
 
-        for(int i = 0; i < boxIslands.size(); i++){
-            TileVector topLeft = boxIslands.get(i).getTopLeft();
-            TileVector bottomRight = boxIslands.get(i).getBottomRight();
+        for(int i = 0; i < mainIslands.size(); i++){
+            TileVector topLeft = mainIslands.get(i).getTopLeft();
+            TileVector bottomRight = mainIslands.get(i).getBottomRight();
             for(int j = topLeft.x; j < bottomRight.x; j++){
                 for(int k = topLeft.y; k < bottomRight.y; k++)
                     workingTileIDSet[j][k] = randomTileID(CAVE_IDS);
+            }
+        }
+
+        for(int i = 0; i < slotIslands.size(); i++){
+            TileVector topLeft = slotIslands.get(i).getTopLeft();
+            TileVector bottomRight = slotIslands.get(i).getBottomRight();
+            for(int x = topLeft.x; x < bottomRight.x; x++){
+                for(int y = topLeft.y; y < bottomRight.y; y++)
+                    workingTileIDSet[x][y] = randomTileID(CAVE_IDS);
             }
         }
     }
@@ -347,27 +359,29 @@ public final class MapGenerator {
 
     public Vector2 getRandomStartingPosition() {
 
-        if(workingMapState == MapState.HUB) {
-            int padding = 10;
+        switch(workingMapState){
+            case HUB:
+                int padding = 10;
 
-            int x = random.nextInt(PLATFORM_MAX_X - PLATFORM_MIN_X) + PLATFORM_MIN_X;
-            int y = random.nextInt(PLATFORM_MAX_Y - PLATFORM_MIN_Y) + PLATFORM_MIN_Y;
+                int x = random.nextInt(PLATFORM_MAX_X - PLATFORM_MIN_X) + PLATFORM_MIN_X;
+                int y = random.nextInt(PLATFORM_MAX_Y - PLATFORM_MIN_Y) + PLATFORM_MIN_Y;
 
-            for (int i = -padding; i <= padding; i++) {
-                for (int j = -padding; j <= padding; j++) {
-                    if (i == padding) {
-                        if (workingTileIDSet[x + i][y + j] == 0)
+                for (int i = -padding; i <= padding; i++) {
+                    for (int j = -padding; j <= padding; j++) {
+                        if (i == padding) {
+                            if (workingTileIDSet[x + i][y + j] == 0)
+                                return getRandomStartingPosition();
+                        } else if (workingTileIDSet[x + i][y + j] != 0)
                             return getRandomStartingPosition();
-                    } else if (workingTileIDSet[x + i][y + j] != 0)
-                        return getRandomStartingPosition();
+                    }
                 }
-            }
 
-            return new Vector2(GameApp.toPPM(y) * 64, GameApp.toPPM(workingHeight - x - (padding - 2)) * 64);
-        }
-        else {
-            TileVector tileVector = cavernPath.getCaverns().get(cavernPath.getCavernBlockPath().get(0)).getMidPoint();
-            return new Vector2(tileVectorToWorldPosition(new TileVector(tileVector.x + 10, tileVector.y)));
+                return new Vector2(GameApp.toPPM(y) * 64, GameApp.toPPM(workingHeight - x - (padding - 2)) * 64);
+            case CAVERN:
+                TileVector tileVector = cavernPath.getCaverns().get(cavernPath.getCavernBlockPath().get(0)).getMidPoint();
+                return new Vector2(tileVectorToWorldPosition(new TileVector(tileVector.x + 10, tileVector.y)));
+            default: TUNNEL:
+                return new Vector2(tileVectorToWorldPosition(new TileVector(184, 20)));
         }
     }
 
