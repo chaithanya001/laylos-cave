@@ -9,11 +9,11 @@ public class CavernPath {
     private static final Random random = new Random();
     private static final int MAX_BLOCK_PER_PATH = 12;
     private static final int MAX_BLOCKS = 16;
-    private final ArrayList<CavernBlock> cavernBlocks;
+    private final ArrayList<Cavern> caverns;
     private final ArrayList<Integer> cavernBlockPath;
 
     public CavernPath(){
-        cavernBlocks = new ArrayList<CavernBlock>();
+        caverns = new ArrayList<Cavern>();
         cavernBlockPath = new ArrayList<Integer>();
         initBlocks();
         determineBlockPathways();
@@ -21,17 +21,17 @@ public class CavernPath {
 
     private void initBlocks(){
         for(int i = 1; i <= MAX_BLOCKS; i++)
-            cavernBlocks.add(new CavernBlock(i));
+            caverns.add(new Cavern(i));
     }
 
     private void determineBlockPathways(){
 
         int startingBlockPosition = random.nextInt(MAX_BLOCKS);
         cavernBlockPath.add(startingBlockPosition);
-        cavernBlocks.get(startingBlockPosition).setStartBlock(true).setPathBlock(true);
+        caverns.get(startingBlockPosition).setStartBlock(true).setPathBlock(true);
 
         for(int i = 1; i < MAX_BLOCK_PER_PATH; i++) {
-            CavernBlock currentBlock = cavernBlocks.get(cavernBlockPath.get(cavernBlockPath.size()-1));
+            Cavern currentBlock = caverns.get(cavernBlockPath.get(cavernBlockPath.size()-1));
             ArrayList<PathDirection.Cavern> potentialDirections = new ArrayList<PathDirection.Cavern>();
 
             if (currentBlock.getBlockNumber() > 4)
@@ -63,15 +63,15 @@ public class CavernPath {
                 PathDirection.Cavern pathDirection = potentialDirections.get(random.nextInt(potentialDirections.size()));
                 int nextBlockPosition = (currentBlock.getBlockNumber()-1) + pathDirection.direction;
                 cavernBlockPath.add(nextBlockPosition);
-                cavernBlocks.get(nextBlockPosition).setPathBlock(true);
-                cavernBlocks.get(currentBlock.getBlockNumber()-1).setDirection(pathDirection);
+                caverns.get(nextBlockPosition).setPathBlock(true);
+                caverns.get(currentBlock.getBlockNumber()-1).setDirection(pathDirection);
             }
             else break;
         }
     }
 
-    public ArrayList<CavernBlock> getCavernBlocks(){
-        return cavernBlocks;
+    public ArrayList<Cavern> getCaverns(){
+        return caverns;
     }
 
     public ArrayList<Integer> getCavernBlockPath(){

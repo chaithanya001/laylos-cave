@@ -1,7 +1,7 @@
 package com.heynaveed.layloscave.utils.maps;
 
 
-public final class CavernBlock {
+public final class Cavern {
 
     private final int blockNumber;
     private boolean isPathBlock = false;
@@ -11,7 +11,7 @@ public final class CavernBlock {
     private PathDirection.Cavern direction = PathDirection.Cavern.NONE;
     private final TileVector midPoint;
 
-    public CavernBlock(int blockNumber){
+    public Cavern(int blockNumber){
         this.blockNumber = blockNumber;
         midPoint = new TileVector(X_BLOCK_MIDPOINTS[blockNumber-1], Y_BLOCK_MIDPOINTS[blockNumber-1]);
     }
@@ -36,7 +36,7 @@ public final class CavernBlock {
         this.isPathBlock = isPathBlock;
     }
 
-    public CavernBlock setStartBlock(boolean isStartBlock){
+    public Cavern setStartBlock(boolean isStartBlock){
         this.isStartBlock = isStartBlock;
         return this;
     }

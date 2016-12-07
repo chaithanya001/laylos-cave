@@ -3,16 +3,16 @@ package com.heynaveed.layloscave.utils.maps;
 import java.util.ArrayList;
 
 
-final class TreePath {
+final class TreeMap {
 
     private static final int MINIMUM_X_DIFFERENCE = 8;
     private static final int MIN_PLATFORM_LENGTH = 5;
     private static final int CHILDREN_PER_PARENT = 4;
-    private static final ArrayList<TreeNode> TREE_NODEs = new ArrayList<TreeNode>();
+    private static final ArrayList<Node> TREE_NODEs = new ArrayList<Node>();
     private static final ArrayList<TileVector[]> individualPlatformPositions = new ArrayList<TileVector[]>();
     private static final ArrayList<TileVector> globalPlatformPositions = new ArrayList<TileVector>();
 
-    public TreePath build(int layerNum, TileVector[] rootTileVector){
+    public TreeMap build(int layerNum, TileVector[] rootTileVector){
         initialise(rootTileVector);
         createTree(layerNum);
         return this;
@@ -20,10 +20,10 @@ final class TreePath {
 
     private void initialise(TileVector[] rootTileVectors){
 //        TileVector[] rootTileVectors = calculateRootTileVector();
-        TreeNode rootTreeNode = new TreeNode(rootTileVectors).isRootNode(true);
-        TREE_NODEs.add(rootTreeNode);
+        Node rootNode = new Node(rootTileVectors).isRootNode(true);
+        TREE_NODEs.add(rootNode);
         individualPlatformPositions.add(rootTileVectors);
-        globalPlatformPositions.addAll(rootTreeNode.getTileVectorsAsList());
+        globalPlatformPositions.addAll(rootNode.getTileVectorsAsList());
     }
 
     private TileVector[] calculateRootTileVector(){
@@ -50,7 +50,7 @@ final class TreePath {
                 int platformSpacing = 8;
 //                int platformSpacing = random.nextInt(4) + MINIMUM_X_DIFFERENCE;
                 childNumber = childNumber == 0 ?4 :childNumber;
-                TreeNode parentTreeNode = TREE_NODEs.get(
+                Node parentNode = TREE_NODEs.get(
                         calculateParentIndex(TREE_NODEs.size(), childNumber));
                 TileVector[] tilePos = new TileVector[platformLength];
 
@@ -59,34 +59,34 @@ final class TreePath {
                     case 1:
                         for(int k = 0; k < tilePos.length; k++){
                             tilePos[k] = new TileVector(
-                                    parentTreeNode.getLeftTilePos().x()- platformSpacing,
-                                    parentTreeNode.getLeftTilePos().y() - tilePos.length + k - 1);
+                                    parentNode.getLeftTilePos().x()- platformSpacing,
+                                    parentNode.getLeftTilePos().y() - tilePos.length + k - 1);
                         }
                         break;
                     case 2:
                         for(int k = 0; k < tilePos.length; k++){
                             tilePos[k] = new TileVector(
-                                    parentTreeNode.getRightTilePos().x()- platformSpacing,
-                                    parentTreeNode.getRightTilePos().y() + k + 1);
+                                    parentNode.getRightTilePos().x()- platformSpacing,
+                                    parentNode.getRightTilePos().y() + k + 1);
                         }
                         break;
                     case 3:
                         for(int k = 0; k < tilePos.length; k++){
                             tilePos[k] = new TileVector(
-                                    parentTreeNode.getLeftTilePos().x()+ platformSpacing,
-                                    parentTreeNode.getLeftTilePos().y() - tilePos.length + k - 1);
+                                    parentNode.getLeftTilePos().x()+ platformSpacing,
+                                    parentNode.getLeftTilePos().y() - tilePos.length + k - 1);
                         }
                         break;
                     case 4:
                         for(int k = 0; k < tilePos.length; k++){
                             tilePos[k] = new TileVector(
-                                    parentTreeNode.getRightTilePos().x()+ platformSpacing,
-                                    parentTreeNode.getRightTilePos().y() + k + 1);
+                                    parentNode.getRightTilePos().x()+ platformSpacing,
+                                    parentNode.getRightTilePos().y() + k + 1);
                         }
                         break;
                 }
 
-                TreeNode newPlatform;
+                Node newPlatform;
                 boolean shouldSkip = false;
 
                 check_loop:
@@ -105,7 +105,7 @@ final class TreePath {
                     }
                 }
 
-                newPlatform = new TreeNode(tilePos);
+                newPlatform = new Node(tilePos);
                 TREE_NODEs.add(newPlatform);
 
                 if(!shouldSkip) {
@@ -115,7 +115,7 @@ final class TreePath {
             }
         }
 
-//        System.out.println("Total TreePath Nodes: " + TREE_NODEs.size());
+//        System.out.println("Total TreeMap Nodes: " + TREE_NODEs.size());
 //        System.out.println("Actual Platforms: " + individualPlatformPositions.size());
     }
 

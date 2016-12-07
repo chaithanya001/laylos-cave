@@ -89,8 +89,8 @@ public final class MapGenerator {
     public static void main(String[] args) throws IOException{
         GameApp.CONFIGURATION = "Desktop";
 //        new MapGenerator().buildMap(MapState.HUB);
-        new MapGenerator().buildMap(MapState.CAVERN);
-//        new MapGenerator().buildMap(MapState.TUNNEL);
+//        new MapGenerator().buildMap(MapState.CAVERN);
+        new MapGenerator().buildMap(MapState.TUNNEL);
     }
 
     public MapGenerator buildMap(MapState mapState) throws IOException{
@@ -117,9 +117,9 @@ public final class MapGenerator {
                 break;
         }
 
-        deleteOldObjects();
-        calculateTerrainObjectList();
-        generateObjects();
+//        deleteOldObjects();
+//        calculateTerrainObjectList();
+//        generateObjects();
         compressTileIDSet();
         updateTerrainLayer();
         writeToMap();
@@ -135,10 +135,10 @@ public final class MapGenerator {
 
     private static void generateCavernPathway(){
         cavernPath = new CavernPath();
-        ArrayList<CavernBlock> cavernBlocks = cavernPath.getCavernBlocks();
+        ArrayList<Cavern> caverns = cavernPath.getCaverns();
 
-        for(int i = 0; i < cavernBlocks.size(); i++){
-            if(!cavernBlocks.get(i).isPathBlock()){
+        for(int i = 0; i < caverns.size(); i++){
+            if(!caverns.get(i).isPathBlock()){
 
                 int tempX = TOP_LEFT_X_BLOCK_POSITIONS[0];
                 int tempY = ((i%4)*48)+2;
@@ -157,25 +157,25 @@ public final class MapGenerator {
                 }
             }
 
-            if(cavernBlocks.get(i).getDirection().equals(PathDirection.Cavern.UP)){
+            if(caverns.get(i).getDirection().equals(PathDirection.Cavern.UP)){
                 for(int j = X_BLOCK_MIDPOINTS[i]; j > X_BLOCK_MIDPOINTS[i]-28; j--){
                     for(int k = Y_BLOCK_MIDPOINTS[i]-2; k <= Y_BLOCK_MIDPOINTS[i]+2; k++)
                         workingTileIDSet[j][k] = 0;
                 }
             }
-            else if(cavernBlocks.get(i).getDirection().equals(PathDirection.Cavern.DOWN)){
+            else if(caverns.get(i).getDirection().equals(PathDirection.Cavern.DOWN)){
                 for(int j = X_BLOCK_MIDPOINTS[i]; j < X_BLOCK_MIDPOINTS[i]+28; j++){
                     for(int k = Y_BLOCK_MIDPOINTS[i]-2; k <= Y_BLOCK_MIDPOINTS[i]+2; k++)
                         workingTileIDSet[j][k] = 0;
                 }
             }
-            else if(cavernBlocks.get(i).getDirection().equals(PathDirection.Cavern.LEFT)){
+            else if(caverns.get(i).getDirection().equals(PathDirection.Cavern.LEFT)){
                 for(int j = Y_BLOCK_MIDPOINTS[i]; j > Y_BLOCK_MIDPOINTS[i]-45; j--){
                     for(int k = X_BLOCK_MIDPOINTS[i]-4; k <= X_BLOCK_MIDPOINTS[i]+4; k++)
                         workingTileIDSet[k][j] = 0;
                 }
             }
-            else if(cavernBlocks.get(i).getDirection().equals(PathDirection.Cavern.RIGHT)){
+            else if(caverns.get(i).getDirection().equals(PathDirection.Cavern.RIGHT)){
                 for(int j = Y_BLOCK_MIDPOINTS[i]; j < Y_BLOCK_MIDPOINTS[i]+45; j++){
                     for(int k = X_BLOCK_MIDPOINTS[i]-4; k <= X_BLOCK_MIDPOINTS[i]+4; k++)
                         workingTileIDSet[k][j] = 0;
@@ -215,11 +215,11 @@ public final class MapGenerator {
     }
 
     private static void generateTunnelPathway(){
-        ArrayList<TunnelIsland> tunnelIslands = new TunnelPath().getTunnelIslands();
+        ArrayList<BoxIsland> boxIslands = new TunnelMap().getBoxIslands();
 
-        for(int i = 0; i < tunnelIslands.size(); i++){
-            TileVector topLeft = tunnelIslands.get(i).getTopLeft();
-            TileVector bottomRight = tunnelIslands.get(i).getBottomRight();
+        for(int i = 0; i < boxIslands.size(); i++){
+            TileVector topLeft = boxIslands.get(i).getTopLeft();
+            TileVector bottomRight = boxIslands.get(i).getBottomRight();
             for(int j = topLeft.x; j < bottomRight.x; j++){
                 for(int k = topLeft.y; k < bottomRight.y; k++)
                     workingTileIDSet[j][k] = randomTileID(CAVE_IDS);
@@ -366,24 +366,24 @@ public final class MapGenerator {
             return new Vector2(GameApp.toPPM(y) * 64, GameApp.toPPM(workingHeight - x - (padding - 2)) * 64);
         }
         else {
-            TileVector tileVector = cavernPath.getCavernBlocks().get(cavernPath.getCavernBlockPath().get(0)).getMidPoint();
+            TileVector tileVector = cavernPath.getCaverns().get(cavernPath.getCavernBlockPath().get(0)).getMidPoint();
             return new Vector2(tileVectorToWorldPosition(new TileVector(tileVector.x + 10, tileVector.y)));
         }
     }
 
     private static void generateHubPathway(){
-        HubPath hubPath = new HubPath().build();
-        platformPositions = hubPath.getIndividualSegmentPositions();
-        ArrayList<HubSegment> pathHubSegments = hubPath.getPathSegments();
+        HubMap hubMap = new HubMap().build();
+        platformPositions = hubMap.getIndividualSegmentPositions();
+        ArrayList<Segment> pathSegments = hubMap.getPathSegments();
 
         for(int i = 0; i < platformPositions.size(); i++){
             for(int j = 0; j < platformPositions.get(i).length; j++)
                 workingTileIDSet[platformPositions.get(i)[j].x][platformPositions.get(i)[j].y] = 0;
         }
 
-        for(int i = 0; i < pathHubSegments.size(); i++){
-            PathDirection.Hub directionState = pathHubSegments.get(i).getDirection();
-            TileVector[] tileVector = pathHubSegments.get(i).getTileVectorsAsArray();
+        for(int i = 0; i < pathSegments.size(); i++){
+            PathDirection.Hub directionState = pathSegments.get(i).getDirection();
+            TileVector[] tileVector = pathSegments.get(i).getTileVectorsAsArray();
 
             boolean isXAxis = false;
 

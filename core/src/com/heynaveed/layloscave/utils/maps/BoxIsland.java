@@ -4,7 +4,7 @@ package com.heynaveed.layloscave.utils.maps;
  * Created by naveed.shihab on 05/12/2016.
  */
 
-public final class TunnelIsland {
+public final class BoxIsland {
 
     private final TileVector topLeft;
     private final TileVector bottomRight;
@@ -12,7 +12,7 @@ public final class TunnelIsland {
     private final TileVector bottomLeft;
     private final TileVector midPoint;
 
-    public TunnelIsland(TileVector topLeft, TileVector bottomRight){
+    public BoxIsland(TileVector topLeft, TileVector bottomRight){
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;
         this.topRight = new TileVector(topLeft.x, bottomRight.y);

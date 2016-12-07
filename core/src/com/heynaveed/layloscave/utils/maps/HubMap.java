@@ -8,7 +8,7 @@ import java.util.Random;
  * Created by naveed.shihab on 16/11/2016.
  */
 
-final class HubPath {
+final class HubMap {
 
     private static final Random random = new Random();
 
@@ -20,14 +20,14 @@ final class HubPath {
     private static final int MAX_SEGMENTS = 250;
     private static final int[] VERTICAL_SEGMENT_SIZES = {8, 9, 10, 11, 12, 13};
     private static final int[] HORIZONTAL_SEGMENT_SIZES = {20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35};
-    private static final ArrayList<HubSegment> PATH_HUB_SEGMENTS = new ArrayList<HubSegment>();
+    private static final ArrayList<Segment> PATH_HUB_SEGMENTS = new ArrayList<Segment>();
     private static final ArrayList<TileVector[]> individualSegmentPositions = new ArrayList<TileVector[]>();
     private static final PathDirection.Hub[] directionStates = truncateDirectionArray(PathDirection.Hub.values());
     private static final boolean[] directionPotential = new boolean[directionStates.length];
     private static final ArrayList<PathDirection.Hub> finalDirectionStates = new ArrayList<PathDirection.Hub>();
 
 
-    public HubPath build(){
+    public HubMap build(){
         initialise();
         createPath();
 //        System.out.println("Segments: " + PATH_HUB_SEGMENTS.size());
@@ -106,9 +106,9 @@ final class HubPath {
     }
 
     private void appendSegment() {
-        HubSegment newestHubSegment = new HubSegment();
-        PATH_HUB_SEGMENTS.add(newestHubSegment);
-        individualSegmentPositions.add(newestHubSegment.getTileVectorsAsArray());
+        Segment newestSegment = new Segment();
+        PATH_HUB_SEGMENTS.add(newestSegment);
+        individualSegmentPositions.add(newestSegment.getTileVectorsAsArray());
     }
 
     private PathDirection.Hub decideDirection() {
@@ -138,7 +138,7 @@ final class HubPath {
             directionPotential[1] = false;
         }
 
-//        printDirectionPotential("After First HubSegment Check");
+//        printDirectionPotential("After First Segment Check");
 
         if (upMinPotential < MapGenerator.PLATFORM_MIN_X)
             directionPotential[0] = false;
@@ -167,7 +167,7 @@ final class HubPath {
             }
         }
 
-//        printDirectionPotential("After Previous HubSegment Check");
+//        printDirectionPotential("After Previous Segment Check");
 
         up_loop:
         for (int x = WORKING_POSITION.x; x > upMaxPotential; x--) {
@@ -313,7 +313,7 @@ final class HubPath {
             return PathDirection.Hub.NONE;
     }
 
-    private HubSegment getLastSegment(int previousNumber) {
+    private Segment getLastSegment(int previousNumber) {
         return PATH_HUB_SEGMENTS.get(PATH_HUB_SEGMENTS.size() - previousNumber);
     }
 
@@ -323,7 +323,7 @@ final class HubPath {
 
     private void printDirectionPotential(String title) {
         System.out.println("============================================================================================");
-        System.out.println(title + "\t-\tHubSegment No.: " + Integer.toString(PATH_HUB_SEGMENTS.size() + 1) + "\t-\tWorking Pos.: (" + WORKING_POSITION.x + ", " + WORKING_POSITION.y + ")");
+        System.out.println(title + "\t-\tSegment No.: " + Integer.toString(PATH_HUB_SEGMENTS.size() + 1) + "\t-\tWorking Pos.: (" + WORKING_POSITION.x + ", " + WORKING_POSITION.y + ")");
         System.out.println("============================================================================================");
         for (int i = 0; i < directionPotential.length; i++)
             System.out.println(directionStates[i] + ": " + directionPotential[i]);
@@ -358,7 +358,7 @@ final class HubPath {
         return temp;
     }
 
-    public ArrayList<HubSegment> getPathSegments() {
+    public ArrayList<Segment> getPathSegments() {
         return PATH_HUB_SEGMENTS;
     }
 

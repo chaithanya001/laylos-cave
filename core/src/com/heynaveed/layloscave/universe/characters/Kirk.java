@@ -20,7 +20,7 @@ import com.heynaveed.layloscave.utils.AnimationPackager;
 import com.heynaveed.layloscave.utils.RoundTo;
 import com.heynaveed.layloscave.keys.AnimationKey;
 import com.heynaveed.layloscave.universe.Character;
-import com.heynaveed.layloscave.utils.maps.CavernBlock;
+import com.heynaveed.layloscave.utils.maps.Cavern;
 import com.heynaveed.layloscave.utils.maps.TileVector;
 
 import java.util.ArrayList;
@@ -146,9 +146,9 @@ public final class Kirk extends Character {
             case HUB:
                 break;
             case CAVERN:
-                for(int i = 0; i < CavernBlock.X_BLOCK_MIDPOINTS.length; i++)
+                for(int i = 0; i < Cavern.X_BLOCK_MIDPOINTS.length; i++)
                     cavernBlockMidpoints.add(screen.tileVectorToWorldPosition(
-                            new TileVector(CavernBlock.X_BLOCK_MIDPOINTS[i], CavernBlock.Y_BLOCK_MIDPOINTS[i])));
+                            new TileVector(Cavern.X_BLOCK_MIDPOINTS[i], Cavern.Y_BLOCK_MIDPOINTS[i])));
                 break;
             case TUNNEL:
                 break;
