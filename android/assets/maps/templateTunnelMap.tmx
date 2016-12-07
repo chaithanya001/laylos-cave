@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="left-down" width="300" height="200" tilewidth="64" tileheight="64" nextobjectid="1127">
+ <tileset firstgid="1" name="tileMapGutter" tilewidth="64" tileheight="64" spacing="1" margin="1" tilecount="25" columns="5">
+  <image source="tileMapGutter.png" width="326" height="326"/>
+ </tileset>
+ <tileset firstgid="26" name="tileSet" tilewidth="64" tileheight="64" tilecount="8" columns="4">
+  <image source="tileSet.png" width="256" height="128"/>
+ </tileset>
+ <layer name="background" width="300" height="200">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3DQQ0AAAwDodNR/0LnYW9IWDVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVfT4vuk68gKkDAA==
+  </data>
+ </layer>
+ <layer name="terrain" width="300" height="200">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3BMQEAAADCoPVPbQdvoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgN2nNPnSAqQMA
+  </data>
+ </layer>
+ <objectgroup name="ground"/>
+ <objectgroup name="rotation"/>
+ <objectgroup name="ice"/>
+ <objectgroup name="muddy"/>
+ <objectgroup name="bouncy"/>
+ <objectgroup name="crumbling"/>
+</map>

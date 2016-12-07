@@ -33,9 +33,6 @@ import java.util.Random;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-/**
- * Created by naveed.shihab on 27/10/2016.
- */
 
 public final class MapGenerator {
 
@@ -58,7 +55,7 @@ public final class MapGenerator {
     private static final int MAX_X_CLEAN_PADDING = 160;
     private static final int MIN_Y_CLEAN_PADDING = 20;
     private static final int MAX_Y_CLEAN_PADDING = 270;
-    public static final int HUB_HEIGHT = 200;
+    private static final int HUB_HEIGHT = 200;
     private static final int HUB_WIDTH = 300;
     private static final int CAVERN_WIDTH = 191;
     private static final int CAVERN_HEIGHT = 111;
@@ -174,13 +171,13 @@ public final class MapGenerator {
             }
             else if(cavernBlocks.get(i).getDirection().equals(PathDirection.Cavern.LEFT)){
                 for(int j = Y_BLOCK_MIDPOINTS[i]; j > Y_BLOCK_MIDPOINTS[i]-45; j--){
-                    for(int k = X_BLOCK_MIDPOINTS[i]-3; k <= X_BLOCK_MIDPOINTS[i]+3; k++)
+                    for(int k = X_BLOCK_MIDPOINTS[i]-4; k <= X_BLOCK_MIDPOINTS[i]+4; k++)
                         workingTileIDSet[k][j] = 0;
                 }
             }
             else if(cavernBlocks.get(i).getDirection().equals(PathDirection.Cavern.RIGHT)){
                 for(int j = Y_BLOCK_MIDPOINTS[i]; j < Y_BLOCK_MIDPOINTS[i]+45; j++){
-                    for(int k = X_BLOCK_MIDPOINTS[i]-3; k <= X_BLOCK_MIDPOINTS[i]+3; k++)
+                    for(int k = X_BLOCK_MIDPOINTS[i]-4; k <= X_BLOCK_MIDPOINTS[i]+4; k++)
                         workingTileIDSet[k][j] = 0;
                 }
             }
@@ -368,8 +365,10 @@ public final class MapGenerator {
 
             return new Vector2(GameApp.toPPM(y) * 64, GameApp.toPPM(workingHeight - x - (padding - 2)) * 64);
         }
-        else
-            return new Vector2(tileVectorToWorldPosition(cavernPath.getCavernBlocks().get(cavernPath.getCavernBlockPath().get(0)).getMidPoint()));
+        else {
+            TileVector tileVector = cavernPath.getCavernBlocks().get(cavernPath.getCavernBlockPath().get(0)).getMidPoint();
+            return new Vector2(tileVectorToWorldPosition(new TileVector(tileVector.x + 10, tileVector.y)));
+        }
     }
 
     private static void generateHubPathway(){
