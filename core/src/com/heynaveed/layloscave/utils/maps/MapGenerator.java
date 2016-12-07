@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Base64Coder;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.StreamUtils;
+import com.badlogic.gdx.utils.StringBuilder;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
 import com.heynaveed.layloscave.GameApp;
@@ -28,9 +29,12 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Random;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import sun.misc.BASE64Encoder;
 
 /**
  * Created by naveed.shihab on 27/10/2016.
@@ -61,8 +65,12 @@ public final class MapGenerator {
     private static final int HUB_WIDTH = 300;
     private static final int CAVERN_WIDTH = 191;
     private static final int CAVERN_HEIGHT = 111;
+    private static final int TUNNEL_HEIGHT = 200;
+    private static final int TUNNEL_WIDTH = 300;
+    private static final int TUNNEL_BORDER = 15;
     private static int hubNumber = 0;
     private static int cavernNumber = 0;
+    private static int tunnelNumber = 0;
     private static int[][] workingTileIDSet;
     private static int[] finalTileIDSet;
     private static String encodedString;
@@ -70,7 +78,6 @@ public final class MapGenerator {
     private static ArrayList<TileVector[]> platformPositions;
     private static ArrayList<TileVector> portalPositions;
     private static ArrayList<Boolean> portalFacing;
-    private static HubPath hubPath;
     private static int objectID = 1000;
     private static FileHandle newMap;
     private static MapState workingMapState;
@@ -89,6 +96,7 @@ public final class MapGenerator {
         GameApp.CONFIGURATION = "Desktop";
 //        new MapGenerator().buildMap(MapState.HUB);
         new MapGenerator().buildMap(MapState.CAVERN);
+//        new MapGenerator().buildMap(MapState.TUNNEL);
     }
 
     public MapGenerator buildMap(MapState mapState) throws IOException{
@@ -108,6 +116,10 @@ public final class MapGenerator {
             case CAVERN:
                 generateCavernBase();
                 generateCavernPathway();
+                break;
+            case TUNNEL:
+                generateTunnelBase();
+                generateTunnelPathway();
                 break;
         }
 
@@ -197,6 +209,30 @@ public final class MapGenerator {
 
     }
 
+    private static void generateTunnelBase(){
+        for(int x = 0; x < TUNNEL_HEIGHT; x++){
+            for(int y = 0; y < TUNNEL_WIDTH; y++) {
+                if(x < TUNNEL_BORDER || x > TUNNEL_HEIGHT - TUNNEL_BORDER || y < TUNNEL_BORDER || y > TUNNEL_WIDTH - TUNNEL_BORDER)
+                    workingTileIDSet[x][y] = randomTileID(CAVE_IDS);
+                else
+                    workingTileIDSet[x][y] = 0;
+            }
+        }
+    }
+
+    private static void generateTunnelPathway(){
+        ArrayList<TunnelIsland> tunnelIslands = new TunnelPath().getTunnelIslands();
+
+        for(int i = 0; i < tunnelIslands.size(); i++){
+            TileVector topLeft = tunnelIslands.get(i).getTopLeft();
+            TileVector bottomRight = tunnelIslands.get(i).getBottomRight();
+            for(int j = topLeft.x; j < bottomRight.x; j++){
+                for(int k = topLeft.y; k < bottomRight.y; k++)
+                    workingTileIDSet[j][k] = randomTileID(CAVE_IDS);
+            }
+        }
+    }
+
     public static void extractTileIDSet(byte[] data){
 
         InputStream is = null;
@@ -237,6 +273,10 @@ public final class MapGenerator {
                 workingWidth = CAVERN_WIDTH;
                 workingHeight = CAVERN_HEIGHT;
                 break;
+            case TUNNEL:
+                levelNumber = ++tunnelNumber;
+                workingWidth = TUNNEL_WIDTH;
+                workingHeight = TUNNEL_HEIGHT;
             default:
                 levelNumber = 1;
         }
@@ -337,7 +377,7 @@ public final class MapGenerator {
     }
 
     private static void generateHubPathway(){
-        hubPath = new HubPath().build();
+        HubPath hubPath = new HubPath().build();
         platformPositions = hubPath.getIndividualSegmentPositions();
         ArrayList<HubSegment> pathHubSegments = hubPath.getPathSegments();
 
@@ -516,11 +556,10 @@ public final class MapGenerator {
     }
 
     private static boolean doesTileMatchArray(int[] array, int number){
-        for(int i = 0; i < array.length; i++){
-            if(number == array[i])
+        for (int anArray : array) {
+            if (number == anArray)
                 return true;
         }
-
         return false;
     }
 
@@ -548,6 +587,7 @@ public final class MapGenerator {
     }
 
     private static void compressTileIDSet() throws IOException{
+        BASE64Encoder encoder = new BASE64Encoder();
         finalTileIDSet = convertToFinalArray(workingTileIDSet);
         byte[] byteArray = intToUnsignedByte(finalTileIDSet);
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream(byteArray.length);
@@ -573,9 +613,8 @@ public final class MapGenerator {
                 sb.append("\n");
                 line = reader.readLine();
             }
-
-            mapFileRoot = new XmlReader().parse(sb.toString());
             reader.close();
+            mapFileRoot = new XmlReader().parse(sb.toString());
         }
         else if(GameApp.CONFIGURATION.equals("Android"))
             mapFileRoot = new XmlReader().parse(newMap.readString());
@@ -646,6 +685,23 @@ public final class MapGenerator {
         return byteBuffer.array();
     }
 
+    private static byte[] intToUnsignedByte2(int[] integerArray){
+
+        int arrayLength = integerArray.length;
+
+        byte[]dst = new byte[arrayLength << 2];
+
+        for (int i=0; i<arrayLength; i++) {
+            int x = integerArray[i];
+            int j = i << 2;
+            dst[j++] = (byte) ((x >>> 0) & 0xff);
+            dst[j++] = (byte) ((x >>> 8) & 0xff);
+            dst[j++] = (byte) ((x >>> 16) & 0xff);
+            dst[j++] = (byte) ((x >>> 24) & 0xff);
+        }
+        return dst;
+    }
+
     private static int unsignedByteToInt (byte b) {
         return b & 0xFF;
     }
@@ -660,9 +716,8 @@ public final class MapGenerator {
         int count = 0;
 
         for(int i = 0; i < array.length; i++){
-            for(int j = 0; j < array[i].length; j++, count++){
+            for(int j = 0; j < array[i].length; j++, count++)
                 newArray[count] = array[i][j];
-            }
         }
 
         return newArray;

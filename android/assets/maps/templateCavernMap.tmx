@@ -12,7 +12,7 @@
   </data>
  </layer>
  <layer name="terrain" width="191" height="111">
-  <data encoding="base64" compression="zlib">
+  <data encoding="base64" compression="gzip">
    eJztwQENAAAAwqD3T20ON6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/gxLUwAB
   </data>
  </layer>

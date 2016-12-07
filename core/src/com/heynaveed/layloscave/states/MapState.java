@@ -5,7 +5,7 @@ package com.heynaveed.layloscave.states;
  */
 
 public enum MapState {
-    HUB("HubMap"), CAVERN("CavernMap");
+    HUB("HubMap"), CAVERN("CavernMap"), TUNNEL("TunnelMap");
 
     public final String name;
 

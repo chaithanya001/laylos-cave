@@ -1,5 +1,6 @@
 package com.heynaveed.layloscave.universe;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.loaders.resolvers.LocalFileHandleResolver;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;

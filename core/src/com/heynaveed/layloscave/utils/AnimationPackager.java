@@ -22,7 +22,7 @@ public final class AnimationPackager {
     private static final float[][] KIRK_FRAME_SPEEDS = {{0.4f}, {0.12f, 0.15f}, {0.2f}, {0.2f}, {0.4f}, {0}};
     private static final Animation[] KIRK_ANIMATIONS = new Animation[KIRK_FRAME_SEQUENCES.length];
     private static final int[][] JINI_FRAME_SEQUENCES = {{0, 1, 2, 3, 4, 5, 4, 3, 2, 1}, {0, 1, 2, 3}, {6, 5, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}};
-    private static final float[][] JINI_FRAME_SPEEDS = {{0.1f}, {0.1f}, {0.05f}, {0.05f}};
+    private static final float[][] JINI_FRAME_SPEEDS = {{0.1f}, {0.1f}, {0.04f}, {0.05f}};
     private static final Animation[] JINI_ANIMATIONS = new Animation[JINI_FRAME_SEQUENCES.length];
     private static final int[][] PORTAL_FRAME_SEQUENCES = {{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}};
     private static final float[][] PORTAL_FRAME_SPEEDS = {{0.1f}};
