@@ -34,6 +34,7 @@ public final class Kirk extends Character {
     private static final float HUB_CAMERA_EAST_LIMIT = 177.0f;
     private static final float HUB_CAMERA_NORTH_LIMIT = 119.0f;
     private static final float HUB_CAMERA_SOUTH_LIMIT = 8.5f;
+    private static final float TUNNEL_CAMERA_NORTH_LIMIT = 111.0f;
     private static final float TUNNEL_CAMERA_SOUTH_LIMIT = 16.0f;
     private static final float FIXTURE_WIDTH = GameApp.toPPM(48);
     private static final float FIXTURE_HEIGHT = GameApp.toPPM(92);
@@ -167,12 +168,12 @@ public final class Kirk extends Character {
         else if(body.getPosition().x > HUB_CAMERA_EAST_LIMIT)
             gameCam.position.x = HUB_CAMERA_EAST_LIMIT;
 
-        if (body.getPosition().y > TUNNEL_CAMERA_SOUTH_LIMIT && body.getPosition().y < HUB_CAMERA_NORTH_LIMIT)
+        if (body.getPosition().y > TUNNEL_CAMERA_SOUTH_LIMIT && body.getPosition().y < TUNNEL_CAMERA_NORTH_LIMIT)
             gameCam.position.y = RoundTo.RoundToNearest(body.getPosition().y, GameApp.toPPM(1));
         else if(body.getPosition().y < TUNNEL_CAMERA_SOUTH_LIMIT)
             gameCam.position.y = TUNNEL_CAMERA_SOUTH_LIMIT;
-        else if(body.getPosition().y > HUB_CAMERA_NORTH_LIMIT)
-            gameCam.position.y = HUB_CAMERA_NORTH_LIMIT;
+        else if(body.getPosition().y > TUNNEL_CAMERA_NORTH_LIMIT)
+            gameCam.position.y = TUNNEL_CAMERA_NORTH_LIMIT;
     }
 
     private void panHubCamera(float dt) {

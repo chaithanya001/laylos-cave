@@ -219,6 +219,7 @@ public final class MapGenerator {
         ArrayList<BoxIsland> mainIslands = tunnelMap.getTopBoxIslands();
         mainIslands.addAll(tunnelMap.getBottomBoxIslands());
         ArrayList<BoxIsland> slotIslands = tunnelMap.getSlotIslands();
+        ArrayList<Node> tunnelEntranceNodes = tunnelMap.getTunnelEntranceNodes();
 
         for(int i = 0; i < mainIslands.size(); i++){
             TileVector topLeft = mainIslands.get(i).getTopLeft();
@@ -236,6 +237,12 @@ public final class MapGenerator {
                 for(int y = topLeft.y; y < bottomRight.y; y++)
                     workingTileIDSet[x][y] = randomTileID(CAVE_IDS);
             }
+        }
+
+        for(int i = 0; i < tunnelEntranceNodes.size(); i++){
+            TileVector[] tileVectors = tunnelEntranceNodes.get(i).getTileVectorsAsArray();
+            for(int j = 0; j < tileVectors.length; j++)
+                workingTileIDSet[tileVectors[j].x][tileVectors[j].y] = randomTileID(CAVE_IDS);
         }
     }
 

@@ -24,11 +24,13 @@ public class TunnelMap {
     private final ArrayList<BoxIsland> topBoxIslands;
     private final ArrayList<BoxIsland> bottomBoxIslands;
     private final ArrayList<BoxIsland> slotIslands;
+    private final ArrayList<Node> tunnelEntranceNodes;
 
     public TunnelMap(){
         topBoxIslands = new ArrayList<BoxIsland>();
         bottomBoxIslands = new ArrayList<BoxIsland>();
         slotIslands = new ArrayList<BoxIsland>();
+        tunnelEntranceNodes = new ArrayList<Node>();
         generateTunnelIslands();
     }
 
@@ -80,6 +82,26 @@ public class TunnelMap {
                         new TileVector(topRight.x, topRight.y),
                         new TileVector(topRight.x + SLOT_HEIGHT, topRight.y + TUNNEL_WIDTH)));
         }
+
+        for(int i = 0; i < topBoxIslands.size()-1; i++){
+            TileVector bottomRight = topBoxIslands.get(i).getBottomRight();
+            TileVector[] tileVectors = new TileVector[15];
+
+            for(int j = 0; j < tileVectors.length; j++)
+                tileVectors[j] = new TileVector(bottomRight.x + 8, bottomRight.y + j);
+
+            tunnelEntranceNodes.add(new Node(tileVectors));
+        }
+
+        for(int i = 0; i < bottomBoxIslands.size()-1; i++){
+            TileVector bottomRight = bottomBoxIslands.get(i).getBottomRight();
+            TileVector[] tileVectors = new TileVector[15];
+
+            for(int j = 0; j < tileVectors.length; j++)
+                tileVectors[j] = new TileVector(bottomRight.x + 8, bottomRight.y + j);
+
+            tunnelEntranceNodes.add(new Node(tileVectors));
+        }
     }
 
     public ArrayList<BoxIsland> getBottomBoxIslands(){
@@ -92,5 +114,9 @@ public class TunnelMap {
 
     public ArrayList<BoxIsland> getSlotIslands(){
         return slotIslands;
+    }
+
+    public ArrayList<Node> getTunnelEntranceNodes(){
+        return tunnelEntranceNodes;
     }
 }
