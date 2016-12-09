@@ -26,12 +26,9 @@ public final class CollisionDetector implements ContactListener {
     private final InputController inputController;
     private final Kirk kirk;
 
-    private static boolean checkForHeadCollision = false;
-    private static boolean checkForPortalCollision = false;
-
     private TiledMap map;
 
-    public CollisionDetector(PlayScreen screen, Kirk kirk){
+    public CollisionDetector(PlayScreen screen){
         super();
         bodiesToRemove = new Array<Body>();
         this.screen = screen;
@@ -43,9 +40,9 @@ public final class CollisionDetector implements ContactListener {
     public void beginContact(Contact contact) {
         Fixture fixA = contact.getFixtureA();
         Fixture fixB = contact.getFixtureB();
-        Fixture kirk_body = null;
+        Fixture kirk_body;
         Fixture foreignObject = null;
-        checkForPortalCollision = false;
+        boolean checkForPortalCollision = false;
 
         int cDef = fixA.getFilterData().categoryBits | fixB.getFilterData().categoryBits;
 
@@ -58,7 +55,6 @@ public final class CollisionDetector implements ContactListener {
             foreignObject = kirk_body == fixA ? fixB : fixA;
             checkForPortalCollision = true;
         }
-
 
         switch(cDef){
             case GameApp.KIRK_BIT | GameApp.MUDDY_PLATFORM_BIT:
@@ -88,7 +84,7 @@ public final class CollisionDetector implements ContactListener {
             case GameApp.KIRK_BIT | GameApp.PORTAL_BIT:
                 if(checkForPortalCollision && !kirk.isPortalLocked()){
                     ArrayList<Portal> portals = screen.getPortals();
-                    Portal partnerPortal = null;
+                    Portal partnerPortal;
                     for(int i = 0; i < portals.size(); i++){
 
                         if(foreignObject.getUserData().equals(Portal.RANDOM_PORTAL_BIT_ONE)) {
@@ -111,6 +107,9 @@ public final class CollisionDetector implements ContactListener {
                     }
                     kirk.setControlDisabled(true);
                 }
+                break;
+            case GameApp.JINI_BIT | GameApp.GROUND_PLATFORM_BIT:
+                System.out.println("JINI HIT");
                 break;
         }
     }
@@ -154,18 +153,12 @@ public final class CollisionDetector implements ContactListener {
     public void postSolve(Contact contact, ContactImpulse impulse) {
         Fixture fixA = contact.getFixtureA();
         Fixture fixB = contact.getFixtureB();
-        checkForHeadCollision = false;
 
         int cDef = fixA.getFilterData().categoryBits | fixB.getFilterData().categoryBits;
-
-        if(fixA.getUserData() == "kirk_head" || fixB.getUserData() == "kirk_head")
-            checkForHeadCollision = true;
 
         switch(cDef){
             case GameApp.KIRK_BIT | GameApp.GROUND_PLATFORM_BIT:
                 kirk.setCurrentPlatformState(PlatformState.GROUND);
-//                if(checkForHeadCollision)
-//                    System.out.println("HEAD COLLISION");
                 break;
             case GameApp.KIRK_BIT | GameApp.MUDDY_PLATFORM_BIT:
                 kirk.setCurrentPlatformState(PlatformState.MUDDY);

@@ -145,14 +145,14 @@ public final class Jini extends Character {
         fDef.filter.categoryBits = GameApp.JINI_BIT;
         fDef.filter.maskBits = GameApp.GROUND_PLATFORM_BIT | GameApp.OBJECT_BIT;
 
-        CircleShape mainBody = new CircleShape();
-        mainBody.setRadius(GameApp.toPPM(48));
-        mainBody.setPosition(new Vector2(0, 0));
-        fDef.shape = mainBody;
+        CircleShape jiniDetector = new CircleShape();
+        jiniDetector.setRadius(GameApp.toPPM(256));
+        jiniDetector.setPosition(new Vector2(0, 0));
+        fDef.shape = jiniDetector;
         fDef.friction = 0;
         fDef.restitution = 0;
         fDef.isSensor = true;
-        body.createFixture(fDef);
+        body.createFixture(fDef).setUserData("jiniDetector");
     }
 
     @Override

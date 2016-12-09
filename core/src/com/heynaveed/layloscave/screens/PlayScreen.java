@@ -76,7 +76,7 @@ public class PlayScreen implements Screen {
         kirk.setSize(SPRITE_SIZE, SPRITE_SIZE);
         jini.setSize(SPRITE_SIZE, SPRITE_SIZE);
         inputController = new InputController(this).setKirk(kirk).setJini(jini);
-        contactListener = new CollisionDetector(this, kirk);
+        contactListener = new CollisionDetector(this);
         contactListener.setMap(currentTileMap);
         currentTileMap = levels.get(levelNumberOffset()).getMap();
         mapRenderer = new OrthogonalTiledMapRenderer(currentTileMap, GameApp.toPPM(MAP_UNIT_SCALE));
@@ -134,7 +134,7 @@ public class PlayScreen implements Screen {
 
         if (jini.getJiniAromaEffect().isComplete())
             jini.getJiniAromaEffect().reset();
-//        debugRenderer.render(world, gameCam.combined);
+        debugRenderer.render(world, gameCam.combined);
     }
 
     private void updatePortals(float dt) {
