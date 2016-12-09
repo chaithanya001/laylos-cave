@@ -3,21 +3,22 @@ package com.heynaveed.layloscave.utils.maps;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * Created by naveed.shihab on 16/11/2016.
- */
 
-final class Segment {
+final class PathSegment {
 
     private final TileVector[] tileVectors;
+    private final int segmentLength;
+    private final TileVector workingPosition;
     private final PathDirection.Hub direction;
 
-    Segment(){
-        direction = HubMap.CURRENT_DIRECTION;
-        tileVectors = createPathSegment(HubMap.SEGMENT_LENGTH, HubMap.WORKING_POSITION);
+    PathSegment(PathDirection.Hub direction, int segmentLength, TileVector workingPosition) {
+        this.direction = direction;
+        this.segmentLength = segmentLength;
+        this.workingPosition = workingPosition;
+        tileVectors = createPathSegment();
     }
 
-    private TileVector[] createPathSegment(int segmentLength, TileVector workingPosition){
+    private TileVector[] createPathSegment(){
 
         TileVector[] temp = new TileVector[segmentLength];
 

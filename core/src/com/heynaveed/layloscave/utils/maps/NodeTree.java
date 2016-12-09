@@ -3,7 +3,7 @@ package com.heynaveed.layloscave.utils.maps;
 import java.util.ArrayList;
 
 
-final class TreeMap {
+final class NodeTree {
 
     private static final int MINIMUM_X_DIFFERENCE = 8;
     private static final int MIN_PLATFORM_LENGTH = 5;
@@ -12,7 +12,7 @@ final class TreeMap {
     private static final ArrayList<TileVector[]> individualPlatformPositions = new ArrayList<TileVector[]>();
     private static final ArrayList<TileVector> globalPlatformPositions = new ArrayList<TileVector>();
 
-    public TreeMap build(int layerNum, TileVector[] rootTileVector){
+    public NodeTree build(int layerNum, TileVector[] rootTileVector){
         initialise(rootTileVector);
         createTree(layerNum);
         return this;
@@ -20,7 +20,7 @@ final class TreeMap {
 
     private void initialise(TileVector[] rootTileVectors){
 //        TileVector[] rootTileVectors = calculateRootTileVector();
-        Node rootNode = new Node(rootTileVectors).isRootNode(true);
+        Node rootNode = new Node(rootTileVectors);
         TREE_NODEs.add(rootNode);
         individualPlatformPositions.add(rootTileVectors);
         globalPlatformPositions.addAll(rootNode.getTileVectorsAsList());
@@ -44,11 +44,11 @@ final class TreeMap {
     private void createTree(int layerNum){
         for(int i = 1; i <= layerNum; i++){
             for(int j = 1; j <= Math.pow(CHILDREN_PER_PARENT, i); j++) {
-//                int platformLength = random.nextInt(5)+ MIN_PLATFORM_LENGTH;
+//                int platformLength = RANDOM.nextInt(5)+ MIN_PLATFORM_LENGTH;
                 int platformLength = 8;
                 int childNumber = (TREE_NODEs.size() % CHILDREN_PER_PARENT);
                 int platformSpacing = 8;
-//                int platformSpacing = random.nextInt(4) + MINIMUM_X_DIFFERENCE;
+//                int platformSpacing = RANDOM.nextInt(4) + MINIMUM_X_DIFFERENCE;
                 childNumber = childNumber == 0 ?4 :childNumber;
                 Node parentNode = TREE_NODEs.get(
                         calculateParentIndex(TREE_NODEs.size(), childNumber));
@@ -115,7 +115,7 @@ final class TreeMap {
             }
         }
 
-//        System.out.println("Total TreeMap Nodes: " + TREE_NODEs.size());
+//        System.out.println("Total NodeTree Nodes: " + TREE_NODEs.size());
 //        System.out.println("Actual Platforms: " + individualPlatformPositions.size());
     }
 

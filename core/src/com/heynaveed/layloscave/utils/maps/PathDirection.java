@@ -25,4 +25,8 @@ public class PathDirection {
 
         Cavern(int direction){ this.direction = direction; }
     }
+
+    enum Tunnel{
+        UP, DOWN, LEFT, RIGHT, NONE;
+    }
 }

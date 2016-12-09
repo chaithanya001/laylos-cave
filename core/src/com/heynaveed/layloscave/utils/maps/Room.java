@@ -1,47 +1,41 @@
 package com.heynaveed.layloscave.utils.maps;
 
 
-public final class Cavern {
+public final class Room {
 
     private final int blockNumber;
     private boolean isPathBlock = false;
-    private boolean isStartBlock = false;
     public static final int[] X_BLOCK_MIDPOINTS = {13, 13, 13, 13, 41, 41, 41, 41, 69, 69, 69, 69, 97, 97, 97, 97};
     public static final int[] Y_BLOCK_MIDPOINTS = {23, 71, 119, 167, 23, 71, 119, 167, 23, 71, 119, 167, 23, 71, 119, 167};
     private PathDirection.Cavern direction = PathDirection.Cavern.NONE;
     private final TileVector midPoint;
 
-    public Cavern(int blockNumber){
+    Room(int blockNumber){
         this.blockNumber = blockNumber;
         midPoint = new TileVector(X_BLOCK_MIDPOINTS[blockNumber-1], Y_BLOCK_MIDPOINTS[blockNumber-1]);
     }
 
-    public PathDirection.Cavern getDirection(){
+    PathDirection.Cavern getDirection(){
         return direction;
     }
 
-    public void setDirection(PathDirection.Cavern direction){
+    void setDirection(PathDirection.Cavern direction){
         this.direction = direction;
     }
 
-    public int getBlockNumber(){
+    int getBlockNumber(){
         return blockNumber;
     }
 
-    public boolean isPathBlock(){
+    boolean isPathBlock(){
         return isPathBlock;
     }
 
-    public void setPathBlock(boolean isPathBlock){
+    void setPathBlock(boolean isPathBlock){
         this.isPathBlock = isPathBlock;
     }
 
-    public Cavern setStartBlock(boolean isStartBlock){
-        this.isStartBlock = isStartBlock;
-        return this;
-    }
-
-    public TileVector getMidPoint(){
+    TileVector getMidPoint(){
         return midPoint;
     }
 }
