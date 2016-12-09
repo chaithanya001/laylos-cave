@@ -135,7 +135,7 @@ public class PlayScreen implements Screen {
 
         if (jini.getJiniAromaEffect().isComplete())
             jini.getJiniAromaEffect().reset();
-//        debugRenderer.render(world, gameCam.combined);
+        debugRenderer.render(world, gameCam.combined);
     }
 
     private void updatePortals(float dt) {

@@ -63,7 +63,6 @@ public final class Jini extends Character {
         setPosition(body.getPosition().x - getWidth()/2, body.getPosition().y - getHeight()/2);
         tileVectorPos = getTileVectorPos();
         setRegion(updateAnimationFrame(dt));
-        System.out.println(tileVectorPos.x() + ", " + tileVectorPos.y());
     }
 
     private void handleAromaEffect(){
@@ -138,7 +137,7 @@ public final class Jini extends Character {
     protected void initialiseBody() {
         BodyDef bDef = new BodyDef();
         bDef.position.set(screen.getKirk().getBody().getPosition());
-        bDef.type = BodyDef.BodyType.KinematicBody;
+        bDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bDef);
     }
 
@@ -149,12 +148,12 @@ public final class Jini extends Character {
         fDef.filter.maskBits = GameApp.GROUND_PLATFORM_BIT | GameApp.OBJECT_BIT;
 
         CircleShape jiniDetector = new CircleShape();
-        jiniDetector.setRadius(GameApp.toPPM(256));
+        jiniDetector.setRadius(GameApp.toPPM(192));
         jiniDetector.setPosition(new Vector2(0, 0));
         fDef.shape = jiniDetector;
         fDef.friction = 0;
         fDef.restitution = 0;
-        fDef.isSensor = true;
+        fDef.isSensor = false;
         body.createFixture(fDef).setUserData("jiniDetector");
     }
 

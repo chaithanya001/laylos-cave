@@ -385,9 +385,8 @@ public final class Kirk extends Character {
 
     @Override
     protected void initialiseBody() {
-        Vector2 randomStartingPosition = screen.getRandomStartingPosition();
         BodyDef bDef = new BodyDef();
-        bDef.position.set(randomStartingPosition);
+        bDef.position.set(screen.getRandomStartingPosition());
         bDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bDef);
     }

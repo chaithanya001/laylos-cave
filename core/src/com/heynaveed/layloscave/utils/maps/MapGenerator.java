@@ -234,7 +234,7 @@ public final class MapGenerator {
                 TileVector tileVector = stageMap.getCaverns().get(stageMap.getCavernBlockPath().get(0)).getMidPoint();
                 return new Vector2(tileVectorToWorldPosition(new TileVector(tileVector.x + 10, tileVector.y)));
             default: TUNNEL:
-                return new Vector2(tileVectorToWorldPosition(new TileVector(184, 20)));
+                return new Vector2(tileVectorToWorldPosition(new TileVector(184, 26)));
         }
     }
 
@@ -497,10 +497,6 @@ public final class MapGenerator {
 
     private static int generateObjectID(){
         return objectID++;
-    }
-
-    private static int randomTileID(int[] array){
-        return array[random.nextInt(array.length)];
     }
 
     public ArrayList<TileVector> getPortalPositions(){
