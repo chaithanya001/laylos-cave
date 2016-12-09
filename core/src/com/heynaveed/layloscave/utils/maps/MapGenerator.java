@@ -481,7 +481,7 @@ public final class MapGenerator {
         return newArray;
     }
 
-    private static int[][] convertToWorkingArray(int[] array){
+    public int[][] convertToWorkingArray(int[] array){
         int[][] newArray = new int[workingWidth][workingHeight];
         int j = 0;
 
@@ -504,4 +504,8 @@ public final class MapGenerator {
     }
 
     public ArrayList<Boolean> getPortalFacing(){ return portalFacing; }
+
+    public int[][] getWorkingTileIDSet(){
+        return workingTileIDSet;
+    }
 }

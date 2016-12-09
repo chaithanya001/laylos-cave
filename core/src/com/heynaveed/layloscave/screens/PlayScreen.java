@@ -57,6 +57,7 @@ public class PlayScreen implements Screen {
     private MapState currentMapState;
     private MapGenerator mapGenerator;
     private int currentLevel;
+    private int[][] currentTileIDSet;
 
     public PlayScreen(GameApp gameApp) throws IOException {
         this.gameApp = gameApp;
@@ -66,6 +67,7 @@ public class PlayScreen implements Screen {
 //        currentMapState = MapState.STAGE;
         currentMapState = MapState.TUNNEL;
         mapGenerator = new MapGenerator().buildMap(currentMapState);
+        currentTileIDSet = mapGenerator.getWorkingTileIDSet();
         viewport = new FitViewport(GameApp.toPPM(GameApp.VIEWPORT_WIDTH), GameApp.toPPM(GameApp.VIEWPORT_HEIGHT), gameCam);
         gameCam.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight() / 2, 0);
         currentLevel = 1;
@@ -135,7 +137,7 @@ public class PlayScreen implements Screen {
 
         if (jini.getJiniAromaEffect().isComplete())
             jini.getJiniAromaEffect().reset();
-        debugRenderer.render(world, gameCam.combined);
+//        debugRenderer.render(world, gameCam.combined);
     }
 
     private void updatePortals(float dt) {
@@ -306,5 +308,9 @@ public class PlayScreen implements Screen {
 
     public MapState getCurrentMapState(){
         return currentMapState;
+    }
+
+    public int[][] getCurrentTileIDSet(){
+        return currentTileIDSet;
     }
 }

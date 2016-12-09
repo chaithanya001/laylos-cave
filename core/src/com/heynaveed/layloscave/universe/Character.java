@@ -21,6 +21,7 @@ public abstract class Character extends Sprite {
     protected final World world;
 
     protected TileVector tileVectorPos;
+    protected TileVector chosenPosition;
     protected AnimationPackager animationPackager;
     protected Body body;
     protected int[][] frameSequences;
@@ -75,11 +76,9 @@ public abstract class Character extends Sprite {
     }
 
     protected TileVector getTileVectorPos(){
-
         Vector2 bodyPosition = body.getPosition();
         int x = GameApp.fromPPM(bodyPosition.x / 64);
         int y = MapGenerator.workingHeight - GameApp.fromPPM(bodyPosition.y / 64);
-
-        return new TileVector(x, y);
+        return new TileVector(y, x);
     }
 }

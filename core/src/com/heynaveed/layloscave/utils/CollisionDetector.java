@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import com.heynaveed.layloscave.GameApp;
 import com.heynaveed.layloscave.states.PlatformState;
 import com.heynaveed.layloscave.universe.Portal;
+import com.heynaveed.layloscave.universe.characters.Jini;
 import com.heynaveed.layloscave.universe.characters.Kirk;
 import com.heynaveed.layloscave.universe.platforms.CrumblingPlatform;
 import com.heynaveed.layloscave.screens.PlayScreen;
@@ -25,6 +26,7 @@ public final class CollisionDetector implements ContactListener {
     private final PlayScreen screen;
     private final InputController inputController;
     private final Kirk kirk;
+    private final Jini jini;
 
     private TiledMap map;
 
@@ -34,6 +36,7 @@ public final class CollisionDetector implements ContactListener {
         this.screen = screen;
         inputController = screen.getInputController();
         this.kirk = screen.getKirk();
+        this.jini = screen.getJini();
     }
 
     @Override
@@ -112,7 +115,7 @@ public final class CollisionDetector implements ContactListener {
                 System.out.println("JINI DETECTS WALL");
                 break;
             case GameApp.JINI_BIT | GameApp.KIRK_BIT:
-                System.out.println("JINI DETECTS KIRK");
+                jini.determineCheckSpace();
                 break;
         }
     }
