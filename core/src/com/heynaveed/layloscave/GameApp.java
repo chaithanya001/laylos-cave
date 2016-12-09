@@ -49,6 +49,10 @@ public class GameApp extends Game {
         return value / PPM;
     }
 
+	public static int fromPPM(float value){
+		return (int)(value * PPM);
+	}
+
 	@Override
 	public void render () {
 		super.render();

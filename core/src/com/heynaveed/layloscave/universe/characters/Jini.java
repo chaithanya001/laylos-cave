@@ -14,6 +14,7 @@ import com.heynaveed.layloscave.screens.PlayScreen;
 import com.heynaveed.layloscave.states.CharacterState;
 import com.heynaveed.layloscave.utils.AnimationPackager;
 import com.heynaveed.layloscave.universe.Character;
+import com.heynaveed.layloscave.utils.maps.TileVector;
 
 public final class Jini extends Character {
 
@@ -60,7 +61,9 @@ public final class Jini extends Character {
         handleTeleporting();
         handleLevitating();
         setPosition(body.getPosition().x - getWidth()/2, body.getPosition().y - getHeight()/2);
+        tileVectorPos = getTileVectorPos();
         setRegion(updateAnimationFrame(dt));
+        System.out.println(tileVectorPos.x() + ", " + tileVectorPos.y());
     }
 
     private void handleAromaEffect(){

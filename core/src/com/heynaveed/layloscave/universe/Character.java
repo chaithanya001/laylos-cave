@@ -5,10 +5,14 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import com.heynaveed.layloscave.GameApp;
 import com.heynaveed.layloscave.screens.PlayScreen;
 import com.heynaveed.layloscave.utils.AnimationPackager;
+import com.heynaveed.layloscave.utils.maps.MapGenerator;
+import com.heynaveed.layloscave.utils.maps.TileVector;
 
 public abstract class Character extends Sprite {
 
@@ -16,6 +20,7 @@ public abstract class Character extends Sprite {
     protected final OrthographicCamera gameCam;
     protected final World world;
 
+    protected TileVector tileVectorPos;
     protected AnimationPackager animationPackager;
     protected Body body;
     protected int[][] frameSequences;
@@ -32,6 +37,7 @@ public abstract class Character extends Sprite {
         animationStateTimer = 0;
         health = 100;
         isFacingRight = true;
+        tileVectorPos = new TileVector(0, 0);
     }
 
     protected abstract void update(float dt);
@@ -66,5 +72,14 @@ public abstract class Character extends Sprite {
 
     public float getHealth(){
         return health;
+    }
+
+    protected TileVector getTileVectorPos(){
+
+        Vector2 bodyPosition = body.getPosition();
+        int x = GameApp.fromPPM(bodyPosition.x / 64);
+        int y = MapGenerator.workingHeight - GameApp.fromPPM(bodyPosition.y / 64);
+
+        return new TileVector(x, y);
     }
 }
