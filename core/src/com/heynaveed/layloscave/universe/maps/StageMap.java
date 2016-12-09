@@ -69,19 +69,19 @@ public final class StageMap extends Map implements MapBuilder {
             Room currentBlock = ROOMS.get(cavernBlockPath.get(cavernBlockPath.size()-1));
             ArrayList<PathDirection.Stage> potentialDirections = new ArrayList<PathDirection.Stage>();
 
-            if (currentBlock.getBlockNumber() > 4)
+            if (currentBlock.getRoomNumber() > 4)
                 potentialDirections.add(PathDirection.Stage.UP);
-            if (currentBlock.getBlockNumber() < 13)
+            if (currentBlock.getRoomNumber() < 13)
                 potentialDirections.add(PathDirection.Stage.DOWN);
-            if (currentBlock.getBlockNumber() % 4 != 0)
+            if (currentBlock.getRoomNumber() % 4 != 0)
                 potentialDirections.add(PathDirection.Stage.RIGHT);
-            if (currentBlock.getBlockNumber() % 4 != 1)
+            if (currentBlock.getRoomNumber() % 4 != 1)
                 potentialDirections.add(PathDirection.Stage.LEFT);
 
             check_loop:
             for (int j = 0; j < potentialDirections.size(); j++) {
                 for (int k = 0; k < cavernBlockPath.size(); k++) {
-                    if (currentBlock.getBlockNumber() + potentialDirections.get(j).direction == cavernBlockPath.get(k) + 1) {
+                    if (currentBlock.getRoomNumber() + potentialDirections.get(j).direction == cavernBlockPath.get(k) + 1) {
                         potentialDirections.remove(j);
                         j--;
                         continue check_loop;
@@ -96,10 +96,10 @@ public final class StageMap extends Map implements MapBuilder {
 
             if(!potentialDirections.isEmpty()) {
                 PathDirection.Stage pathDirection = potentialDirections.get(RANDOM.nextInt(potentialDirections.size()));
-                int nextBlockPosition = (currentBlock.getBlockNumber()-1) + pathDirection.direction;
+                int nextBlockPosition = (currentBlock.getRoomNumber()-1) + pathDirection.direction;
                 cavernBlockPath.add(nextBlockPosition);
                 ROOMS.get(nextBlockPosition).setPathBlock(true);
-                ROOMS.get(currentBlock.getBlockNumber()-1).setDirection(pathDirection);
+                ROOMS.get(currentBlock.getRoomNumber()-1).setDirection(pathDirection);
             }
             else break;
         }

@@ -3,16 +3,16 @@ package com.heynaveed.layloscave.utils.maps;
 
 public final class Room {
 
-    private final int blockNumber;
+    private final int roomNumber;
     private boolean isPathBlock = false;
     public static final int[] X_BLOCK_MIDPOINTS = {13, 13, 13, 13, 41, 41, 41, 41, 69, 69, 69, 69, 97, 97, 97, 97};
     public static final int[] Y_BLOCK_MIDPOINTS = {23, 71, 119, 167, 23, 71, 119, 167, 23, 71, 119, 167, 23, 71, 119, 167};
     private PathDirection.Stage direction = PathDirection.Stage.NONE;
     private final TileVector midPoint;
 
-    public Room(int blockNumber){
-        this.blockNumber = blockNumber;
-        midPoint = new TileVector(X_BLOCK_MIDPOINTS[blockNumber-1], Y_BLOCK_MIDPOINTS[blockNumber-1]);
+    public Room(int roomNumber){
+        this.roomNumber = roomNumber;
+        midPoint = new TileVector(X_BLOCK_MIDPOINTS[roomNumber -1], Y_BLOCK_MIDPOINTS[roomNumber -1]);
     }
 
     public PathDirection.Stage getDirection(){
@@ -23,8 +23,8 @@ public final class Room {
         this.direction = direction;
     }
 
-    public int getBlockNumber(){
-        return blockNumber;
+    public int getRoomNumber(){
+        return roomNumber;
     }
 
     public boolean isPathBlock(){
