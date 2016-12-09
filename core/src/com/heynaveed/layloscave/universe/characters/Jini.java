@@ -23,8 +23,6 @@ public final class Jini extends Character {
     private final ParticleEffect jiniAromaEffect = new ParticleEffect();
     private final PlayScreen screen;
 
-    private boolean hasSwapped;
-    private boolean isImpulsing;
     private boolean isTeleporting;
     private boolean previousFacing;
     private float kirkDisplacement;
@@ -63,6 +61,7 @@ public final class Jini extends Character {
         setPosition(body.getPosition().x - getWidth()/2, body.getPosition().y - getHeight()/2);
         tileVectorPos = getTileVectorPos();
         setRegion(updateAnimationFrame(dt));
+        System.out.println("X: " + tileVectorPos.x() + ", Y: " + tileVectorPos.y());
     }
 
     private void handleAromaEffect(){
@@ -104,7 +103,7 @@ public final class Jini extends Character {
         }
 
         previousFacing = isFacingRight;
-        body.setTransform(screen.getKirk().getBody().getPosition().x + kirkDisplacement, screen.getKirk().getBody().getPosition().y + 1, 0);
+//        body.setTransform(screen.getKirk().getBody().getPosition().x + kirkDisplacement, screen.getKirk().getBody().getPosition().y + 1, 0);
         jiniAromaEffect.setPosition(body.getPosition().x, body.getPosition().y);
         setRotation(calculateRotation());
     }
@@ -136,32 +135,31 @@ public final class Jini extends Character {
     @Override
     protected void initialiseBody() {
         BodyDef bDef = new BodyDef();
-        bDef.position.set(screen.getKirk().getBody().getPosition());
+        bDef.position.set(screen.getKirk().getBody().getPosition().x - 3, screen.getKirk().getBody().getPosition().y+2);
         bDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bDef);
+        body.setGravityScale(0);
     }
 
     @Override
     protected void initialiseFixtures() {
         FixtureDef fDef = new FixtureDef();
         fDef.filter.categoryBits = GameApp.JINI_BIT;
-        fDef.filter.maskBits = GameApp.GROUND_PLATFORM_BIT | GameApp.OBJECT_BIT;
+        fDef.filter.maskBits = GameApp.GROUND_PLATFORM_BIT | GameApp.OBJECT_BIT | GameApp.KIRK_BIT;
 
         CircleShape jiniDetector = new CircleShape();
-        jiniDetector.setRadius(GameApp.toPPM(192));
+        jiniDetector.setRadius(GameApp.toPPM(GameApp.TILE_LENGTH*3));
         jiniDetector.setPosition(new Vector2(0, 0));
         fDef.shape = jiniDetector;
         fDef.friction = 0;
         fDef.restitution = 0;
-        fDef.isSensor = false;
+        fDef.isSensor = true;
         body.createFixture(fDef).setUserData("jiniDetector");
     }
 
     @Override
     protected void initialiseStates() {
-        isImpulsing = false;
         isTeleporting = false;
-        hasSwapped = false;
         previousFacing = true;
     }
 

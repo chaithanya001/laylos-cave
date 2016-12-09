@@ -109,7 +109,10 @@ public final class CollisionDetector implements ContactListener {
                 }
                 break;
             case GameApp.JINI_BIT | GameApp.GROUND_PLATFORM_BIT:
-                System.out.println("JINI HIT");
+                System.out.println("JINI DETECTS WALL");
+                break;
+            case GameApp.JINI_BIT | GameApp.KIRK_BIT:
+                System.out.println("JINI DETECTS KIRK");
                 break;
         }
     }
