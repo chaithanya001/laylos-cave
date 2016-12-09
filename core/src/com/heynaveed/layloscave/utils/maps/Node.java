@@ -4,47 +4,47 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-final class Node {
+public final class Node {
 
     private final TileVector[] tileVectors;
     private final PathDirection.Hub hubDirection;
-    private final PathDirection.Cavern cavernDirection;
+    private final PathDirection.Stage stageDirection;
     private final PathDirection.Tunnel tunnelDirection;
 
-    Node(TileVector[] tileVectors){
+    public Node(TileVector[] tileVectors){
         this.tileVectors = tileVectors;
         this.hubDirection = PathDirection.Hub.NONE;
-        this.cavernDirection = PathDirection.Cavern.NONE;
+        this.stageDirection = PathDirection.Stage.NONE;
         this.tunnelDirection = PathDirection.Tunnel.NONE;
     }
 
-    Node(TileVector[] tileVectors, PathDirection.Hub hubDirection){
+    public Node(TileVector[] tileVectors, PathDirection.Hub hubDirection){
         this.tileVectors = tileVectors;
         this.hubDirection = hubDirection;
-        this.cavernDirection = PathDirection.Cavern.NONE;
+        this.stageDirection = PathDirection.Stage.NONE;
         this.tunnelDirection = PathDirection.Tunnel.NONE;
     }
 
-    Node(TileVector[] tileVectors, PathDirection.Cavern cavernDirection){
+    Node(TileVector[] tileVectors, PathDirection.Stage stageDirection){
         this.tileVectors = tileVectors;
         this.hubDirection = PathDirection.Hub.NONE;
-        this.cavernDirection = cavernDirection;
+        this.stageDirection = stageDirection;
         this.tunnelDirection = PathDirection.Tunnel.NONE;
     }
 
     Node(TileVector[] tileVectors, PathDirection.Tunnel tunnelDirection){
         this.tileVectors = tileVectors;
         this.hubDirection = PathDirection.Hub.NONE;
-        this.cavernDirection = PathDirection.Cavern.NONE;
+        this.stageDirection = PathDirection.Stage.NONE;
         this.tunnelDirection = tunnelDirection;
     }
 
-    PathDirection.Hub getHubDirection(){
+    public PathDirection.Hub getHubDirection(){
         return hubDirection;
     }
 
-    PathDirection.Cavern getCavernDirection(){
-        return cavernDirection;
+    PathDirection.Stage getStageDirection(){
+        return stageDirection;
     }
 
     PathDirection.Tunnel getTunnelDirection(){
@@ -63,11 +63,11 @@ final class Node {
         return tileVectors[0];
     }
 
-    TileVector getEndTilePos(){
+    public TileVector getEndTilePos(){
         return tileVectors[tileVectors.length-1];
     }
 
-    TileVector[] getTileVectorsAsArray(){
+    public TileVector[] getTileVectorsAsArray(){
         return tileVectors;
     }
 

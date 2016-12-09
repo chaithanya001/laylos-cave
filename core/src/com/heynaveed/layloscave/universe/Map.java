@@ -1,34 +1,33 @@
-package com.heynaveed.layloscave.utils.maps;
+package com.heynaveed.layloscave.universe;
 
 import com.heynaveed.layloscave.states.MapState;
+import com.heynaveed.layloscave.utils.maps.PathDirection;
 
 import java.util.Random;
 
-abstract class Map {
+public abstract class Map {
 
-    static Random RANDOM = new Random();
-    static int[] CAVE_IDS = {6, 7, 8, 9, 10};
-
+    protected static Random RANDOM = new Random();
+    protected static int[] CAVE_IDS = {6, 7, 8, 9, 10};
     protected final int width;
     protected final int height;
-    MapState mapState;
+    protected MapState mapState;
+    protected int[][] tileIDSet;
 
-    int[][] tileIDSet;
-
-    Map(int height, int width){
+    protected Map(int height, int width){
         this.height = height;
         this.width = width;
         tileIDSet = new int[height][width];
     }
 
-    static PathDirection.Hub[] truncateDirectionArray(PathDirection.Hub[] array) {
+    protected static PathDirection.Hub[] truncateDirectionArray(PathDirection.Hub[] array) {
         PathDirection.Hub[] temp = new PathDirection.Hub[array.length - 1];
         for (int i = 0; i < temp.length; i++)
             temp[i] = array[i];
         return temp;
     }
 
-    void smoothMap(int iterations){
+    protected void smoothMap(int iterations){
         for(int i = 0; i < iterations; i++) {
             for (int j = 0; j < height; j++) {
                 for (int k = 0; k < width; k++) {
@@ -59,19 +58,19 @@ abstract class Map {
         return wallCount;
     }
 
-    int offsetRandom(int value){
+    protected int offsetRandom(int value){
         return RANDOM.nextInt(15) + value;
     }
 
-    boolean isWallTile(int x, int y){
+    protected boolean isWallTile(int x, int y){
         return x < 6 || x > height -10 || y < 6 || y > width -8;
     }
 
-    static int randomTileID(int[] array){
+    protected int randomTileID(int[] array){
         return array[RANDOM.nextInt(array.length)];
     }
 
-    int[][] getTileIDSet(){
+    public int[][] getTileIDSet(){
         return tileIDSet;
     }
 

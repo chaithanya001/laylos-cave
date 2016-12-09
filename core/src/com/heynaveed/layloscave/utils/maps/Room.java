@@ -7,31 +7,31 @@ public final class Room {
     private boolean isPathBlock = false;
     public static final int[] X_BLOCK_MIDPOINTS = {13, 13, 13, 13, 41, 41, 41, 41, 69, 69, 69, 69, 97, 97, 97, 97};
     public static final int[] Y_BLOCK_MIDPOINTS = {23, 71, 119, 167, 23, 71, 119, 167, 23, 71, 119, 167, 23, 71, 119, 167};
-    private PathDirection.Cavern direction = PathDirection.Cavern.NONE;
+    private PathDirection.Stage direction = PathDirection.Stage.NONE;
     private final TileVector midPoint;
 
-    Room(int blockNumber){
+    public Room(int blockNumber){
         this.blockNumber = blockNumber;
         midPoint = new TileVector(X_BLOCK_MIDPOINTS[blockNumber-1], Y_BLOCK_MIDPOINTS[blockNumber-1]);
     }
 
-    PathDirection.Cavern getDirection(){
+    public PathDirection.Stage getDirection(){
         return direction;
     }
 
-    void setDirection(PathDirection.Cavern direction){
+    public void setDirection(PathDirection.Stage direction){
         this.direction = direction;
     }
 
-    int getBlockNumber(){
+    public int getBlockNumber(){
         return blockNumber;
     }
 
-    boolean isPathBlock(){
+    public boolean isPathBlock(){
         return isPathBlock;
     }
 
-    void setPathBlock(boolean isPathBlock){
+    public void setPathBlock(boolean isPathBlock){
         this.isPathBlock = isPathBlock;
     }
 

@@ -12,6 +12,9 @@ import com.badlogic.gdx.utils.XmlReader.Element;
 import com.heynaveed.layloscave.GameApp;
 import com.heynaveed.layloscave.states.MapState;
 import com.heynaveed.layloscave.universe.Portal;
+import com.heynaveed.layloscave.universe.maps.HubMap;
+import com.heynaveed.layloscave.universe.maps.StageMap;
+import com.heynaveed.layloscave.universe.maps.TunnelMap;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -40,10 +43,10 @@ public final class MapGenerator {
     private static final int MAX_PORTAL_PLATFORM_HEIGHT = 4;
     private static final int[] GROUND_IDS = {1, 2, 3, 4, 5};
     private static final int[] CAVE_IDS = {6, 7, 8, 9, 10};
-    static final int PLATFORM_MIN_X = 20;
-    static final int PLATFORM_MAX_X = 180;
-    static final int PLATFORM_MIN_Y = 20;
-    static final int PLATFORM_MAX_Y = 280;
+    public static final int PLATFORM_MIN_X = 20;
+    public static final int PLATFORM_MAX_X = 180;
+    public static final int PLATFORM_MIN_Y = 20;
+    public static final int PLATFORM_MAX_Y = 280;
     private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
     public static final String MAP_PATH = "maps/";
     private static final String TEMPLATE_PATH = "template";
@@ -52,8 +55,8 @@ public final class MapGenerator {
     private static final int HUB_MAP_WIDTH = 300;
     private static final int CAVERN_MAP_WIDTH = 191;
     private static final int CAVERN_MAP_HEIGHT = 111;
-    static final int TUNNEL_MAP_HEIGHT = 200;
-    static final int TUNNEL_MAP_WIDTH = 300;
+    public static final int TUNNEL_MAP_HEIGHT = 200;
+    public static final int TUNNEL_MAP_WIDTH = 300;
     private static int hubNumber = 0;
     private static int cavernNumber = 0;
     private static int tunnelNumber = 0;
@@ -73,13 +76,13 @@ public final class MapGenerator {
 
     private static final Random random = new Random();
     private static HubMap hubMap;
-    private static CavernMap cavernMap;
+    private static StageMap stageMap;
     private static TunnelMap tunnelMap;
 
     public static void main(String[] args) throws IOException{
         GameApp.CONFIGURATION = "Desktop";
 //        new MapGenerator().buildMap(MapState.HUB);
-        new MapGenerator().buildMap(MapState.CAVERN);
+        new MapGenerator().buildMap(MapState.STAGE);
 //        new MapGenerator().buildMap(MapState.TUNNEL);
     }
 
@@ -95,9 +98,9 @@ public final class MapGenerator {
                 workingTileIDSet = hubMap.getTileIDSet();
                 determinePortalPositions();
                 break;
-            case CAVERN:
-                cavernMap = new CavernMap(workingHeight, workingWidth);
-                workingTileIDSet = cavernMap.getTileIDSet();
+            case STAGE:
+                stageMap = new StageMap(workingHeight, workingWidth);
+                workingTileIDSet = stageMap.getTileIDSet();
                 break;
             case TUNNEL:
                 tunnelMap = new TunnelMap(workingHeight, workingWidth);
@@ -149,7 +152,7 @@ public final class MapGenerator {
                 workingWidth = HUB_MAP_WIDTH;
                 workingHeight = HUB_MAP_HEIGHT;
                 break;
-            case CAVERN:
+            case STAGE:
                 levelNumber = ++cavernNumber;
                 workingWidth = CAVERN_MAP_WIDTH;
                 workingHeight = CAVERN_MAP_HEIGHT;
@@ -227,8 +230,8 @@ public final class MapGenerator {
                 }
 
                 return new Vector2(GameApp.toPPM(y) * 64, GameApp.toPPM(workingHeight - x - (padding - 2)) * 64);
-            case CAVERN:
-                TileVector tileVector = cavernMap.getCaverns().get(cavernMap.getCavernBlockPath().get(0)).getMidPoint();
+            case STAGE:
+                TileVector tileVector = stageMap.getCaverns().get(stageMap.getCavernBlockPath().get(0)).getMidPoint();
                 return new Vector2(tileVectorToWorldPosition(new TileVector(tileVector.x + 10, tileVector.y)));
             default: TUNNEL:
                 return new Vector2(tileVectorToWorldPosition(new TileVector(184, 20)));

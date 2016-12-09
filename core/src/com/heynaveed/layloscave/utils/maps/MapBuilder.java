@@ -1,7 +1,7 @@
 package com.heynaveed.layloscave.utils.maps;
 
 
-interface MapBuilder {
+public interface MapBuilder {
 
     void initialiseWorkingValues();
     void initialiseTileIDSet();

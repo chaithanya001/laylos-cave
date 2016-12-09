@@ -1,10 +1,18 @@
-package com.heynaveed.layloscave.utils.maps;
+package com.heynaveed.layloscave.universe.maps;
 
 import com.heynaveed.layloscave.states.MapState;
+import com.heynaveed.layloscave.utils.maps.MapBuilder;
+import com.heynaveed.layloscave.utils.maps.MapGenerator;
+import com.heynaveed.layloscave.utils.maps.Node;
+import com.heynaveed.layloscave.utils.maps.Path;
+import com.heynaveed.layloscave.utils.maps.PathDirection;
+import com.heynaveed.layloscave.utils.maps.TileVector;
+import com.heynaveed.layloscave.universe.Map;
+
 import java.util.ArrayList;
 
 
-final class HubMap extends Map implements MapBuilder{
+public final class HubMap extends Map implements MapBuilder {
 
     private static final int PATH_PADDING = 8;
     private static final int PATH_SPACING = 7;
@@ -20,7 +28,7 @@ final class HubMap extends Map implements MapBuilder{
     private static int SEGMENT_LENGTH;
     private static PathDirection.Hub CURRENT_DIRECTION;
 
-    HubMap(int height, int width) {
+    public HubMap(int height, int width) {
         super(height, width);
         mapState = MapState.HUB;
 
@@ -79,7 +87,7 @@ final class HubMap extends Map implements MapBuilder{
 
         for(int i = 0; i < INDIVIDUAL_SEGMENT_POSITIONS.size(); i++){
             for(int j = 0; j < INDIVIDUAL_SEGMENT_POSITIONS.get(i).length; j++)
-                tileIDSet[INDIVIDUAL_SEGMENT_POSITIONS.get(i)[j].x][INDIVIDUAL_SEGMENT_POSITIONS.get(i)[j].y] = 0;
+                tileIDSet[INDIVIDUAL_SEGMENT_POSITIONS.get(i)[j].x()][INDIVIDUAL_SEGMENT_POSITIONS.get(i)[j].y()] = 0;
         }
 
         for(int i = 0; i < PATH.getNodes().size(); i++){
@@ -103,15 +111,15 @@ final class HubMap extends Map implements MapBuilder{
             for (TileVector tileVectors : tileVector) {
                 for (int k = -PATH_PADDING; k < 0; k++) {
                     if (isXAxis)
-                        tileIDSet[tileVectors.x][tileVectors.y + k] = 0;
+                        tileIDSet[tileVectors.x()][tileVectors.y() + k] = 0;
                     else
-                        tileIDSet[tileVectors.x + k][tileVectors.y] = 0;
+                        tileIDSet[tileVectors.x() + k][tileVectors.y()] = 0;
                 }
                 for (int k = 0; k < PATH_PADDING; k++) {
                     if (isXAxis)
-                        tileIDSet[tileVectors.x][tileVectors.y + k] = 0;
+                        tileIDSet[tileVectors.x()][tileVectors.y() + k] = 0;
                     else
-                        tileIDSet[tileVectors.x + k][tileVectors.y] = 0;
+                        tileIDSet[tileVectors.x() + k][tileVectors.y()] = 0;
                 }
             }
         }
@@ -167,7 +175,7 @@ final class HubMap extends Map implements MapBuilder{
     private void appendSegmentToPath() {
         TileVector[] temp = new TileVector[SEGMENT_LENGTH];
         for(int i = 0; i < SEGMENT_LENGTH; i++)
-            temp[i] = new TileVector(WORKING_POSITION.x + (i*CURRENT_DIRECTION.x), WORKING_POSITION.y + (i*CURRENT_DIRECTION.y));
+            temp[i] = new TileVector(WORKING_POSITION.x() + (i*CURRENT_DIRECTION.x), WORKING_POSITION.y() + (i*CURRENT_DIRECTION.y));
 
         Node newestNode = new Node(temp, CURRENT_DIRECTION);
         PATH.getNodes().add(newestNode);
@@ -227,23 +235,23 @@ final class HubMap extends Map implements MapBuilder{
         }
 
         up_loop:
-        for (int x = WORKING_POSITION.x; x > upMaxPotential; x--) {
+        for (int x = WORKING_POSITION.x(); x > upMaxPotential; x--) {
             for (int i = 0; i < PATH.getNodes().size() - 1; i++) {
                 TileVector[] currentSegment = PATH.getNodes().get(i).getTileVectorsAsArray();
 
                 for (int j = 0; j < currentSegment.length; j++) {
-                    if (x == currentSegment[j].x && WORKING_POSITION.y == currentSegment[j].y) {
+                    if (x == currentSegment[j].x() && WORKING_POSITION.y() == currentSegment[j].y()) {
                         DIRECTION_POTENTIAL[0] = false;
                         break up_loop;
                     }
                     for (int k = -PATH_SPACING; k < 0; k++) {
-                        if (x == currentSegment[j].x && WORKING_POSITION.y + k == currentSegment[j].y) {
+                        if (x == currentSegment[j].x() && WORKING_POSITION.y() + k == currentSegment[j].y()) {
                             DIRECTION_POTENTIAL[0] = false;
                             break up_loop;
                         }
                     }
                     for (int k = 1; k <= PATH_SPACING; k++) {
-                        if (x == currentSegment[j].x && WORKING_POSITION.y + k == currentSegment[j].y) {
+                        if (x == currentSegment[j].x() && WORKING_POSITION.y() + k == currentSegment[j].y()) {
                             DIRECTION_POTENTIAL[0] = false;
                             break up_loop;
                         }
@@ -253,23 +261,23 @@ final class HubMap extends Map implements MapBuilder{
         }
 
         down_loop:
-        for (int x = WORKING_POSITION.x; x < downMaxPotential; x++) {
+        for (int x = WORKING_POSITION.x(); x < downMaxPotential; x++) {
             for (int i = 0; i < PATH.getNodes().size() - 1; i++) {
                 TileVector[] currentSegment = PATH.getNodes().get(i).getTileVectorsAsArray();
 
                 for (int j = 0; j < currentSegment.length; j++) {
-                    if (x == currentSegment[j].x && WORKING_POSITION.y == currentSegment[j].y) {
+                    if (x == currentSegment[j].x() && WORKING_POSITION.y() == currentSegment[j].y()) {
                         DIRECTION_POTENTIAL[1] = false;
                         break down_loop;
                     }
                     for (int k = -PATH_SPACING; k < 0; k++) {
-                        if (x == currentSegment[j].x && WORKING_POSITION.y + k == currentSegment[j].y) {
+                        if (x == currentSegment[j].x() && WORKING_POSITION.y() + k == currentSegment[j].y()) {
                             DIRECTION_POTENTIAL[1] = false;
                             break down_loop;
                         }
                     }
                     for (int k = 1; k <= PATH_SPACING; k++) {
-                        if (x == currentSegment[j].x && WORKING_POSITION.y + k == currentSegment[j].y) {
+                        if (x == currentSegment[j].x() && WORKING_POSITION.y() + k == currentSegment[j].y()) {
                             DIRECTION_POTENTIAL[1] = false;
                             break down_loop;
                         }
@@ -279,23 +287,23 @@ final class HubMap extends Map implements MapBuilder{
         }
 
         left_loop:
-        for (int y = WORKING_POSITION.y; y > leftMaxPotential; y--) {
+        for (int y = WORKING_POSITION.y(); y > leftMaxPotential; y--) {
             for (int i = 0; i < PATH.getNodes().size() - 1; i++) {
                 TileVector[] currentSegment = PATH.getNodes().get(i).getTileVectorsAsArray();
 
                 for (int j = 0; j < currentSegment.length; j++) {
-                    if (WORKING_POSITION.x == currentSegment[j].x && y == currentSegment[j].y) {
+                    if (WORKING_POSITION.x() == currentSegment[j].x() && y == currentSegment[j].y()) {
                         DIRECTION_POTENTIAL[2] = false;
                         break left_loop;
                     }
                     for (int k = -PATH_SPACING; k < 0; k++) {
-                        if (y == currentSegment[j].y && WORKING_POSITION.x + k == currentSegment[j].x) {
+                        if (y == currentSegment[j].y() && WORKING_POSITION.x() + k == currentSegment[j].x()) {
                             DIRECTION_POTENTIAL[2] = false;
                             break left_loop;
                         }
                     }
                     for (int k = 1; k <= PATH_SPACING; k++) {
-                        if (y == currentSegment[j].y && WORKING_POSITION.x + k == currentSegment[j].x) {
+                        if (y == currentSegment[j].y() && WORKING_POSITION.x() + k == currentSegment[j].x()) {
                             DIRECTION_POTENTIAL[2] = false;
                             break left_loop;
                         }
@@ -305,23 +313,23 @@ final class HubMap extends Map implements MapBuilder{
         }
 
         right_loop:
-        for (int y = WORKING_POSITION.y; y < rightMaxPotential; y++) {
+        for (int y = WORKING_POSITION.y(); y < rightMaxPotential; y++) {
             for (int i = 0; i < PATH.getNodes().size() - 1; i++) {
                 TileVector[] currentSegment = PATH.getNodes().get(i).getTileVectorsAsArray();
 
                 for (int j = 0; j < currentSegment.length; j++) {
-                    if (WORKING_POSITION.x == currentSegment[j].x && y == currentSegment[j].y) {
+                    if (WORKING_POSITION.x() == currentSegment[j].x() && y == currentSegment[j].y()) {
                         DIRECTION_POTENTIAL[3] = false;
                         break right_loop;
                     }
                     for (int k = -PATH_SPACING; k < 0; k++) {
-                        if (y == currentSegment[j].y && WORKING_POSITION.x + k == currentSegment[j].x) {
+                        if (y == currentSegment[j].y() && WORKING_POSITION.x() + k == currentSegment[j].x()) {
                             DIRECTION_POTENTIAL[3] = false;
                             break right_loop;
                         }
                     }
                     for (int k = 1; k <= PATH_SPACING; k++) {
-                        if (y == currentSegment[j].y && WORKING_POSITION.x + k == currentSegment[j].x) {
+                        if (y == currentSegment[j].y() && WORKING_POSITION.x() + k == currentSegment[j].x()) {
                             DIRECTION_POTENTIAL[3] = false;
                             break right_loop;
                         }

@@ -1,11 +1,17 @@
-package com.heynaveed.layloscave.utils.maps;
+package com.heynaveed.layloscave.universe.maps;
 
 import com.heynaveed.layloscave.states.MapState;
+import com.heynaveed.layloscave.utils.maps.BoxIsland;
+import com.heynaveed.layloscave.utils.maps.MapBuilder;
+import com.heynaveed.layloscave.utils.maps.MapGenerator;
+import com.heynaveed.layloscave.utils.maps.Node;
+import com.heynaveed.layloscave.utils.maps.TileVector;
+import com.heynaveed.layloscave.universe.Map;
 
 import java.util.ArrayList;
 
 
-final class TunnelMap extends Map implements MapBuilder {
+public final class TunnelMap extends Map implements MapBuilder {
 
     private static final int TUNNEL_WIDTH = 15;
     private static final int SLOT_HEIGHT = TUNNEL_WIDTH;
@@ -23,7 +29,7 @@ final class TunnelMap extends Map implements MapBuilder {
     private static final ArrayList<BoxIsland> slotIslands = new ArrayList<BoxIsland>();
     private static final ArrayList<Node> tunnelEntranceNodes = new ArrayList<Node>();
 
-    TunnelMap(int height, int width){
+    public TunnelMap(int height, int width){
         super(height, width);
         mapState = MapState.TUNNEL;
 
@@ -98,8 +104,8 @@ final class TunnelMap extends Map implements MapBuilder {
 
             if(RANDOM.nextInt(2) == 0)
                 slotIslands.add(new BoxIsland(
-                        new TileVector(topRight.x, topRight.y),
-                        new TileVector(topRight.x + SLOT_HEIGHT, topRight.y + TUNNEL_WIDTH)));
+                        new TileVector(topRight.x(), topRight.y()),
+                        new TileVector(topRight.x() + SLOT_HEIGHT, topRight.y() + TUNNEL_WIDTH)));
         }
 
         for(int i = 0; i < topBoxIslands.size()-1; i++){
@@ -107,7 +113,7 @@ final class TunnelMap extends Map implements MapBuilder {
             TileVector[] tileVectors = new TileVector[15];
 
             for(int j = 0; j < tileVectors.length; j++)
-                tileVectors[j] = new TileVector(bottomRight.x + 8, bottomRight.y + j);
+                tileVectors[j] = new TileVector(bottomRight.x() + 8, bottomRight.y() + j);
 
             tunnelEntranceNodes.add(new Node(tileVectors));
         }
@@ -117,7 +123,7 @@ final class TunnelMap extends Map implements MapBuilder {
             TileVector[] tileVectors = new TileVector[15];
 
             for(int j = 0; j < tileVectors.length; j++)
-                tileVectors[j] = new TileVector(bottomRight.x + 8, bottomRight.y + j);
+                tileVectors[j] = new TileVector(bottomRight.x() + 8, bottomRight.y() + j);
 
             tunnelEntranceNodes.add(new Node(tileVectors));
         }
@@ -132,8 +138,8 @@ final class TunnelMap extends Map implements MapBuilder {
         for(int i = 0; i < mainIslands.size(); i++){
             TileVector topLeft = mainIslands.get(i).getTopLeft();
             TileVector bottomRight = mainIslands.get(i).getBottomRight();
-            for(int j = topLeft.x; j < bottomRight.x; j++){
-                for(int k = topLeft.y; k < bottomRight.y; k++)
+            for(int j = topLeft.x(); j < bottomRight.x(); j++){
+                for(int k = topLeft.y(); k < bottomRight.y(); k++)
                     tileIDSet[j][k] = randomTileID(CAVE_IDS);
             }
         }
@@ -141,8 +147,8 @@ final class TunnelMap extends Map implements MapBuilder {
         for(int i = 0; i < slotIslands.size(); i++){
             TileVector topLeft = slotIslands.get(i).getTopLeft();
             TileVector bottomRight = slotIslands.get(i).getBottomRight();
-            for(int x = topLeft.x; x < bottomRight.x; x++){
-                for(int y = topLeft.y; y < bottomRight.y; y++)
+            for(int x = topLeft.x(); x < bottomRight.x(); x++){
+                for(int y = topLeft.y(); y < bottomRight.y(); y++)
                     tileIDSet[x][y] = randomTileID(CAVE_IDS);
             }
         }
@@ -150,7 +156,7 @@ final class TunnelMap extends Map implements MapBuilder {
         for(int i = 0; i < tunnelEntranceNodes.size(); i++){
             TileVector[] tileVectors = tunnelEntranceNodes.get(i).getTileVectorsAsArray();
             for(int j = 0; j < tileVectors.length; j++)
-                tileIDSet[tileVectors[j].x][tileVectors[j].y] = randomTileID(CAVE_IDS);
+                tileIDSet[tileVectors[j].x()][tileVectors[j].y()] = randomTileID(CAVE_IDS);
         }
     }
 }

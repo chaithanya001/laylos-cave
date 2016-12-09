@@ -95,7 +95,7 @@ public final class Kirk extends Character {
             case HUB:
                 panHubCamera(dt);
                 break;
-            case CAVERN:
+            case STAGE:
                 panCavernCamera();
                 break;
             case TUNNEL:
@@ -146,7 +146,7 @@ public final class Kirk extends Character {
         switch(screen.getCurrentMapState()){
             case HUB:
                 break;
-            case CAVERN:
+            case STAGE:
                 for(int i = 0; i < Room.X_BLOCK_MIDPOINTS.length; i++)
                     cavernBlockMidpoints.add(screen.tileVectorToWorldPosition(
                             new TileVector(Room.X_BLOCK_MIDPOINTS[i], Room.Y_BLOCK_MIDPOINTS[i])));

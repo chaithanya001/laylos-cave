@@ -14,9 +14,6 @@ import com.heynaveed.layloscave.utils.AnimationPackager;
 
 import java.util.Random;
 
-/**
- * Created by naveed.shihab on 26/11/2016.
- */
 
 public class Portal extends Sprite {
 

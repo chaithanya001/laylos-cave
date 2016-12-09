@@ -1,10 +1,15 @@
-package com.heynaveed.layloscave.utils.maps;
+package com.heynaveed.layloscave.universe.maps;
 
 import com.heynaveed.layloscave.states.MapState;
+import com.heynaveed.layloscave.universe.Map;
+import com.heynaveed.layloscave.utils.maps.MapBuilder;
+import com.heynaveed.layloscave.utils.maps.PathDirection;
+import com.heynaveed.layloscave.utils.maps.Room;
+
 import java.util.ArrayList;
 
 
-final class CavernMap extends Map implements MapBuilder{
+public final class StageMap extends Map implements MapBuilder {
 
     private static final int MAX_BLOCK_PER_PATH = 12;
     private static final int MAX_BLOCKS = 16;
@@ -18,9 +23,9 @@ final class CavernMap extends Map implements MapBuilder{
     private static final ArrayList<Room> ROOMS = new ArrayList<Room>();
     private static final ArrayList<Integer> cavernBlockPath = new ArrayList<Integer>();
 
-    CavernMap(int height, int width) {
+    public StageMap(int height, int width) {
         super(height, width);
-        mapState = MapState.CAVERN;
+        mapState = MapState.STAGE;
 
         initialiseWorkingValues();
         initialiseTileIDSet();
@@ -62,16 +67,16 @@ final class CavernMap extends Map implements MapBuilder{
 
         for(int i = 1; i < MAX_BLOCK_PER_PATH; i++) {
             Room currentBlock = ROOMS.get(cavernBlockPath.get(cavernBlockPath.size()-1));
-            ArrayList<PathDirection.Cavern> potentialDirections = new ArrayList<PathDirection.Cavern>();
+            ArrayList<PathDirection.Stage> potentialDirections = new ArrayList<PathDirection.Stage>();
 
             if (currentBlock.getBlockNumber() > 4)
-                potentialDirections.add(PathDirection.Cavern.UP);
+                potentialDirections.add(PathDirection.Stage.UP);
             if (currentBlock.getBlockNumber() < 13)
-                potentialDirections.add(PathDirection.Cavern.DOWN);
+                potentialDirections.add(PathDirection.Stage.DOWN);
             if (currentBlock.getBlockNumber() % 4 != 0)
-                potentialDirections.add(PathDirection.Cavern.RIGHT);
+                potentialDirections.add(PathDirection.Stage.RIGHT);
             if (currentBlock.getBlockNumber() % 4 != 1)
-                potentialDirections.add(PathDirection.Cavern.LEFT);
+                potentialDirections.add(PathDirection.Stage.LEFT);
 
             check_loop:
             for (int j = 0; j < potentialDirections.size(); j++) {
@@ -85,12 +90,12 @@ final class CavernMap extends Map implements MapBuilder{
             }
 
             if(i == 1){
-                potentialDirections.remove(PathDirection.Cavern.DOWN);
-                potentialDirections.remove(PathDirection.Cavern.UP);
+                potentialDirections.remove(PathDirection.Stage.DOWN);
+                potentialDirections.remove(PathDirection.Stage.UP);
             }
 
             if(!potentialDirections.isEmpty()) {
-                PathDirection.Cavern pathDirection = potentialDirections.get(RANDOM.nextInt(potentialDirections.size()));
+                PathDirection.Stage pathDirection = potentialDirections.get(RANDOM.nextInt(potentialDirections.size()));
                 int nextBlockPosition = (currentBlock.getBlockNumber()-1) + pathDirection.direction;
                 cavernBlockPath.add(nextBlockPosition);
                 ROOMS.get(nextBlockPosition).setPathBlock(true);
@@ -122,25 +127,25 @@ final class CavernMap extends Map implements MapBuilder{
                 }
             }
 
-            if(ROOMS.get(i).getDirection().equals(PathDirection.Cavern.UP)){
+            if(ROOMS.get(i).getDirection().equals(PathDirection.Stage.UP)){
                 for(int j = X_BLOCK_MIDPOINTS[i]; j > X_BLOCK_MIDPOINTS[i]-28; j--){
                     for(int k = Y_BLOCK_MIDPOINTS[i]-2; k <= Y_BLOCK_MIDPOINTS[i]+2; k++)
                         tileIDSet[j][k] = 0;
                 }
             }
-            else if(ROOMS.get(i).getDirection().equals(PathDirection.Cavern.DOWN)){
+            else if(ROOMS.get(i).getDirection().equals(PathDirection.Stage.DOWN)){
                 for(int j = X_BLOCK_MIDPOINTS[i]; j < X_BLOCK_MIDPOINTS[i]+28; j++){
                     for(int k = Y_BLOCK_MIDPOINTS[i]-2; k <= Y_BLOCK_MIDPOINTS[i]+2; k++)
                         tileIDSet[j][k] = 0;
                 }
             }
-            else if(ROOMS.get(i).getDirection().equals(PathDirection.Cavern.LEFT)){
+            else if(ROOMS.get(i).getDirection().equals(PathDirection.Stage.LEFT)){
                 for(int j = Y_BLOCK_MIDPOINTS[i]; j > Y_BLOCK_MIDPOINTS[i]-45; j--){
                     for(int k = X_BLOCK_MIDPOINTS[i]-4; k <= X_BLOCK_MIDPOINTS[i]+4; k++)
                         tileIDSet[k][j] = 0;
                 }
             }
-            else if(ROOMS.get(i).getDirection().equals(PathDirection.Cavern.RIGHT)){
+            else if(ROOMS.get(i).getDirection().equals(PathDirection.Stage.RIGHT)){
                 for(int j = Y_BLOCK_MIDPOINTS[i]; j < Y_BLOCK_MIDPOINTS[i]+45; j++){
                     for(int k = X_BLOCK_MIDPOINTS[i]-4; k <= X_BLOCK_MIDPOINTS[i]+4; k++)
                         tileIDSet[k][j] = 0;
@@ -149,11 +154,11 @@ final class CavernMap extends Map implements MapBuilder{
         }
     }
 
-    ArrayList<Room> getCaverns(){
+    public ArrayList<Room> getCaverns(){
         return ROOMS;
     }
 
-    ArrayList<Integer> getCavernBlockPath(){
+    public ArrayList<Integer> getCavernBlockPath(){
         return cavernBlockPath;
     }
 }

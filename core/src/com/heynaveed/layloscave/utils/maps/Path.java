@@ -4,12 +4,12 @@ package com.heynaveed.layloscave.utils.maps;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-final class Path {
+public final class Path {
 
     private final ArrayList<Node> nodes;
     private final TileVector[] pathVectors;
 
-    Path(){
+    public Path(){
         nodes = new ArrayList<Node>();
         pathVectors = calculatePathway();
     }
@@ -18,7 +18,7 @@ final class Path {
         return new TileVector[1];
     }
 
-    ArrayList<Node> getNodes(){
+    public ArrayList<Node> getNodes(){
         return nodes;
     }
 

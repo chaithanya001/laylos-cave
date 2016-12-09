@@ -62,8 +62,8 @@ public class PlayScreen implements Screen {
         this.gameApp = gameApp;
         gameCam = new OrthographicCamera();
         inputMultiplexer = new InputMultiplexer();
-        currentMapState = MapState.HUB;
-//        currentMapState = MapState.CAVERN;
+//        currentMapState = MapState.HUB;
+        currentMapState = MapState.STAGE;
 //        currentMapState = MapState.TUNNEL;
         mapGenerator = new MapGenerator().buildMap(currentMapState);
         viewport = new FitViewport(GameApp.toPPM(GameApp.VIEWPORT_WIDTH), GameApp.toPPM(GameApp.VIEWPORT_HEIGHT), gameCam);

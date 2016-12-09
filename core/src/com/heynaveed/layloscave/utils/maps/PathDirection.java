@@ -1,12 +1,8 @@
 package com.heynaveed.layloscave.utils.maps;
 
-/**
- * Created by naveed.shihab on 16/11/2016.
- */
-
 public class PathDirection {
 
-    enum Hub {
+    public enum Hub {
         UP(-1, 0), DOWN(1, 0), LEFT(0, -1), RIGHT(0, 1), NONE(0, 0);
 
         public final int x;
@@ -18,15 +14,15 @@ public class PathDirection {
         }
     }
 
-    enum Cavern{
+    public enum Stage {
         UP(-4), DOWN(4), LEFT(-1), RIGHT(1), NONE(0);
 
         public final int direction;
 
-        Cavern(int direction){ this.direction = direction; }
+        Stage(int direction){ this.direction = direction; }
     }
 
-    enum Tunnel{
+    public enum Tunnel{
         UP, DOWN, LEFT, RIGHT, NONE;
     }
 }
