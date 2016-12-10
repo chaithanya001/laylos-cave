@@ -18,4 +18,9 @@ public final class TileVector {
     public int y(){
         return y;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
 }

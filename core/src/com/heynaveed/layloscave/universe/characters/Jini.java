@@ -22,7 +22,7 @@ public final class Jini extends Character {
 
     private static final int DESTINATION_CONFIRM_LIMIT = 5;
     private static final int DESTINATION_CHECK_LIMIT = 21;
-    private static final Random random = new Random();
+    private static final Random RANDOM = new Random();
     private static final float MAX_KIRK_DISPLACEMENT = 3;
     private static final float MAX_ROTATION = 15;
     private final ParticleEffect jiniAromaEffect = new ParticleEffect();
@@ -279,8 +279,8 @@ public final class Jini extends Character {
     }
 
     private TileVector chooseFreeSpace(TileVector[][] positionsToCheck){
-        int randomX = random.nextInt(positionsToCheck.length);
-        int randomY = random.nextInt(positionsToCheck.length);
+        int randomX = RANDOM.nextInt(positionsToCheck.length);
+        int randomY = RANDOM.nextInt(positionsToCheck.length);
         TileVector vectorToCheck = positionsToCheck[randomX][randomY];
 
         if (tileIDSet[vectorToCheck.x()][vectorToCheck.y()] == 0
