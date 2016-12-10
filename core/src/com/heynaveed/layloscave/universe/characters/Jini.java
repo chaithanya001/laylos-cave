@@ -37,7 +37,7 @@ public final class Jini extends Character {
     private CharacterState.Jini previousCharacterState;
 
     private int[][] tileIDSet;
-    private boolean isLevitateImpulse = false;
+    private boolean isDoubleJumpImpulse = false;
     private boolean shouldChange;
 
     public Jini(PlayScreen screen){
@@ -65,7 +65,7 @@ public final class Jini extends Character {
         followKirk();
         handleAromaEffect();
         handleTeleporting();
-        handleLevitating();
+        handleDoubleJump();
         setPosition(body.getPosition().x - getWidth()/2, body.getPosition().y - getHeight()/2);
         tileVectorPos = calculateTileVectorPos();
         handleDodging();
@@ -86,7 +86,7 @@ public final class Jini extends Character {
 
     private void handleTeleporting(){
         if(isTeleporting){
-            isLevitateImpulse = false;
+            isDoubleJumpImpulse = false;
             if(animations[AnimationKey.Jini.TELEPORTING.index].isAnimationFinished(animationStateTimer)) {
                 isTeleporting = false;
                 animationStateTimer = 0;
@@ -94,10 +94,10 @@ public final class Jini extends Character {
         }
     }
 
-    private void handleLevitating(){
-        if(isLevitateImpulse){
+    private void handleDoubleJump(){
+        if(isDoubleJumpImpulse){
             if(animations[AnimationKey.Jini.DOUBLE_JUMP.index].isAnimationFinished(animationStateTimer))
-                isLevitateImpulse = false;
+                isDoubleJumpImpulse = false;
         }
     }
 
@@ -184,7 +184,7 @@ public final class Jini extends Character {
 
         if(isTeleporting)
             currentCharacterState = CharacterState.Jini.TELEPORTING;
-        else if(isLevitateImpulse)
+        else if(isDoubleJumpImpulse)
             currentCharacterState = CharacterState.Jini.DOUBLE_JUMP;
         else if(screen.getKirk().getCurrentCharacterState() == CharacterState.Kirk.RUNNING)
             currentCharacterState = CharacterState.Jini.FLYING;
@@ -258,7 +258,7 @@ public final class Jini extends Character {
     public void setisLevitateImpulse(boolean isLevitateImpulse){
         if(!isTeleporting)
             resetAnimationStateTimer();
-        this.isLevitateImpulse = isLevitateImpulse;
+        this.isDoubleJumpImpulse = isLevitateImpulse;
     }
 
     public ParticleEffect getJiniAromaEffect(){
