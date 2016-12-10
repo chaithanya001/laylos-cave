@@ -15,10 +15,10 @@ public final class StageMap extends Map implements MapBuilder {
     private static final int MAX_BLOCKS = 16;
     private static final int CAVERN_BLOCK_WIDTH = 43;
     private static final int CAVERN_BLOCK_HEIGHT = 23;
-    private static final int[] TOP_LEFT_X_BLOCK_POSITIONS = {2, 30, 58, 86};
-    private static final int[] TOP_LEFT_Y_BLOCK_POSITIONS = {2, 50, 98, 146};
-    private static final int[] X_BLOCK_MIDPOINTS = {13, 13, 13, 13, 41, 41, 41, 41, 69, 69, 69, 69, 97, 97, 97, 97};
-    private static final int[] Y_BLOCK_MIDPOINTS = {23, 71, 119, 167, 23, 71, 119, 167, 23, 71, 119, 167, 23, 71, 119, 167};
+    private static final int[] TOP_LEFT_X_BLOCK_POSITIONS = {17, 45, 73, 101};
+    private static final int[] TOP_LEFT_Y_BLOCK_POSITIONS = {17, 65, 113, 161};
+    private static final int[] X_BLOCK_MIDPOINTS = {28, 28, 28, 28, 56, 56, 56, 56, 84, 84, 84, 84, 112, 112, 112, 112};
+    private static final int[] Y_BLOCK_MIDPOINTS = {38, 86, 134, 182, 38, 86, 134, 182, 38, 86, 134, 182, 38, 86, 134, 182};
 
     private static final ArrayList<Room> ROOMS = new ArrayList<Room>();
     private static final ArrayList<Integer> cavernBlockPath = new ArrayList<Integer>();
@@ -111,7 +111,7 @@ public final class StageMap extends Map implements MapBuilder {
             if(!ROOMS.get(i).isPathBlock()){
 
                 int tempX = TOP_LEFT_X_BLOCK_POSITIONS[0];
-                int tempY = ((i%4)*48)+2;
+                int tempY = ((i%4)*48)+17;
 
                 tempX_loop:
                 for(int j = 0; j < TOP_LEFT_X_BLOCK_POSITIONS.length; j++){

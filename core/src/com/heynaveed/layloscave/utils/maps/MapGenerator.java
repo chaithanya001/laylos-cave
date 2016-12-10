@@ -53,8 +53,8 @@ public final class MapGenerator {
     public static final String TMX_EXTENSION = ".tmx";
     private static final int HUB_MAP_HEIGHT = 200;
     private static final int HUB_MAP_WIDTH = 300;
-    private static final int CAVERN_MAP_WIDTH = 191;
-    private static final int CAVERN_MAP_HEIGHT = 111;
+    private static final int STAGE_MAP_WIDTH = 221;
+    private static final int STAGE_MAP_HEIGHT = 141;
     public static final int TUNNEL_MAP_HEIGHT = 200;
     public static final int TUNNEL_MAP_WIDTH = 300;
     private static int hubNumber = 0;
@@ -71,7 +71,7 @@ public final class MapGenerator {
     private static FileHandle newMap;
     private static MapState workingMapState;
     private static int levelNumber = 0;
-    private static int workingWidth;
+    public static int workingWidth;
     public static int workingHeight;
 
     private static final Random random = new Random();
@@ -154,8 +154,8 @@ public final class MapGenerator {
                 break;
             case STAGE:
                 levelNumber = ++cavernNumber;
-                workingWidth = CAVERN_MAP_WIDTH;
-                workingHeight = CAVERN_MAP_HEIGHT;
+                workingWidth = STAGE_MAP_WIDTH;
+                workingHeight = STAGE_MAP_HEIGHT;
                 break;
             case TUNNEL:
                 levelNumber = ++tunnelNumber;

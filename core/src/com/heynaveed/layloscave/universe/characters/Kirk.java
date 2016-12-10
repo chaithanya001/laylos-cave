@@ -108,7 +108,7 @@ public final class Kirk extends Character {
         handlePlatformInteractions();
         handleJiniImpulseRotations();
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
-        tileVectorPos = getTileVectorPos();
+        tileVectorPos = calculateTileVectorPos();
         setRegion(updateAnimationFrame(dt));
     }
 

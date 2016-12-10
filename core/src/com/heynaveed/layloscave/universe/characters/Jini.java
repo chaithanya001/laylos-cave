@@ -20,6 +20,8 @@ import java.util.Random;
 
 public final class Jini extends Character {
 
+    private static final int DESTINATION_CONFIRM_LIMIT = 5;
+    private static final int DESTINATION_CHECK_LIMIT = 21;
     private static final Random random = new Random();
     private static final float MAX_KIRK_DISPLACEMENT = 3;
     private static final float MAX_ROTATION = 15;
@@ -65,7 +67,7 @@ public final class Jini extends Character {
         handleTeleporting();
         handleLevitating();
         setPosition(body.getPosition().x - getWidth()/2, body.getPosition().y - getHeight()/2);
-        tileVectorPos = getTileVectorPos();
+        tileVectorPos = calculateTileVectorPos();
         handleDodging();
         setRegion(updateAnimationFrame(dt));
     }
@@ -162,7 +164,7 @@ public final class Jini extends Character {
         fDef.filter.maskBits = GameApp.GROUND_PLATFORM_BIT | GameApp.OBJECT_BIT | GameApp.KIRK_BIT;
 
         CircleShape jiniDetector = new CircleShape();
-        jiniDetector.setRadius(GameApp.toPPM(GameApp.TILE_LENGTH*2));
+        jiniDetector.setRadius(GameApp.toPPM(GameApp.TILE_LENGTH*3));
         jiniDetector.setPosition(new Vector2(0, 0));
         fDef.shape = jiniDetector;
         fDef.friction = 0;
@@ -264,7 +266,7 @@ public final class Jini extends Character {
     }
 
     public void determineCheckSpace(){
-        TileVector[][] positionsToCheck = new TileVector[15][15];
+        TileVector[][] positionsToCheck = new TileVector[DESTINATION_CHECK_LIMIT][DESTINATION_CHECK_LIMIT];
         int displacement = positionsToCheck.length/2;
 
         for(int x = -displacement; x <= displacement; x++){
@@ -281,9 +283,10 @@ public final class Jini extends Character {
         int randomY = random.nextInt(positionsToCheck.length);
         TileVector vectorToCheck = positionsToCheck[randomX][randomY];
 
-        if (tileIDSet[vectorToCheck.x()][vectorToCheck.y()] == 0) {
-            for(int i = -2; i <= 2; i++){
-                for(int j = -2; j <= 2; j++){
+        if (tileIDSet[vectorToCheck.x()][vectorToCheck.y()] == 0
+                && !tileVectorPos.equals(screen.getKirk().getTileVectorPos())) {
+            for(int i = -DESTINATION_CONFIRM_LIMIT; i <= DESTINATION_CONFIRM_LIMIT; i++){
+                for(int j = -DESTINATION_CONFIRM_LIMIT; j <= DESTINATION_CONFIRM_LIMIT; j++){
                     if(tileIDSet[vectorToCheck.x() + i][vectorToCheck.y() + j] != 0)
                         vectorToCheck = chooseFreeSpace(positionsToCheck);
                 }

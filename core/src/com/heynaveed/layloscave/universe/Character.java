@@ -28,7 +28,6 @@ public abstract class Character extends Sprite {
     protected float [][] frameSpeeds;
     protected Animation[] animations;
     protected float animationStateTimer;
-    protected float health;
     protected boolean isFacingRight;
 
     public Character(PlayScreen screen) {
@@ -36,7 +35,6 @@ public abstract class Character extends Sprite {
         gameCam = screen.getGameCam();
         world = screen.getWorld();
         animationStateTimer = 0;
-        health = 100;
         isFacingRight = true;
         tileVectorPos = new TileVector(0, 0);
     }
@@ -59,10 +57,6 @@ public abstract class Character extends Sprite {
         return body.getLinearVelocity().y < 0 ? -1*velocity : 1*velocity;
     }
 
-    public void applyDamage(float damage){
-        health -= damage;
-    }
-
     public Body getBody(){
         return body;
     }
@@ -71,14 +65,14 @@ public abstract class Character extends Sprite {
         return isFacingRight;
     }
 
-    public float getHealth(){
-        return health;
-    }
-
-    protected TileVector getTileVectorPos(){
+    protected TileVector calculateTileVectorPos(){
         Vector2 bodyPosition = body.getPosition();
         int x = GameApp.fromPPM(bodyPosition.x / 64);
         int y = MapGenerator.workingHeight - GameApp.fromPPM(bodyPosition.y / 64);
         return new TileVector(y, x);
+    }
+
+    public TileVector getTileVectorPos(){
+        return tileVectorPos;
     }
 }

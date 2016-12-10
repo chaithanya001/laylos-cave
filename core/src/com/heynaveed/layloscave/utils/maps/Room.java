@@ -5,8 +5,8 @@ public final class Room {
 
     private final int roomNumber;
     private boolean isPathBlock = false;
-    public static final int[] X_BLOCK_MIDPOINTS = {13, 13, 13, 13, 41, 41, 41, 41, 69, 69, 69, 69, 97, 97, 97, 97};
-    public static final int[] Y_BLOCK_MIDPOINTS = {23, 71, 119, 167, 23, 71, 119, 167, 23, 71, 119, 167, 23, 71, 119, 167};
+    public static final int[] X_BLOCK_MIDPOINTS = {28, 28, 28, 28, 56, 56, 56, 56, 84, 84, 84, 84, 112, 112, 112, 112};
+    public static final int[] Y_BLOCK_MIDPOINTS = {38, 86, 134, 182, 38, 86, 134, 182, 38, 86, 134, 182, 38, 86, 134, 182};
     private PathDirection.Stage direction = PathDirection.Stage.NONE;
     private final TileVector midPoint;
 
