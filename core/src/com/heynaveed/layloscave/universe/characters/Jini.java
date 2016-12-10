@@ -290,6 +290,8 @@ public final class Jini extends Character {
                 }
             }
         }
+        else
+            vectorToCheck = chooseFreeSpace(positionsToCheck);
 
         return new TileVector(vectorToCheck.x(), vectorToCheck.y());
     }

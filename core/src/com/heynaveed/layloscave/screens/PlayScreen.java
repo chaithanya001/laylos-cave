@@ -64,8 +64,8 @@ public class PlayScreen implements Screen {
         gameCam = new OrthographicCamera();
         inputMultiplexer = new InputMultiplexer();
 //        currentMapState = MapState.HUB;
-//        currentMapState = MapState.STAGE;
-        currentMapState = MapState.TUNNEL;
+        currentMapState = MapState.STAGE;
+//        currentMapState = MapState.TUNNEL;
         mapGenerator = new MapGenerator().buildMap(currentMapState);
         currentTileIDSet = mapGenerator.getWorkingTileIDSet();
         viewport = new FitViewport(GameApp.toPPM(GameApp.VIEWPORT_WIDTH), GameApp.toPPM(GameApp.VIEWPORT_HEIGHT), gameCam);
@@ -137,7 +137,7 @@ public class PlayScreen implements Screen {
 
         if (jini.getJiniAromaEffect().isComplete())
             jini.getJiniAromaEffect().reset();
-//        debugRenderer.render(world, gameCam.combined);
+        debugRenderer.render(world, gameCam.combined);
     }
 
     private void updatePortals(float dt) {
