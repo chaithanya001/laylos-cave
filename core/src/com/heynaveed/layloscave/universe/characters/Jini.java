@@ -274,7 +274,6 @@ public final class Jini extends Character {
 
         chosenPosition = chooseFreeSpace(positionsToCheck);
         shouldChange = true;
-        System.out.println("chosenPos: " + chosenPosition.x() + ", " + chosenPosition.y());
     }
 
     private TileVector chooseFreeSpace(TileVector[][] positionsToCheck){
