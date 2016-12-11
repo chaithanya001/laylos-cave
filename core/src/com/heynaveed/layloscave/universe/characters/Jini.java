@@ -21,8 +21,8 @@ import java.util.Random;
 
 public final class Jini extends Character {
 
-    private static final int MAX_JINI_KIRK_DIST_X = 12;
-    private static final int MAX_JINI_KIRK_DIST_Y = 20;
+    private static final int MAX_JINI_KIRK_DIST_X = 18;
+    private static final int MAX_JINI_KIRK_DIST_Y = 23;
     private static final int DESTINATION_CONFIRM_LIMIT = 6;
     private static final int DESTINATION_CHECK_LIMIT = 21;
     private static final Random RANDOM = new Random();
