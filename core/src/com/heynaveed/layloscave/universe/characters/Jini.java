@@ -67,7 +67,7 @@ public final class Jini extends Character {
         handleTeleporting();
         handleDoubleJump();
         setPosition(body.getPosition().x - getWidth()/2, body.getPosition().y - getHeight()/2);
-        tileVectorPos = calculateTileVectorPos();
+        tileVectorPos = GameApp.worldPositionToTileVector(body.getPosition());
         handleDodging();
         setRegion(updateAnimationFrame(dt));
     }
@@ -79,7 +79,7 @@ public final class Jini extends Character {
 
     private void handleDodging(){
         if(shouldChange){
-            body.setTransform(screen.tileVectorToWorldPosition(chosenPosition), 0);
+            body.setTransform(GameApp.tileVectorToWorldPosition(chosenPosition), 0);
             shouldChange = false;
         }
     }

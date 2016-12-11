@@ -108,7 +108,7 @@ public final class Kirk extends Character {
         handlePlatformInteractions();
         handleJiniImpulseRotations();
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
-        tileVectorPos = calculateTileVectorPos();
+        tileVectorPos = GameApp.worldPositionToTileVector(body.getPosition());
         setRegion(updateAnimationFrame(dt));
     }
 
@@ -149,7 +149,7 @@ public final class Kirk extends Character {
                 break;
             case STAGE:
                 for(int i = 0; i < Room.X_BLOCK_MIDPOINTS.length; i++)
-                    cavernBlockMidpoints.add(screen.tileVectorToWorldPosition(
+                    cavernBlockMidpoints.add(GameApp.tileVectorToWorldPosition(
                             new TileVector(Room.X_BLOCK_MIDPOINTS[i], Room.Y_BLOCK_MIDPOINTS[i])));
                 break;
             case TUNNEL:

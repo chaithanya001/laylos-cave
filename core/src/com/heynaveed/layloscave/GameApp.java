@@ -2,7 +2,10 @@ package com.heynaveed.layloscave;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.heynaveed.layloscave.screens.PlayScreen;
+import com.heynaveed.layloscave.utils.maps.MapGenerator;
+import com.heynaveed.layloscave.utils.maps.TileVector;
 
 import java.io.IOException;
 
@@ -51,6 +54,16 @@ public class GameApp extends Game {
 
 	public static int fromPPM(float value){
 		return (int)(value * PPM);
+	}
+
+	public static Vector2 tileVectorToWorldPosition(TileVector position) {
+		return new Vector2(toPPM(position.y()) * 64, toPPM(MapGenerator.workingHeight - position.x()) * 64);
+	}
+
+	public static TileVector worldPositionToTileVector(Vector2 position) {
+		int x = fromPPM(position.x / 64);
+		int y = MapGenerator.workingHeight - fromPPM(position.y / 64);
+		return new TileVector(y, x);
 	}
 
 	@Override

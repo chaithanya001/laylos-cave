@@ -167,15 +167,11 @@ public class PlayScreen implements Screen {
         }
 
         for (int i = 0; i < portalPositions.size(); i++) {
-            Portal portal = new Portal(this, portalFacing.get(i)).build(tileVectorToWorldPosition(portalPositions.get(i)));
+            Portal portal = new Portal(this, portalFacing.get(i)).build(GameApp.tileVectorToWorldPosition(portalPositions.get(i)));
             portal.setSize(SPRITE_SIZE * 2, SPRITE_SIZE * 2);
             portals.add(portal);
 //            System.out.println("ID: " + portals.get(i).getId() + ", Partner ID: " + portals.get(i).getPartnerId());
         }
-    }
-
-    public Vector2 tileVectorToWorldPosition(TileVector tileVector) {
-        return new Vector2(GameApp.toPPM(tileVector.y()) * 64, GameApp.toPPM(MapGenerator.workingHeight - tileVector.x()) * 64);
     }
 
     private void loadLevels() {

@@ -73,13 +73,6 @@ public abstract class Character extends Sprite {
         return isFacingRight;
     }
 
-    protected TileVector calculateTileVectorPos() {
-        Vector2 bodyPosition = body.getPosition();
-        int x = GameApp.fromPPM(bodyPosition.x / 64);
-        int y = MapGenerator.workingHeight - GameApp.fromPPM(bodyPosition.y / 64);
-        return new TileVector(y, x);
-    }
-
     public TileVector getTileVectorPos() {
         return tileVectorPos;
     }
