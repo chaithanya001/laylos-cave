@@ -1,4 +1,4 @@
-Jini Aroma
+purple
 - Delay -
 active: true
 lowMin: 0.0
@@ -8,12 +8,12 @@ lowMin: 1000.0
 lowMax: 1000.0
 - Count - 
 min: 0
-max: 60
+max: 120
 - Emission - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 60.0
-highMax: 60.0
+highMin: 120.0
+highMax: 120.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
@@ -93,8 +93,8 @@ timeline0: 0.0
 active: true
 lowMin: 0.0
 lowMax: 0.0
-highMin: -1.0
-highMax: -3.0
+highMin: -5.0
+highMax: 5.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
@@ -164,7 +164,7 @@ premultipliedAlpha: false
 starParticle.png
 
 
-Jini Aroma
+red
 - Delay -
 active: true
 lowMin: 0.0
@@ -174,12 +174,12 @@ lowMin: 1000.0
 lowMax: 1000.0
 - Count - 
 min: 0
-max: 15
+max: 30
 - Emission - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 15.0
-highMax: 15.0
+highMin: 30.0
+highMax: 30.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
@@ -259,8 +259,8 @@ timeline0: 0.0
 active: true
 lowMin: 0.0
 lowMax: 0.0
-highMin: -1.0
-highMax: -3.0
+highMin: -5.0
+highMax: 5.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
@@ -298,9 +298,9 @@ active: false
 active: false
 - Tint - 
 colorsCount: 3
-colors0: 0.2784314
-colors1: 0.2784314
-colors2: 0.2784314
+colors0: 0.7058824
+colors1: 0.30980393
+colors2: 0.30980393
 timelineCount: 1
 timeline0: 0.0
 - Transparency - 
