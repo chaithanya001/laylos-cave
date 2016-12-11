@@ -41,7 +41,7 @@ public final class Jini extends Character {
     private TileVector[] dodgeVectors;
     private int[][] tileIDSet;
     private boolean isDoubleJumpImpulse = false;
-    private boolean shouldChange;
+    private boolean isDodging;
 
     public Jini(PlayScreen screen){
         super(screen);
@@ -81,11 +81,11 @@ public final class Jini extends Character {
     }
 
     private void handleDodging(){
-        if(shouldChange){
+        if(isDodging){
             body.setTransform(GameApp.tileVectorToWorldPosition(dodgeVectors[dodgeCounter]), 0);
 
             if(dodgeCounter == dodgeVectors.length-1)
-                shouldChange = false;
+                isDodging = false;
             else
                 dodgeCounter++;
         }
@@ -148,7 +148,7 @@ public final class Jini extends Character {
     protected void initialiseWorldValues(){
         kirkDisplacement = -MAX_KIRK_DISPLACEMENT;
         rotation = 0;
-        shouldChange = false;
+        isDodging = false;
     }
 
     @Override
@@ -191,14 +191,12 @@ public final class Jini extends Character {
 
         if(isTeleporting)
             currentCharacterState = CharacterState.Jini.TELEPORTING;
+        else if(isDodging)
+            currentCharacterState = CharacterState.Jini.FLYING;
         else if(isDoubleJumpImpulse)
             currentCharacterState = CharacterState.Jini.DOUBLE_JUMP;
-        else if(screen.getKirk().getCurrentCharacterState() == CharacterState.Kirk.RUNNING)
-            currentCharacterState = CharacterState.Jini.FLYING;
-        else if(screen.getKirk().getCurrentCharacterState() == CharacterState.Kirk.STANDING)
-            currentCharacterState = CharacterState.Jini.FLOATING;
         else
-            currentCharacterState = CharacterState.Jini.FLYING;
+            currentCharacterState = CharacterState.Jini.FLOATING;
     }
 
     @Override
@@ -284,7 +282,8 @@ public final class Jini extends Character {
         targetPosition = chooseFreeSpace(positionsToCheck);
         dodgeVectors = AStar.calculateMapVectorPath(currentPosition, targetPosition);
         dodgeCounter = 0;
-        shouldChange = true;
+        isDodging = true;
+        isFacingRight = dodgeVectors[0].y() < dodgeVectors[dodgeVectors.length-1].y();
     }
 
     private TileVector chooseFreeSpace(TileVector[][] positionsToCheck){
@@ -305,5 +304,9 @@ public final class Jini extends Character {
         else vectorToCheck = chooseFreeSpace(positionsToCheck);
 
         return new TileVector(vectorToCheck.x(), vectorToCheck.y());
+    }
+
+    public boolean isDodging() {
+        return isDodging;
     }
 }

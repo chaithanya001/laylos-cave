@@ -241,19 +241,9 @@ public final class InputController implements InputProcessor {
         switch(keycode){
             case Input.Keys.LEFT:
                 controls[ControlKey.LEFT.index] = true;
-
-                if(!jini.isTeleporting() && kirk.isFacingRight()) {
-                    jini.setIsTeleporting(true);
-                    jini.resetAnimationStateTimer();
-                }
                 return true;
             case Input.Keys.RIGHT:
                 controls[ControlKey.RIGHT.index] = true;
-
-                if(!jini.isTeleporting() && !kirk.isFacingRight()) {
-                    jini.setIsTeleporting(true);
-                    jini.resetAnimationStateTimer();
-                }
                 return true;
             case Input.Keys.UP:
                 if(kirk.getCurrentPlatformState() != PlatformState.BOUNCY && !kirk.isSliding())
