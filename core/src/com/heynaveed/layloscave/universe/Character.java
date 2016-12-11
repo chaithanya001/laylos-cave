@@ -25,7 +25,7 @@ public abstract class Character extends Sprite {
     protected AnimationPackager animationPackager;
     protected Body body;
     protected int[][] frameSequences;
-    protected float [][] frameSpeeds;
+    protected float[][] frameSpeeds;
     protected Animation[] animations;
     protected float animationStateTimer;
     protected boolean isFacingRight;
@@ -40,39 +40,48 @@ public abstract class Character extends Sprite {
     }
 
     protected abstract void update(float dt);
+
     protected abstract void initialiseWorldValues();
+
     protected abstract void initialiseTimers();
+
     protected abstract void initialiseBody();
+
     protected abstract void initialiseFixtures();
+
     protected abstract void initialiseStates();
+
     protected abstract void updateCharacterState();
+
     protected abstract TextureRegion updateAnimationFrame(float dt);
+
     protected abstract void dispose();
 
-    public float horizontalDirectionMultiplyer(float velocity){
-        return !isFacingRight ? -1*velocity : 1*velocity;
+    public float horizontalDirectionMultiplyer(float velocity) {
+        return !isFacingRight ? -1 * velocity : 1 * velocity;
     }
 
-    public float verticalDirectionMultiplyer(float velocity){
-        return body.getLinearVelocity().y < 0 ? -1*velocity : 1*velocity;
+    public float verticalDirectionMultiplyer(float velocity) {
+        return body.getLinearVelocity().y < 0 ? -1 * velocity : 1 * velocity;
     }
 
-    public Body getBody(){
+    public Body getBody() {
         return body;
     }
 
-    public boolean isFacingRight(){
+    public boolean isFacingRight() {
         return isFacingRight;
     }
 
-    protected TileVector calculateTileVectorPos(){
+    protected TileVector calculateTileVectorPos() {
         Vector2 bodyPosition = body.getPosition();
         int x = GameApp.fromPPM(bodyPosition.x / 64);
         int y = MapGenerator.workingHeight - GameApp.fromPPM(bodyPosition.y / 64);
         return new TileVector(y, x);
     }
 
-    public TileVector getTileVectorPos(){
+    public TileVector getTileVectorPos() {
         return tileVectorPos;
     }
+
 }

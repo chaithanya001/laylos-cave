@@ -287,13 +287,13 @@ public final class Jini extends Character {
                 && !tileVectorPos.equals(screen.getKirk().getTileVectorPos())) {
             for(int i = -DESTINATION_CONFIRM_LIMIT; i <= DESTINATION_CONFIRM_LIMIT; i++){
                 for(int j = -DESTINATION_CONFIRM_LIMIT; j <= DESTINATION_CONFIRM_LIMIT; j++){
-                    if(tileIDSet[vectorToCheck.x() + i][vectorToCheck.y() + j] != 0)
+                    if(tileIDSet[vectorToCheck.x() + i][vectorToCheck.y() + j] != 0
+                            || (vectorToCheck.x() == screen.getKirk().getTileVectorPos().x() && (vectorToCheck.y()) == screen.getKirk().getTileVectorPos().y()))
                         vectorToCheck = chooseFreeSpace(positionsToCheck);
                 }
             }
         }
-        else
-            vectorToCheck = chooseFreeSpace(positionsToCheck);
+        else vectorToCheck = chooseFreeSpace(positionsToCheck);
 
         return new TileVector(vectorToCheck.x(), vectorToCheck.y());
     }
