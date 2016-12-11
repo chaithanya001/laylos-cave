@@ -21,7 +21,8 @@ import java.util.Random;
 
 public final class Jini extends Character {
 
-    private static final int MAX_JINI_KIRK_DIST = 25;
+    private static final int MAX_JINI_KIRK_DIST_X = 12;
+    private static final int MAX_JINI_KIRK_DIST_Y = 20;
     private static final int DESTINATION_CONFIRM_LIMIT = 6;
     private static final int DESTINATION_CHECK_LIMIT = 21;
     private static final Random RANDOM = new Random();
@@ -66,11 +67,11 @@ public final class Jini extends Character {
 
     @Override
     public void update(float dt){
+        jiniAromaEffect.setPosition(body.getPosition().x, body.getPosition().y);
         handleAromaEffect();
         handleTeleporting();
         handleDoubleJump();
         setPosition(body.getPosition().x - getWidth()/2, body.getPosition().y - getHeight()/2);
-        jiniAromaEffect.setPosition(body.getPosition().x, body.getPosition().y);
         currentPosition = GameApp.worldPositionToTileVector(body.getPosition());
         handleMovement(dt);
         setRegion(updateAnimationFrame(dt));
@@ -120,8 +121,8 @@ public final class Jini extends Character {
             }
         }
 
-        if(Math.abs(GameApp.worldPositionToTileVector(kirkPosition).y() - GameApp.worldPositionToTileVector(jiniPosition).y()) > MAX_JINI_KIRK_DIST
-                || Math.abs(GameApp.worldPositionToTileVector(kirkPosition).x() - GameApp.worldPositionToTileVector(jiniPosition).x()) > MAX_JINI_KIRK_DIST) {
+        if(Math.abs(GameApp.worldPositionToTileVector(kirkPosition).y() - GameApp.worldPositionToTileVector(jiniPosition).y()) > MAX_JINI_KIRK_DIST_Y
+                || Math.abs(GameApp.worldPositionToTileVector(kirkPosition).x() - GameApp.worldPositionToTileVector(jiniPosition).x()) > MAX_JINI_KIRK_DIST_X) {
             body.setLinearVelocity(new Vector2(0, 0));
             teleportJini();
             wanderTimer = MAX_WANDER_TIMER;
