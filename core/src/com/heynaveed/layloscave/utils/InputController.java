@@ -148,12 +148,6 @@ public final class InputController implements InputProcessor {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 controls[ControlKey.LEFT.index] = true;
-
-                if(!jini.isTeleporting() && kirk.isFacingRight()) {
-                    jini.setIsTeleporting(true);
-                    jini.resetAnimationStateTimer();
-                }
-
                 return true;
             }
 
@@ -169,11 +163,6 @@ public final class InputController implements InputProcessor {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 controls[ControlKey.RIGHT.index] = true;
-
-                if(!jini.isTeleporting() && !kirk.isFacingRight()) {
-                    jini.setIsTeleporting(true);
-                    jini.resetAnimationStateTimer();
-                }
                 return true;
             }
 
