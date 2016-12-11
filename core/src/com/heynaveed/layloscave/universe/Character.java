@@ -5,14 +5,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
-import com.heynaveed.layloscave.GameApp;
 import com.heynaveed.layloscave.screens.PlayScreen;
 import com.heynaveed.layloscave.utils.AnimationPackager;
-import com.heynaveed.layloscave.utils.maps.MapGenerator;
 import com.heynaveed.layloscave.utils.maps.TileVector;
+
+import java.util.ArrayList;
 
 public abstract class Character extends Sprite {
 
@@ -20,8 +19,8 @@ public abstract class Character extends Sprite {
     protected final OrthographicCamera gameCam;
     protected final World world;
 
-    protected TileVector tileVectorPos;
-    protected TileVector chosenPosition;
+    protected TileVector currentPosition;
+    protected TileVector targetPosition;
     protected AnimationPackager animationPackager;
     protected Body body;
     protected int[][] frameSequences;
@@ -36,7 +35,7 @@ public abstract class Character extends Sprite {
         world = screen.getWorld();
         animationStateTimer = 0;
         isFacingRight = true;
-        tileVectorPos = new TileVector(0, 0);
+        currentPosition = new TileVector(0, 0);
     }
 
     protected abstract void update(float dt);
@@ -61,7 +60,7 @@ public abstract class Character extends Sprite {
         return !isFacingRight ? -1 * velocity : 1 * velocity;
     }
 
-    public float verticalDirectionMultiplyer(float velocity) {
+    protected float verticalDirectionMultiplyer(float velocity) {
         return body.getLinearVelocity().y < 0 ? -1 * velocity : 1 * velocity;
     }
 
@@ -73,8 +72,7 @@ public abstract class Character extends Sprite {
         return isFacingRight;
     }
 
-    public TileVector getTileVectorPos() {
-        return tileVectorPos;
+    public TileVector getCurrentPosition() {
+        return currentPosition;
     }
-
 }

@@ -12,6 +12,7 @@ import com.heynaveed.layloscave.keys.SpriteKeys;
 import com.heynaveed.layloscave.keys.AnimationKey;
 import com.heynaveed.layloscave.screens.PlayScreen;
 import com.heynaveed.layloscave.states.CharacterState;
+import com.heynaveed.layloscave.utils.AStar;
 import com.heynaveed.layloscave.utils.AnimationPackager;
 import com.heynaveed.layloscave.universe.Character;
 import com.heynaveed.layloscave.utils.maps.TileVector;
@@ -36,6 +37,8 @@ public final class Jini extends Character {
     private CharacterState.Jini currentCharacterState;
     private CharacterState.Jini previousCharacterState;
 
+    private int dodgeCounter;
+    private TileVector[] dodgeVectors;
     private int[][] tileIDSet;
     private boolean isDoubleJumpImpulse = false;
     private boolean shouldChange;
@@ -67,7 +70,7 @@ public final class Jini extends Character {
         handleTeleporting();
         handleDoubleJump();
         setPosition(body.getPosition().x - getWidth()/2, body.getPosition().y - getHeight()/2);
-        tileVectorPos = GameApp.worldPositionToTileVector(body.getPosition());
+        currentPosition = GameApp.worldPositionToTileVector(body.getPosition());
         handleDodging();
         setRegion(updateAnimationFrame(dt));
     }
@@ -79,8 +82,12 @@ public final class Jini extends Character {
 
     private void handleDodging(){
         if(shouldChange){
-            body.setTransform(GameApp.tileVectorToWorldPosition(chosenPosition), 0);
-            shouldChange = false;
+            body.setTransform(GameApp.tileVectorToWorldPosition(dodgeVectors[dodgeCounter]), 0);
+
+            if(dodgeCounter == dodgeVectors.length-1)
+                shouldChange = false;
+            else
+                dodgeCounter++;
         }
     }
 
@@ -271,10 +278,12 @@ public final class Jini extends Character {
 
         for(int x = -displacement; x <= displacement; x++){
             for(int y = -displacement; y <= displacement; y++)
-                positionsToCheck[x + displacement][y + displacement] = new TileVector(tileVectorPos.x() + x, tileVectorPos.y() + y);
+                positionsToCheck[x + displacement][y + displacement] = new TileVector(currentPosition.x() + x, currentPosition.y() + y);
         }
 
-        chosenPosition = chooseFreeSpace(positionsToCheck);
+        targetPosition = chooseFreeSpace(positionsToCheck);
+        dodgeVectors = AStar.calculateMapVectorPath(currentPosition, targetPosition);
+        dodgeCounter = 0;
         shouldChange = true;
     }
 
@@ -284,11 +293,11 @@ public final class Jini extends Character {
         TileVector vectorToCheck = positionsToCheck[randomX][randomY];
 
         if (tileIDSet[vectorToCheck.x()][vectorToCheck.y()] == 0
-                && !tileVectorPos.equals(screen.getKirk().getTileVectorPos())) {
+                && !currentPosition.equals(screen.getKirk().getCurrentPosition())) {
             for(int i = -DESTINATION_CONFIRM_LIMIT; i <= DESTINATION_CONFIRM_LIMIT; i++){
                 for(int j = -DESTINATION_CONFIRM_LIMIT; j <= DESTINATION_CONFIRM_LIMIT; j++){
                     if(tileIDSet[vectorToCheck.x() + i][vectorToCheck.y() + j] != 0
-                            || (vectorToCheck.x() == screen.getKirk().getTileVectorPos().x() && (vectorToCheck.y()) == screen.getKirk().getTileVectorPos().y()))
+                            || (vectorToCheck.x() == screen.getKirk().getCurrentPosition().x() && (vectorToCheck.y()) == screen.getKirk().getCurrentPosition().y()))
                         vectorToCheck = chooseFreeSpace(positionsToCheck);
                 }
             }
