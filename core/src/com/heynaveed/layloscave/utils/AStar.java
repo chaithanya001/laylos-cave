@@ -1,37 +1,51 @@
 package com.heynaveed.layloscave.utils;
 
-import com.badlogic.gdx.math.Vector2;
-import com.heynaveed.layloscave.GameApp;
 import com.heynaveed.layloscave.utils.maps.TileVector;
+import java.util.ArrayList;
 
 
 public class AStar {
 
-    private final TileVector tvSourcePos;
-    private final TileVector tvTargetPos;
-    private final Vector2 wcSourcePos;
-    private final Vector2 wcTargetPos;
+    public static void main(String[] args){
+        TileVector startPos = new TileVector(91, 23);
+        TileVector targetPos = new TileVector(94, 20);
+        TileVector[] tileVectors = AStar.calculateMapVectorPath(startPos, targetPos);
 
-    public AStar(TileVector tvSourcePos, TileVector tvTargetPos){
-        this.tvSourcePos = tvSourcePos;
-        this.tvTargetPos = tvTargetPos;
-        this.wcSourcePos = GameApp.tileVectorToWorldPosition(tvSourcePos);
-        this.wcTargetPos = GameApp.tileVectorToWorldPosition(tvTargetPos);
+        System.out.println("========== Start: (" + startPos.x() + ", " + startPos.y() + ") - Target: (" + targetPos.x() + ", " + targetPos.y() + ") ==========");
+
+        System.out.println("\nPositions\n========================================================");
+
+        for(int i = 0; i < tileVectors.length; i++)
+            System.out.println("(" + tileVectors[i].x() + ", " + tileVectors[i].y() + ")");
+
+        System.out.println("\n========== Start: (" + startPos.x() + ", " + startPos.y() + ") - Target: (" + targetPos.x() + ", " + targetPos.y() + ") ==========");
     }
 
-    public TileVector getTvSourcePos() {
-        return tvSourcePos;
-    }
+    public static TileVector[] calculateMapVectorPath(TileVector startPos, TileVector targetPos){
 
-    public TileVector getTvTargetPos() {
-        return tvTargetPos;
-    }
+        TileVector[] vectors;
+        ArrayList<TileVector> list = new ArrayList<TileVector>();
+        int xDir, yDir, x = startPos.x(), y = startPos.y();
 
-    public Vector2 getWcSourcePos() {
-        return wcSourcePos;
-    }
+        if(startPos.x() < targetPos.x()) xDir = 1; else xDir = -1;
+        if(startPos.y() < targetPos.y()) yDir = 1; else yDir = -1;
 
-    public Vector2 getWcTargetPos() {
-        return wcTargetPos;
+
+        do{
+            list.add(new TileVector(x, y));
+
+            if(x != targetPos.x()) x+= xDir;
+            if(y != targetPos.y()) y+= yDir;
+
+        } while(x != targetPos.x() || y != targetPos.y());
+
+        list.add(targetPos);
+
+        vectors = new TileVector[list.size()];
+
+        for(int i = 0; i < vectors.length; i++)
+            vectors[i] = new TileVector(list.get(i).x(), list.get(i).y());
+
+        return vectors;
     }
 }
