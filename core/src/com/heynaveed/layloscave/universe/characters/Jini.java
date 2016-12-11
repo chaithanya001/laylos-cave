@@ -25,7 +25,6 @@ public final class Jini extends Character {
     private static final int DESTINATION_CONFIRM_LIMIT = 5;
     private static final int DESTINATION_CHECK_LIMIT = 21;
     private static final Random RANDOM = new Random();
-    private static final float MAX_KIRK_DISPLACEMENT = 3;
     private static final float MAX_WANDER_TIMER = 3;
     private final ParticleEffect jiniAromaEffect = new ParticleEffect();
     private final PlayScreen screen;
@@ -67,11 +66,11 @@ public final class Jini extends Character {
 
     @Override
     public void update(float dt){
-        effectFollow();
         handleAromaEffect();
         handleTeleporting();
         handleDoubleJump();
         setPosition(body.getPosition().x - getWidth()/2, body.getPosition().y - getHeight()/2);
+        jiniAromaEffect.setPosition(body.getPosition().x, body.getPosition().y);
         currentPosition = GameApp.worldPositionToTileVector(body.getPosition());
         handleMovement(dt);
         setRegion(updateAnimationFrame(dt));
@@ -160,10 +159,6 @@ public final class Jini extends Character {
             if(animations[AnimationKey.Jini.DOUBLE_JUMP.index].isAnimationFinished(animationStateTimer))
                 isDoubleJumpImpulse = false;
         }
-    }
-
-    private void effectFollow() {
-        jiniAromaEffect.setPosition(body.getPosition().x, body.getPosition().y);
     }
 
     @Override

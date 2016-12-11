@@ -2,9 +2,12 @@ package com.heynaveed.layloscave.utils;
 
 import com.heynaveed.layloscave.utils.maps.TileVector;
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class AStar {
+
+    private static final Random RANDOM = new Random();
 
     public static void main(String[] args){
         TileVector startPos = new TileVector(91, 23);
@@ -33,6 +36,8 @@ public class AStar {
 
         do{
             list.add(new TileVector(x, y));
+            if(RANDOM.nextInt(2) == 0)
+                list.add(new TileVector(x, y));
 
             if(x != targetPos.x()) x+= xDir;
             if(y != targetPos.y()) y+= yDir;
