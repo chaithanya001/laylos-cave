@@ -31,13 +31,9 @@ public final class Jini extends Character {
     private final PlayScreen screen;
 
     private boolean isTeleporting;
-    private boolean previousFacing;
-    private float kirkDisplacement;
     private float rotation;
     private float restartWanderTimer = -0.1f;
     private float wanderTimer = MAX_WANDER_TIMER;
-    private float maxXCamLimit;
-    private float maxYCamLimit;
 
     private CharacterState.Jini currentCharacterState;
     private CharacterState.Jini previousCharacterState;
@@ -47,6 +43,7 @@ public final class Jini extends Character {
     private int[][] tileIDSet;
     private boolean isDoubleJumpImpulse = false;
     private boolean isDodging;
+    private boolean hasTeleported;
 
     public Jini(PlayScreen screen){
         super(screen);
@@ -70,7 +67,7 @@ public final class Jini extends Character {
 
     @Override
     public void update(float dt){
-        followKirk();
+        effectFollow();
         handleAromaEffect();
         handleTeleporting();
         handleDoubleJump();
@@ -89,6 +86,10 @@ public final class Jini extends Character {
         Vector2 kirkPosition = screen.getKirk().getBody().getPosition();
         Vector2 jiniPosition = body.getPosition();
 
+        if(Math.abs(body.getLinearVelocity().x) > 2.3f
+                || Math.abs(body.getLinearVelocity().y) > 2.3f)
+            body.setLinearVelocity(new Vector2(0, 0));
+
         if(isDodging){
             isFacingRight = dodgeVectors[0].y() < dodgeVectors[dodgeVectors.length-1].y();
             body.setTransform(GameApp.tileVectorToWorldPosition(dodgeVectors[dodgeCounter]), 0);
@@ -99,8 +100,8 @@ public final class Jini extends Character {
                 dodgeCounter++;
         }
         else{
-            if(kirkPosition.x > jiniPosition.x) isFacingRight = true;
-            else isFacingRight = false;
+
+            isFacingRight = kirkPosition.x > jiniPosition.x;
 
             if(wanderTimer > 0)
                 wanderTimer -= dt;
@@ -136,10 +137,20 @@ public final class Jini extends Character {
 
     private void handleTeleporting(){
         if(isTeleporting){
+
+            float halfTimer = animationPackager.getFrameSpeeds()[AnimationKey.Jini.TELEPORTING.index][0]
+                    * animationPackager.getFrameSequences()[AnimationKey.Jini.TELEPORTING.index].length / 2;
             isDoubleJumpImpulse = false;
+
             if(animations[AnimationKey.Jini.TELEPORTING.index].isAnimationFinished(animationStateTimer)) {
                 isTeleporting = false;
                 animationStateTimer = 0;
+                hasTeleported = false;
+            }
+
+            if (animationStateTimer > halfTimer && !hasTeleported) {
+                body.setTransform(GameApp.tileVectorToWorldPosition(chooseFreeSpace(getPotentialTargetPositions())), 0);
+                hasTeleported = true;
             }
         }
     }
@@ -151,30 +162,12 @@ public final class Jini extends Character {
         }
     }
 
-    private void followKirk() {
-
-        float halfTimer = animationPackager.getFrameSpeeds()[AnimationKey.Jini.TELEPORTING.index][0]
-                * animationPackager.getFrameSequences()[AnimationKey.Jini.TELEPORTING.index].length / 2;
-
-        if (isTeleporting && (animationStateTimer > halfTimer)) {
-            isFacingRight = screen.getKirk().isFacingRight();
-            if (isFacingRight)
-                kirkDisplacement = -MAX_KIRK_DISPLACEMENT;
-            else
-                kirkDisplacement = MAX_KIRK_DISPLACEMENT;
-
-            if (previousFacing != isFacingRight)
-                animationStateTimer = halfTimer;
-        }
-
-        previousFacing = isFacingRight;
-//        body.setTransform(screen.getKirk().getBody().getPosition().x + kirkDisplacement, screen.getKirk().getBody().getPosition().y + 1, 0);
+    private void effectFollow() {
         jiniAromaEffect.setPosition(body.getPosition().x, body.getPosition().y);
     }
 
     @Override
     protected void initialiseWorldValues(){
-        kirkDisplacement = -MAX_KIRK_DISPLACEMENT;
         rotation = 0;
         isDodging = false;
     }
@@ -199,7 +192,7 @@ public final class Jini extends Character {
         fDef.filter.maskBits = GameApp.GROUND_PLATFORM_BIT | GameApp.OBJECT_BIT | GameApp.KIRK_BIT;
 
         CircleShape jiniBody = new CircleShape();
-        jiniBody.setRadius(GameApp.toPPM(GameApp.TILE_LENGTH));
+        jiniBody.setRadius(GameApp.toPPM(GameApp.TILE_LENGTH*1.5f));
         jiniBody.setPosition(new Vector2(0, 0));
         fDef.shape = jiniBody;
         fDef.friction = 0;
@@ -207,7 +200,7 @@ public final class Jini extends Character {
         body.createFixture(fDef).setUserData("jiniBody");
 
         CircleShape jiniDetector = new CircleShape();
-        jiniDetector.setRadius(GameApp.toPPM(GameApp.TILE_LENGTH*3));
+        jiniDetector.setRadius(GameApp.toPPM(GameApp.TILE_LENGTH*4));
         jiniDetector.setPosition(new Vector2(0, 0));
         fDef.shape = jiniDetector;
         fDef.friction = 0;
@@ -219,7 +212,7 @@ public final class Jini extends Character {
     @Override
     protected void initialiseStates() {
         isTeleporting = false;
-        previousFacing = true;
+        hasTeleported = false;
     }
 
     @Override
@@ -307,20 +300,35 @@ public final class Jini extends Character {
     }
 
     public void determineCheckSpace(){
-        TileVector[][] positionsToCheck = new TileVector[DESTINATION_CHECK_LIMIT][DESTINATION_CHECK_LIMIT];
-        int displacement = positionsToCheck.length/2;
 
-        for(int x = -displacement; x <= displacement; x++){
-            for(int y = -displacement; y <= displacement; y++)
-                positionsToCheck[x + displacement][y + displacement] = new TileVector(currentPosition.x() + x, currentPosition.y() + y);
+        if(!isDodging) {
+            TileVector[][] positionsToCheck = getPotentialTargetPositions();
+
+            targetPosition = chooseFreeSpace(positionsToCheck);
+            dodgeVectors = AStar.calculateMapVectorPath(currentPosition, targetPosition);
+            dodgeCounter = 0;
+            isDodging = true;
+            wanderTimer = MAX_WANDER_TIMER;
+            restartWanderTimer = -0.1f;
+        }
+        else{
+            if(!isTeleporting){
+                isTeleporting = true;
+                resetAnimationStateTimer();
+            }
+        }
+    }
+
+    private TileVector[][] getPotentialTargetPositions(){
+        TileVector[][] potentialTargetPositions = new TileVector[DESTINATION_CHECK_LIMIT][DESTINATION_CHECK_LIMIT];
+        int displacement = potentialTargetPositions.length / 2;
+
+        for (int x = -displacement; x <= displacement; x++) {
+            for (int y = -displacement; y <= displacement; y++)
+                potentialTargetPositions[x + displacement][y + displacement] = new TileVector(currentPosition.x() + x, currentPosition.y() + y);
         }
 
-        targetPosition = chooseFreeSpace(positionsToCheck);
-        dodgeVectors = AStar.calculateMapVectorPath(currentPosition, targetPosition);
-        dodgeCounter = 0;
-        isDodging = true;
-        wanderTimer = MAX_WANDER_TIMER;
-        restartWanderTimer = -0.1f;
+        return potentialTargetPositions;
     }
 
     private TileVector chooseFreeSpace(TileVector[][] positionsToCheck){
@@ -341,9 +349,5 @@ public final class Jini extends Character {
         else vectorToCheck = chooseFreeSpace(positionsToCheck);
 
         return new TileVector(vectorToCheck.x(), vectorToCheck.y());
-    }
-
-    public boolean isDodging() {
-        return isDodging;
     }
 }
