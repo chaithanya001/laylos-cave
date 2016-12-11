@@ -21,8 +21,8 @@ import java.util.Random;
 
 public final class Jini extends Character {
 
-    private static final int MAX_JINI_KIRK_DIST = 15;
-    private static final int DESTINATION_CONFIRM_LIMIT = 5;
+    private static final int MAX_JINI_KIRK_DIST = 25;
+    private static final int DESTINATION_CONFIRM_LIMIT = 6;
     private static final int DESTINATION_CHECK_LIMIT = 21;
     private static final Random RANDOM = new Random();
     private static final float MAX_WANDER_TIMER = 3;
@@ -121,14 +121,9 @@ public final class Jini extends Character {
         }
 
         if(Math.abs(GameApp.worldPositionToTileVector(kirkPosition).y() - GameApp.worldPositionToTileVector(jiniPosition).y()) > MAX_JINI_KIRK_DIST
-                || Math.abs(GameApp.worldPositionToTileVector(kirkPosition).x() - GameApp.worldPositionToTileVector(jiniPosition).x()) > 25) {
+                || Math.abs(GameApp.worldPositionToTileVector(kirkPosition).x() - GameApp.worldPositionToTileVector(jiniPosition).x()) > MAX_JINI_KIRK_DIST) {
             body.setLinearVelocity(new Vector2(0, 0));
-
-            if(isFacingRight)
-                body.applyLinearImpulse(new Vector2(2.4f, 0), body.getWorldCenter(), true);
-            else
-                body.applyLinearImpulse(new Vector2(-2.4f, 0), body.getWorldCenter(), true);
-
+            teleportJini();
             wanderTimer = MAX_WANDER_TIMER;
             restartWanderTimer = -0.1f;
         }
@@ -136,7 +131,6 @@ public final class Jini extends Character {
 
     private void handleTeleporting(){
         if(isTeleporting){
-
             float halfTimer = animationPackager.getFrameSpeeds()[AnimationKey.Jini.TELEPORTING.index][0]
                     * animationPackager.getFrameSequences()[AnimationKey.Jini.TELEPORTING.index].length / 2;
             isDoubleJumpImpulse = false;
@@ -148,7 +142,7 @@ public final class Jini extends Character {
             }
 
             if (animationStateTimer > halfTimer && !hasTeleported) {
-                body.setTransform(GameApp.tileVectorToWorldPosition(chooseFreeSpace(getPotentialTargetPositions())), 0);
+                body.setTransform(GameApp.tileVectorToWorldPosition(chooseFreeSpace(getPotentialTargetPositions(screen.getKirk().getCurrentPosition()))), 0);
                 hasTeleported = true;
             }
         }
@@ -297,8 +291,7 @@ public final class Jini extends Character {
     public void determineCheckSpace(){
 
         if(!isDodging) {
-            TileVector[][] positionsToCheck = getPotentialTargetPositions();
-
+            TileVector[][] positionsToCheck = getPotentialTargetPositions(currentPosition);
             targetPosition = chooseFreeSpace(positionsToCheck);
             dodgeVectors = AStar.calculateMapVectorPath(currentPosition, targetPosition);
             dodgeCounter = 0;
@@ -306,21 +299,24 @@ public final class Jini extends Character {
             wanderTimer = MAX_WANDER_TIMER;
             restartWanderTimer = -0.1f;
         }
-        else{
-            if(!isTeleporting){
-                isTeleporting = true;
-                resetAnimationStateTimer();
-            }
+        else
+            teleportJini();
+    }
+
+    private void teleportJini(){
+        if(!isTeleporting){
+            isTeleporting = true;
+            resetAnimationStateTimer();
         }
     }
 
-    private TileVector[][] getPotentialTargetPositions(){
+    private TileVector[][] getPotentialTargetPositions(TileVector middlePoint){
         TileVector[][] potentialTargetPositions = new TileVector[DESTINATION_CHECK_LIMIT][DESTINATION_CHECK_LIMIT];
         int displacement = potentialTargetPositions.length / 2;
 
         for (int x = -displacement; x <= displacement; x++) {
             for (int y = -displacement; y <= displacement; y++)
-                potentialTargetPositions[x + displacement][y + displacement] = new TileVector(currentPosition.x() + x, currentPosition.y() + y);
+                potentialTargetPositions[x + displacement][y + displacement] = new TileVector(middlePoint.x() + x, middlePoint.y() + y);
         }
 
         return potentialTargetPositions;
