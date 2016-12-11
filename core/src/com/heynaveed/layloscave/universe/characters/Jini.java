@@ -143,7 +143,8 @@ public final class Jini extends Character {
             }
 
             if (animationStateTimer > halfTimer && !hasTeleported) {
-                body.setTransform(GameApp.tileVectorToWorldPosition(chooseFreeSpace(getPotentialTargetPositions(screen.getKirk().getCurrentPosition()))), 0);
+                TileVector gameCamPos = screen.getKirk().getCurrentPosition();
+                body.setTransform(GameApp.tileVectorToWorldPosition(chooseFreeSpace(getPotentialTargetPositions(gameCamPos))), 0);
                 hasTeleported = true;
             }
         }
