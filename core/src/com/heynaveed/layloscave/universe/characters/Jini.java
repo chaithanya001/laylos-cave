@@ -110,7 +110,7 @@ public final class Jini extends Character {
             if(restartWanderTimer <= 0){
                 int xDir = RANDOM.nextInt(2) == 0 ?1 :-1;
                 int yDir = RANDOM.nextInt(2) == 0 ?1 :-1;
-                body.applyLinearImpulse(new Vector2(xDir*0.3f, yDir*0.25f), body.getWorldCenter(), true);
+                body.applyLinearImpulse(new Vector2(xDir*0.075f, yDir*0.075f), body.getWorldCenter(), true);
                 wanderTimer = MAX_WANDER_TIMER;
             }
 
@@ -127,7 +127,10 @@ public final class Jini extends Character {
             if(isFacingRight)
                 body.applyLinearImpulse(new Vector2(2.4f, 0), body.getWorldCenter(), true);
             else
-                body.applyLinearImpulse(new Vector2(2.4f, 0), body.getWorldCenter(), true);
+                body.applyLinearImpulse(new Vector2(-2.4f, 0), body.getWorldCenter(), true);
+
+            wanderTimer = MAX_WANDER_TIMER;
+            restartWanderTimer = -0.1f;
         }
     }
 
@@ -196,7 +199,7 @@ public final class Jini extends Character {
         fDef.filter.maskBits = GameApp.GROUND_PLATFORM_BIT | GameApp.OBJECT_BIT | GameApp.KIRK_BIT;
 
         CircleShape jiniBody = new CircleShape();
-        jiniBody.setRadius(GameApp.toPPM(GameApp.TILE_LENGTH*1.5f));
+        jiniBody.setRadius(GameApp.toPPM(GameApp.TILE_LENGTH));
         jiniBody.setPosition(new Vector2(0, 0));
         fDef.shape = jiniBody;
         fDef.friction = 0;
@@ -316,8 +319,8 @@ public final class Jini extends Character {
         dodgeVectors = AStar.calculateMapVectorPath(currentPosition, targetPosition);
         dodgeCounter = 0;
         isDodging = true;
-        wanderTimer = 1;
-        restartWanderTimer = -1;
+        wanderTimer = MAX_WANDER_TIMER;
+        restartWanderTimer = -0.1f;
     }
 
     private TileVector chooseFreeSpace(TileVector[][] positionsToCheck){
