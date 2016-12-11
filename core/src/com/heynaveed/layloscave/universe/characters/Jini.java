@@ -98,9 +98,11 @@ public final class Jini extends Character {
                 isDodging = false;
             else
                 dodgeCounter++;
+
+            body.setActive(false);
         }
         else{
-
+            body.setActive(true);
             isFacingRight = kirkPosition.x > jiniPosition.x;
 
             if(wanderTimer > 0)
