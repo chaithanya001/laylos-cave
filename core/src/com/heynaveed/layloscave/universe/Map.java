@@ -81,5 +81,9 @@ public abstract class Map {
     public int getHeight(){
         return height;
     }
+
+    public MapState getMapState(){
+        return mapState;
+    }
 }
 

@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.heynaveed.layloscave.states.MapState;
+import com.heynaveed.layloscave.universe.Map;
 import com.heynaveed.layloscave.universe.Portal;
 import com.heynaveed.layloscave.utils.InputController;
 import com.heynaveed.layloscave.utils.maps.MapGenerator;
@@ -54,7 +55,7 @@ public class PlayScreen implements Screen {
     private final InputController inputController;
 
     private TiledMap currentTileMap;
-    private MapState currentMapState;
+    private Map currentMap;
     private MapGenerator mapGenerator;
     private int currentLevel;
     private int[][] currentTileIDSet;
@@ -63,11 +64,11 @@ public class PlayScreen implements Screen {
         this.gameApp = gameApp;
         gameCam = new OrthographicCamera();
         inputMultiplexer = new InputMultiplexer();
-//        currentMapState = MapState.HUB;
-        currentMapState = MapState.STAGE;
-//        currentMapState = MapState.TUNNEL;
-        mapGenerator = new MapGenerator().buildMap(currentMapState);
-        currentTileIDSet = mapGenerator.getWorkingTileIDSet();
+        mapGenerator = new MapGenerator();
+//        currentMap = mapGenerator.newHubMap();
+        currentMap = mapGenerator.newStageMap();
+//        currentMap = mapGenerator.newTunnelMap();
+        currentTileIDSet = currentMap.getTileIDSet();
         viewport = new FitViewport(GameApp.toPPM(GameApp.VIEWPORT_WIDTH), GameApp.toPPM(GameApp.VIEWPORT_HEIGHT), gameCam);
         gameCam.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight() / 2, 0);
         currentLevel = 1;
@@ -84,7 +85,7 @@ public class PlayScreen implements Screen {
         mapRenderer = new OrthogonalTiledMapRenderer(currentTileMap, GameApp.toPPM(MAP_UNIT_SCALE));
         world.setContactListener(contactListener);
 
-        if(currentMapState.equals(MapState.HUB))
+        if(currentMap.getMapState().equals(MapState.HUB))
             initialisePortals();
 
         if(GameApp.CONFIGURATION == "Android")
@@ -303,7 +304,7 @@ public class PlayScreen implements Screen {
     }
 
     public MapState getCurrentMapState(){
-        return currentMapState;
+        return currentMap.getMapState();
     }
 
     public int[][] getCurrentTileIDSet(){

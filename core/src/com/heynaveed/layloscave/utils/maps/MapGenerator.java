@@ -69,7 +69,7 @@ public final class MapGenerator {
     private static ArrayList<Boolean> portalFacing;
     private static int objectID = 1000;
     private static FileHandle newMap;
-    private static MapState workingMapState;
+    public static MapState workingMapState;
     private static int levelNumber = 0;
     public static int workingWidth;
     public static int workingHeight;
@@ -81,40 +81,68 @@ public final class MapGenerator {
 
     public static void main(String[] args) throws IOException{
         GameApp.CONFIGURATION = "Desktop";
-//        new MapGenerator().buildMap(MapState.HUB);
-        new MapGenerator().buildMap(MapState.STAGE);
-//        new MapGenerator().buildMap(MapState.TUNNEL);
+        new MapGenerator().newHubMap();
+//        new MapGenerator().newStageMap();
+//        new MapGenerator().newTunnelMap();
     }
 
-    public MapGenerator buildMap(MapState mapState) throws IOException{
-        workingMapState = mapState;
+    public HubMap newHubMap() throws IOException{
+        workingMapState = MapState.HUB;
         determineWorkingVariables();
         createNewMapFile();
         loadMapRoot();
-
-        switch(workingMapState){
-            case HUB:
-                hubMap = new HubMap(workingHeight, workingWidth);
-                workingTileIDSet = hubMap.getTileIDSet();
-                determinePortalPositions();
-                break;
-            case STAGE:
-                stageMap = new StageMap(workingHeight, workingWidth);
-                workingTileIDSet = stageMap.getTileIDSet();
-                break;
-            case TUNNEL:
-                tunnelMap = new TunnelMap(workingHeight, workingWidth);
-                workingTileIDSet = tunnelMap.getTileIDSet();
-                break;
-        }
-
+        hubMap = new HubMap(workingHeight, workingWidth);
+        workingTileIDSet = hubMap.getTileIDSet();
+        determinePortalPositions();
+        paintTerrain();
         deleteOldObjects();
         calculateTerrainObjectList();
         generateObjects();
         compressTileIDSet();
         updateTerrainLayer();
         writeToMap();
-        return this;
+
+        return hubMap;
+    }
+
+    public StageMap newStageMap() throws IOException{
+        workingMapState = MapState.STAGE;
+        determineWorkingVariables();
+        createNewMapFile();
+        loadMapRoot();
+        stageMap = new StageMap(workingHeight, workingWidth);
+        workingTileIDSet = stageMap.getTileIDSet();
+        paintTerrain();
+        deleteOldObjects();
+        calculateTerrainObjectList();
+        generateObjects();
+        compressTileIDSet();
+        updateTerrainLayer();
+        writeToMap();
+
+        return stageMap;
+    }
+
+    public TunnelMap newTunnelMap() throws IOException{
+        workingMapState = MapState.TUNNEL;
+        determineWorkingVariables();
+        createNewMapFile();
+        loadMapRoot();
+        tunnelMap = new TunnelMap(workingHeight, workingWidth);
+        workingTileIDSet = tunnelMap.getTileIDSet();
+        paintTerrain();
+        deleteOldObjects();
+        calculateTerrainObjectList();
+        generateObjects();
+        compressTileIDSet();
+        updateTerrainLayer();
+        writeToMap();
+
+        return tunnelMap;
+    }
+
+    private static void paintTerrain(){
+
     }
 
     public static void extractTileIDSet(byte[] data){
