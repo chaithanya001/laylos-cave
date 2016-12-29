@@ -21,6 +21,7 @@ import java.util.Random;
 
 public final class Jini extends Character {
 
+    private static final float MAX_FACE_ROTATION = 45.0f;
     private static final int MAX_JINI_KIRK_DIST_X = 18;
     private static final int MAX_JINI_KIRK_DIST_Y = 23;
     private static final int DESTINATION_CONFIRM_LIMIT = 4;
@@ -34,6 +35,7 @@ public final class Jini extends Character {
     private float rotation;
     private float restartWanderTimer = -0.1f;
     private float wanderTimer = MAX_WANDER_TIMER;
+    private float currentFacingAngle = 0;
 
     private CharacterState.Jini currentCharacterState;
     private CharacterState.Jini previousCharacterState;
@@ -75,6 +77,18 @@ public final class Jini extends Character {
         currentPosition = GameApp.worldPositionToTileVector(body.getPosition());
         handleMovement(dt);
         setRegion(updateAnimationFrame(dt));
+//        faceKirk();
+    }
+
+    private void faceKirk(){
+
+        Vector2 kirkPos = screen.getKirk().getBody().getPosition();
+        currentFacingAngle = (float)(Math.atan2(kirkPos.y - body.getPosition().y, kirkPos.x - body.getPosition().x) * (180/Math.PI));
+
+        if(Math.abs(currentFacingAngle) < MAX_FACE_ROTATION)
+            setRotation(currentFacingAngle);
+        else
+            setRotation(0);
     }
 
     private void handleAromaEffect(){
